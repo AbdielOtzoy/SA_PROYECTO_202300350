@@ -58,12 +58,12 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 | Archivo visual | Tipo | Propósito |
 |---|---|---|
-| `referencias/casos-de-uso/01-alto-nivel.svg` | Casos de uso | Presenta actores y los once objetivos del alcance. |
-| `referencias/casos-de-uso/02-autenticacion.svg` | Descomposición | Detalla registro, inicio de sesión y recuperación. |
-| `referencias/casos-de-uso/03-catalogo.svg` | Descomposición | Detalla exploración, filtros y ficha. |
-| `referencias/casos-de-uso/04-reproduccion.svg` | Descomposición | Detalla streaming, checkpoint, reanudación, historial y valoración. |
-| `referencias/casos-de-uso/05-asignaciones-permisos.svg` | Descomposición | Detalla consulta de cursos y gestión RBAC. |
-| `referencias/casos-de-uso-locales/06` a `16` | Casos de uso locales | Un diagrama reducido por cada caso expandido, con sus relaciones inmediatas. |
+| ![Diagrama de alto nivel](referencias/casos-de-uso/01-alto-nivel.svg) | Casos de uso | Presenta actores y los once objetivos del alcance. |
+| ![Diagrama de autenticación](referencias/casos-de-uso/02-autenticacion.svg) | Descomposición | Detalla registro, inicio de sesión y recuperación. |
+| ![Diagrama de catálogo](referencias/casos-de-uso/03-catalogo.svg) | Descomposición | Detalla exploración, filtros y ficha. |
+| ![Diagrama de reproducción](referencias/casos-de-uso/04-reproduccion.svg) | Descomposición | Detalla streaming, checkpoint, reanudación, historial y valoración. |
+| ![Diagrama de asignaciones y permisos](referencias/casos-de-uso/05-asignaciones-permisos.svg) | Descomposición | Detalla consulta de cursos y gestión RBAC. |
+| [Diagramas locales 06 a 16](referencias/casos-de-uso-locales/) | Casos de uso locales | Un diagrama reducido por cada caso expandido, con sus relaciones inmediatas. |
 
 ---
 
@@ -95,6 +95,8 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 **Relaciones locales**: `Registrarse` incluye `Validar dominio institucional`, `Validar unicidad de cuenta` y `Enviar confirmación de registro`.
 
+![Diagrama local de registro](referencias/casos-de-uso-locales/06-cu-au-01-registro.svg)
+
 ## CU-AU-02 — Iniciar sesión institucional
 
 | Campo | Definición |
@@ -121,6 +123,8 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - E2. Si el Proveedor OAuth rechaza o cancela la autorización, el sistema muestra el acceso como no completado.
 
 **Relaciones locales**: `Autenticarse mediante OAuth` extiende `Iniciar sesión institucional` cuando el usuario selecciona OAuth. `Iniciar sesión institucional` incluye `Validar identidad institucional`, `Resolver permisos efectivos` y `Crear sesión segura`.
+
+![Diagrama local de inicio de sesión](referencias/casos-de-uso-locales/07-cu-au-02-inicio-sesion.svg)
 
 ## CU-AU-03 — Recuperar acceso
 
@@ -150,6 +154,8 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 **Relaciones locales**: `Recuperar acceso` incluye `Generar mecanismo temporal`, `Enviar mecanismo de recuperación` y `Actualizar contraseña`.
 
+![Diagrama local de recuperación de acceso](referencias/casos-de-uso-locales/08-cu-au-03-recuperar-acceso.svg)
+
 ## CU-CA-01 — Explorar y filtrar catálogo
 
 | Campo | Definición |
@@ -176,6 +182,8 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 **Relaciones locales**: `Explorar y filtrar catálogo` incluye `Consultar grabaciones publicadas` y `Aplicar filtros académicos`.
 
+![Diagrama local de exploración del catálogo](referencias/casos-de-uso-locales/09-cu-ca-01-explorar-catalogo.svg)
+
 ## CU-CA-02 — Consultar ficha de grabación
 
 | Campo | Definición |
@@ -199,6 +207,8 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - E1. Si la grabación dejó de estar publicada, el sistema informa que ya no está disponible y retorna al catálogo.
 
 **Relaciones locales**: `Consultar ficha de grabación` extiende `Explorar y filtrar catálogo` cuando el usuario selecciona una grabación; incluye `Mostrar ficha técnica`.
+
+![Diagrama local de ficha de grabación](referencias/casos-de-uso-locales/10-cu-ca-02-ficha-grabacion.svg)
 
 ## CU-RP-01 — Reproducir grabación
 
@@ -226,6 +236,8 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 **Relaciones locales**: `Reproducir grabación` incluye `Transmitir video`, `Registrar checkpoint` y `Guardar posición al pausar o finalizar`. `Reanudar grabación` lo extiende cuando existe un checkpoint.
 
+![Diagrama local de reproducción](referencias/casos-de-uso-locales/11-cu-rp-01-reproducir.svg)
+
 ## CU-RP-02 — Reanudar grabación
 
 | Campo | Definición |
@@ -250,6 +262,8 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 **Relaciones locales**: `Reanudar grabación` extiende `Reproducir grabación` bajo la condición `[existe checkpoint]`; incluye `Recuperar checkpoint`.
 
+![Diagrama local de reanudación](referencias/casos-de-uso-locales/12-cu-rp-02-reanudar.svg)
+
 ## CU-RP-03 — Consultar historial de reproducción
 
 | Campo | Definición |
@@ -273,6 +287,8 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - E1. Si no se puede obtener el historial, el sistema informa que no está disponible temporalmente.
 
 **Relaciones locales**: `Consultar historial de reproducción` incluye `Obtener últimas 20 reproducciones`.
+
+![Diagrama local de historial](referencias/casos-de-uso-locales/13-cu-rp-03-historial.svg)
 
 ## CU-RP-04 — Valorar grabación
 
@@ -299,6 +315,8 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 **Relaciones locales**: `Valorar grabación` incluye `Registrar o modificar voto` y `Calcular porcentaje de recomendación`.
 
+![Diagrama local de valoración](referencias/casos-de-uso-locales/14-cu-rp-04-valorar.svg)
+
 ## CU-AP-01 — Consultar cursos inscritos
 
 | Campo | Definición |
@@ -323,6 +341,8 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - E1. Si la cuenta no tiene rol de estudiante, el sistema no muestra el panel de asignaciones.
 
 **Relaciones locales**: `Consultar cursos inscritos` incluye `Obtener asignaciones` y `Filtrar inscripciones`.
+
+![Diagrama local de cursos inscritos](referencias/casos-de-uso-locales/15-cu-ap-01-cursos-inscritos.svg)
 
 ## CU-AP-02 — Gestionar roles y permisos
 
@@ -351,3 +371,5 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - E2. Si la cuenta no existe o no está disponible, el sistema informa el error y no cambia roles.
 
 **Relaciones locales**: `Gestionar roles y permisos` incluye `Asignar rol`, `Revocar rol`, `Validar autorización` y `Resolver permisos acumulados`.
+
+![Diagrama local de roles y permisos](referencias/casos-de-uso-locales/16-cu-ap-02-roles-permisos.svg)
