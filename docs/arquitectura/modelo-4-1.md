@@ -147,7 +147,7 @@ La vista de escenarios, también conocida como vista de casos de uso, interactú
 
 El modelo completo de casos de uso (alto nivel, primera descomposición y narrativas expandidas con sus diagramas locales) se encuentra documentado en [Modelo de Casos de Uso](../casos-de-uso/modelo-casos-de-uso.md).
 
-![Diagrama de casos de uso de alto nivel](../casos-de-uso/referencias/casos-de-uso/01-alto-nivel.svg)
+[![Diagrama de casos de uso de alto nivel](../casos-de-uso/referencias/casos-de-uso/01-alto-nivel.drawio.svg)](../casos-de-uso/referencias/casos-de-uso/01-alto-nivel.drawio)
 
 ### Escenarios que validan la arquitectura
 
