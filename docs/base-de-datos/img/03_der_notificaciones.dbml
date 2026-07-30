@@ -1,0 +1,51 @@
+Project notification_db {
+  database_type: 'PostgreSQL'
+  Note: 'DER de Notificaciones. user_id es una referencia lógica a identity_db.users.id y no una clave foránea física.'
+}
+
+Table templates {
+  id uuid [pk]
+  code varchar(50) [unique, not null]
+  subject varchar(200) [not null]
+  body_html text [not null]
+  created_at timestamptz [not null, default: `now()`]
+
+  Note: 'Plantillas de correo reutilizables'
+}
+
+Table user_preferences {
+  user_id uuid [pk, not null, note: 'Referencia lógica a identity_db.users.id']
+  notification_type varchar(30) [pk, not null]
+  is_enabled boolean [not null, default: true]
+
+  Note: 'Preferencias de notificación por usuario'
+}
+
+Table email_queue {
+  id uuid [pk]
+  user_id uuid [not null, note: 'Referencia lógica a identity_db.users.id']
+  template_id uuid [not null]
+  recipient varchar(255) [not null]
+  params_json jsonb
+  status varchar(20) [not null]
+  created_at timestamptz [not null, default: `now()`]
+  sent_at timestamptz
+
+  Note: 'Cola de correos pendientes de envío'
+}
+
+Table email_log {
+  id uuid [pk]
+  user_id uuid [not null, note: 'Referencia lógica a identity_db.users.id']
+  template_id uuid [not null]
+  recipient varchar(255) [not null]
+  subject varchar(200) [not null]
+  body text [not null]
+  sent_at timestamptz
+  status varchar(20) [not null]
+
+  Note: 'Historial de correos enviados'
+}
+
+Ref: email_queue.template_id > templates.id
+Ref: email_log.template_id > templates.id

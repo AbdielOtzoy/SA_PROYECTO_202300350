@@ -1,0 +1,78 @@
+Project identity_db {
+  database_type: 'PostgreSQL'
+  Note: 'DER de Identidad. Las referencias a course_id y semester_id pertenecen lógicamente a catalog_db y no son claves foráneas físicas.'
+}
+
+Table users {
+  id uuid [pk]
+  email varchar(255) [unique, not null]
+  password_hash text [not null]
+  full_name varchar(150) [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  Note: 'Cuentas institucionales de la plataforma'
+}
+
+Table roles {
+  id uuid [pk]
+  name varchar(50) [unique, not null]
+  description text
+
+  Note: 'Roles del sistema: Estudiante, Docente, Auxiliar y Admin'
+}
+
+Table permissions {
+  id uuid [pk]
+  code varchar(50) [unique, not null]
+  description text
+
+  Note: 'Permisos atómicos del sistema'
+}
+
+Table role_permissions {
+  role_id uuid [pk, not null]
+  permission_id uuid [pk, not null]
+
+  Note: 'Asignación de permisos a roles (N:N)'
+}
+
+Table user_roles {
+  user_id uuid [pk, not null]
+  role_id uuid [pk, not null]
+  assigned_by uuid
+  assigned_at timestamptz [not null, default: `now()`]
+
+  Note: 'Asignación de roles a usuarios (N:N)'
+}
+
+Table user_enrollments {
+  user_id uuid [pk, not null]
+  course_id uuid [pk, not null, note: 'Referencia lógica a catalog_db.courses.id']
+  semester_id uuid [note: 'Referencia lógica a catalog_db.semesters.id']
+  status varchar(20) [not null]
+  credentials varchar(50)
+
+  Note: 'Inscripción de estudiantes en cursos (RF-008, RF-026)'
+}
+
+Table credential_audit_log {
+  id uuid [pk]
+  user_id uuid [not null]
+  change_type varchar(20) [not null]
+  old_value_hash text
+  new_value_hash text
+  ip_address inet
+  created_at timestamptz [not null, default: `now()`]
+
+  Note: 'Auditoría de cambios de credenciales y roles'
+}
+
+Ref: role_permissions.role_id > roles.id
+Ref: role_permissions.permission_id > permissions.id
+Ref: user_roles.user_id > users.id
+Ref: user_roles.role_id > roles.id
+Ref: user_roles.assigned_by > users.id
+Ref: user_enrollments.user_id > users.id
+Ref: credential_audit_log.user_id > users.id

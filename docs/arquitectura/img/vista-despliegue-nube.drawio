@@ -1,0 +1,195 @@
+<mxfile host="Electron" agent="opencode">
+  <diagram id="vista-despliegue-nube" name="Vista-Despliegue-Nube">
+    <mxGraphModel dx="1885" dy="1133" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="400" pageHeight="722" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="titulo" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;" value="Vista Física (Despliegue) — Entorno Nube (GCP)" vertex="1">
+          <mxGeometry height="40" width="600" x="650" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nodo-cliente" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=top;align=center;fontSize=12;fontStyle=1;" value="Hardware&lt;br&gt;(Navegador web)" vertex="1">
+          <mxGeometry height="280" width="180" x="40" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="actor1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" value="Usuario institucional" vertex="1">
+          <mxGeometry height="60" width="30" x="70" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="actor2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=11;" value="Administrador" vertex="1">
+          <mxGeometry height="60" width="30" x="150" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="entorno" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;align=left;spacingLeft=8;fontSize=14;fontStyle=1;" value="GOOGLE CLOUD PLATFORM" vertex="1">
+          <mxGeometry height="960" width="1150" x="260" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="maquina" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;verticalAlign=top;align=left;spacingLeft=8;fontSize=13;fontStyle=1;" value="Compute Engine" vertex="1">
+          <mxGeometry height="750" width="1080" x="300" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="red" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;align=left;spacingLeft=8;fontSize=13;fontStyle=1;" value="Red Docker interna" vertex="1">
+          <mxGeometry height="670" width="1010" x="350" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="zona-ms" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#6c8ebf;verticalAlign=top;align=left;spacingLeft=8;fontSize=12;fontStyle=1;dashed=1;" value="Microservicios" vertex="1">
+          <mxGeometry height="600" width="460" x="360" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="c-gateway" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;fontSize=11;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Docker Container&lt;/font&gt;&lt;br&gt;&lt;b&gt;«container» API Gateway&lt;/b&gt;&lt;br&gt;«TypeScript» · expone :443" vertex="1">
+          <mxGeometry height="80" width="190" x="395" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="c-frontend" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;fontSize=11;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Docker Container&lt;/font&gt;&lt;br&gt;&lt;b&gt;«container» Frontend Web&lt;/b&gt;&lt;br&gt;SPA estática" vertex="1">
+          <mxGeometry height="80" width="190" x="610" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="c-identidad" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;fontSize=11;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Docker Container&lt;/font&gt;&lt;br&gt;&lt;b&gt;«container» Svc Identidad&lt;/b&gt;&lt;br&gt;«TypeScript» · gRPC :50051" vertex="1">
+          <mxGeometry height="80" width="190" x="395" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="c-reproduccion" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;fontSize=11;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Docker Container&lt;/font&gt;&lt;br&gt;&lt;b&gt;«container» Svc Reproducción&lt;/b&gt;&lt;br&gt;«Go» · gRPC :50053" vertex="1">
+          <mxGeometry height="80" width="190" x="610" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="c-catalogo" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;fontSize=11;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Docker Container&lt;/font&gt;&lt;br&gt;&lt;b&gt;«container» Svc Catálogo&lt;/b&gt;&lt;br&gt;«TypeScript» · gRPC :50052" vertex="1">
+          <mxGeometry height="80" width="190" x="395" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="c-analitica" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;fontSize=11;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Docker Container&lt;/font&gt;&lt;br&gt;&lt;b&gt;«container» Svc Analítica&lt;/b&gt;&lt;br&gt;«Python» · gRPC :50054" vertex="1">
+          <mxGeometry height="80" width="190" x="610" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="c-notificaciones" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;fontSize=11;align=center;verticalAlign=middle;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Docker Container&lt;/font&gt;&lt;br&gt;&lt;b&gt;«container» Svc Notificaciones&lt;/b&gt;&lt;br&gt;«TypeScript» · gRPC :50055" vertex="1">
+          <mxGeometry height="80" width="190" x="395" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="zona-db" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#d79b00;verticalAlign=top;align=left;spacingLeft=8;fontSize=12;fontStyle=1;dashed=1;" value="Persistencia (Database per Microservice)" vertex="1">
+          <mxGeometry height="600" width="490" x="850" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="db-id" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fontSize=11;align=center;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Docker Container&lt;br&gt;PostgreSQL Identidad&lt;br&gt;:5432" vertex="1">
+          <mxGeometry height="70" width="160" x="890" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="db-cat" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fontSize=11;align=center;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Docker Container&lt;br&gt;PostgreSQL Catálogo&lt;br&gt;:5432" vertex="1">
+          <mxGeometry height="70" width="160" x="890" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="db-not" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fontSize=11;align=center;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Docker Container&lt;br&gt;PostgreSQL Notificaciones&lt;br&gt;:5432" vertex="1">
+          <mxGeometry height="70" width="160" x="920" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="db-rep" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fontSize=11;align=center;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Docker Container&lt;br&gt;MongoDB Reproducción&lt;br&gt;:27017" vertex="1">
+          <mxGeometry height="70" width="160" x="1150" y="435" as="geometry" />
+        </mxCell>
+        <mxCell id="db-ana" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fontSize=11;align=center;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Docker Container&lt;br&gt;MongoDB Analítica&lt;br&gt;:27017" vertex="1">
+          <mxGeometry height="70" width="160" x="1000" y="535" as="geometry" />
+        </mxCell>
+        <mxCell id="db-redis" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fontSize=11;align=center;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Docker Container&lt;br&gt;Redis Analítica (exclusivo)&lt;br&gt;:6379" vertex="1">
+          <mxGeometry height="70" width="160" x="1000" y="645" as="geometry" />
+        </mxCell>
+        <mxCell id="IBVRyTNGiE6IyfTA8jz0-4" edge="1" parent="1" source="gcs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;endArrow=none;endFill=0;startArrow=block;startFill=1;" target="c-reproduccion">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gcs" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=center;verticalAlign=middle;" value="&lt;i&gt;«resource»&lt;/i&gt;&lt;br&gt;&lt;b&gt;Google Cloud Storage&lt;/b&gt;&lt;br&gt;bucket de videos&lt;br&gt;(grabaciones)" vertex="1">
+          <mxGeometry height="120" width="180" x="800" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="gh-cd" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;align=center;verticalAlign=middle;" value="&lt;i&gt;«component»&lt;/i&gt;&lt;br&gt;&lt;b&gt;GitHub Actions&lt;/b&gt;&lt;br&gt;CI / CD" vertex="1">
+          <mxGeometry height="80" width="180" x="40" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="e-cd" edge="1" parent="1" source="gh-cd" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;endFill=0;dashed=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="maquina" value="despliegue automatizado (CD)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-cli-front" edge="1" parent="1" source="nodo-cliente" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="c-frontend" value="HTTPS&amp;nbsp;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="705" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-front-gw" edge="1" parent="1" source="c-frontend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="c-gateway" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-gw-id" edge="1" parent="1" source="c-gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" target="c-identidad" value="gRPC&amp;nbsp;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-gw-cat" edge="1" parent="1" source="c-gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c-catalogo" value="gRPC">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="373" y="340" />
+              <mxPoint x="373" y="585" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-gw-not" edge="1" parent="1" source="c-gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="c-notificaciones" value="gRPC&amp;nbsp;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="383.03" y="356.29" />
+              <mxPoint x="383.03" y="790" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-gw-rep" edge="1" parent="1" source="c-gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="c-reproduccion" value="gRPC">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="528" y="405" />
+              <mxPoint x="705" y="405" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-gw-ana" edge="1" parent="1" source="c-gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="c-analitica" value="gRPC&amp;nbsp;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="593" y="364" />
+              <mxPoint x="593" y="535" />
+              <mxPoint x="705" y="535" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-id-db" edge="1" parent="1" source="c-identidad" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="db-id" value="TCP">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="815" y="470" />
+              <mxPoint x="815" y="335" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-cat-db" edge="1" parent="1" source="c-catalogo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="db-cat" value="TCP&amp;nbsp;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="830" y="585" />
+              <mxPoint x="830" y="425" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-not-db" edge="1" parent="1" source="c-notificaciones" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="db-not" value="TCP">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880" y="790" />
+              <mxPoint x="880" y="775" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-rep-db" edge="1" parent="1" source="c-reproduccion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="db-rep" value="TCP&amp;nbsp;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1140" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-ana-db" edge="1" parent="1" source="c-analitica" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="db-ana" value="TCP&amp;nbsp;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="800" y="577.03" />
+              <mxPoint x="930" y="577.03" />
+              <mxPoint x="930" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-ana-redis" edge="1" parent="1" source="c-analitica" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="db-redis" value="TCP&amp;nbsp;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="800" y="690" />
+              <mxPoint x="920" y="690" />
+              <mxPoint x="920" y="680" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-rep-cat" edge="1" parent="1" source="c-reproduccion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;endFill=0;dashed=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;" target="c-catalogo" value="gRPC">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="667" y="545" />
+              <mxPoint x="528" y="545" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
