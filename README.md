@@ -1,6 +1,10 @@
 # SA_PROYECTO_202300350
 Repositorio para el proyecto del laboratorio de software avanzado
 
+**Curso:** Software Avanzado
+**Estudiante:** Abdiel Otzoy
+**Carnet:** 202300350
+
 ## Documentación
 
 - [Documento final de la Práctica 1](docs/practica-1.md)
