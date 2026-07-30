@@ -1,2 +1,55 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" modified="2026-07-28T00:00:00.000Z" agent="Codex" version="27.0.5"><diagram id="07-cu-au-02-inicio-sesion" name="Página-1"><mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="700" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="header" value="Plataforma YoUSAC — CU-AU-02 — Iniciar sesión institucional" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="60" width="1160" height="38" as="geometry"/></mxCell><mxCell id="boundary" value="Plataforma YoUSAC" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="170" y="115" width="970" height="545" as="geometry"/></mxCell><mxCell id="user" value="Usuario institucional" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="30" y="330" width="40" height="65" as="geometry"/></mxCell><mxCell id="oauth" value="Proveedor OAuth&lt;br&gt;institucional" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="1080" y="400" width="40" height="65" as="geometry"/></mxCell><mxCell id="login" value="Iniciar sesión&lt;br&gt;institucional" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="260" y="300" width="190" height="62" as="geometry"/></mxCell><mxCell id="identity" value="Validar identidad&lt;br&gt;institucional" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="570" y="150" width="190" height="62" as="geometry"/></mxCell><mxCell id="permissions" value="Resolver permisos&lt;br&gt;efectivos" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="800" y="270" width="190" height="62" as="geometry"/></mxCell><mxCell id="session" value="Crear sesión segura" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="570" y="430" width="190" height="62" as="geometry"/></mxCell><mxCell id="oauthlogin" value="Autenticarse&lt;br&gt;mediante OAuth" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="800" y="470" width="190" height="62" as="geometry"/></mxCell><mxCell id="edge0" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="user" target="login"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge1" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="oauth" target="oauthlogin"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="login" target="identity"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge3" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="login" target="permissions"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge4" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="login" target="session"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge5" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt; [elige OAuth]" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="oauthlogin" target="login"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel></diagram></mxfile>
+<mxfile host="Electron" agent="Codex">
+  <diagram id="07-cu-au-02-inicio-sesion" name="Página-1">
+    <mxGraphModel dx="2228" dy="1446" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="300" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" value="Plataforma YoUSAC — CU-AU-02 — Iniciar sesión institucional" vertex="1">
+          <mxGeometry height="38" width="750" x="-90" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Plataforma YoUSAC" vertex="1">
+          <mxGeometry height="625" width="560" x="40" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="user" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Usuario institucional" vertex="1">
+          <mxGeometry height="65" width="40" x="-100" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="oauth" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Proveedor OAuth&lt;br&gt;institucional" vertex="1">
+          <mxGeometry height="65" width="40" x="690" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="login" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Iniciar sesión&lt;br&gt;institucional" vertex="1">
+          <mxGeometry height="62" width="190" x="80" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="identity" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Validar identidad&lt;br&gt;institucional" vertex="1">
+          <mxGeometry height="62" width="190" x="170" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="permissions" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Resolver permisos&lt;br&gt;efectivos" vertex="1">
+          <mxGeometry height="62" width="190" x="370" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="session" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Crear sesión segura" vertex="1">
+          <mxGeometry height="62" width="190" x="80" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="oauthlogin" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Autenticarse&lt;br&gt;mediante OAuth" vertex="1">
+          <mxGeometry height="62" width="190" x="290" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="edge0" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="login" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" edge="1" parent="1" source="oauth" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="oauthlogin" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" edge="1" parent="1" source="login" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="identity" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" edge="1" parent="1" source="login" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="permissions" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" edge="1" parent="1" source="login" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="session" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" edge="1" parent="1" source="oauthlogin" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="login" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt; [elige OAuth]">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

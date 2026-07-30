@@ -1,2 +1,112 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" modified="2026-07-28T00:00:00.000Z" agent="Codex" version="27.0.5"><diagram id="02-autenticacion" name="Página-1"><mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1480" pageHeight="882" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="header" value="Plataforma YoUSAC — Autenticación" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="60" width="1400" height="38" as="geometry"/></mxCell><mxCell id="boundary" value="Plataforma YoUSAC" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="170" y="115" width="1210" height="727" as="geometry"/></mxCell><mxCell id="user" value="Usuario institucional" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="30" y="390" width="40" height="65" as="geometry"/></mxCell><mxCell id="oauth" value="Proveedor OAuth&lt;br&gt;institucional" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="1110" y="420" width="40" height="65" as="geometry"/></mxCell><mxCell id="mail" value="Servicio de correo&lt;br&gt;institucional" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="1110" y="650" width="40" height="65" as="geometry"/></mxCell><mxCell id="register" value="Registrarse con correo&lt;br&gt;institucional" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="250" y="130" width="190" height="62" as="geometry"/></mxCell><mxCell id="login" value="Iniciar sesión&lt;br&gt;institucional" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="250" y="380" width="190" height="62" as="geometry"/></mxCell><mxCell id="recovery" value="Recuperar acceso" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="250" y="630" width="190" height="62" as="geometry"/></mxCell><mxCell id="domain" value="Validar dominio&lt;br&gt;institucional" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="570" y="100" width="190" height="62" as="geometry"/></mxCell><mxCell id="unique" value="Validar unicidad&lt;br&gt;de cuenta" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="850" y="100" width="190" height="62" as="geometry"/></mxCell><mxCell id="confirm" value="Enviar confirmación&lt;br&gt;de registro" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="850" y="220" width="190" height="62" as="geometry"/></mxCell><mxCell id="identity" value="Validar identidad&lt;br&gt;institucional" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="570" y="350" width="190" height="62" as="geometry"/></mxCell><mxCell id="permissions" value="Resolver permisos&lt;br&gt;efectivos" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="850" y="350" width="190" height="62" as="geometry"/></mxCell><mxCell id="session" value="Crear sesión segura" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="850" y="470" width="190" height="62" as="geometry"/></mxCell><mxCell id="token" value="Generar mecanismo&lt;br&gt;temporal" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="570" y="600" width="190" height="62" as="geometry"/></mxCell><mxCell id="sendtoken" value="Enviar mecanismo&lt;br&gt;de recuperación" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="850" y="600" width="190" height="62" as="geometry"/></mxCell><mxCell id="password" value="Actualizar contraseña" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="850" y="720" width="190" height="62" as="geometry"/></mxCell><mxCell id="oauthlogin" value="Autenticarse&lt;br&gt;mediante OAuth" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="570" y="480" width="190" height="62" as="geometry"/></mxCell><mxCell id="edge0" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="user" target="register"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge1" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="user" target="login"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge2" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="user" target="recovery"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge3" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="oauth" target="oauthlogin"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge4" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="mail" target="confirm"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge5" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="mail" target="sendtoken"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge6" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="register" target="domain"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge7" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="register" target="unique"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge8" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="register" target="confirm"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge9" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="login" target="identity"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge10" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="login" target="permissions"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge11" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="login" target="session"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge12" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="recovery" target="token"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge13" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="recovery" target="sendtoken"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge14" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="recovery" target="password"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge15" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt; [elige OAuth]" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="oauthlogin" target="login"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel></diagram></mxfile>
+<mxfile host="Electron" agent="Codex">
+  <diagram id="02-autenticacion" name="Página-1">
+    <mxGraphModel dx="1985" dy="964" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" value="Plataforma YoUSAC — Autenticación" vertex="1">
+          <mxGeometry height="38" width="880" x="160" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Plataforma YoUSAC" vertex="1">
+          <mxGeometry height="727" width="820" x="190" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="user" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Usuario institucional" vertex="1">
+          <mxGeometry height="65" width="40" x="-20" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="oauth" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Proveedor OAuth&lt;br&gt;institucional" vertex="1">
+          <mxGeometry height="65" width="40" x="1130" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="mail" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Servicio de correo&lt;br&gt;institucional" vertex="1">
+          <mxGeometry height="65" width="40" x="1180" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="register" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Registrarse con correo&lt;br&gt;institucional" vertex="1">
+          <mxGeometry height="62" width="190" x="210" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="login" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Iniciar sesión&lt;br&gt;institucional" vertex="1">
+          <mxGeometry height="62" width="190" x="230" y="445" as="geometry" />
+        </mxCell>
+        <mxCell id="recovery" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Recuperar acceso" vertex="1">
+          <mxGeometry height="62" width="190" x="240" y="623" as="geometry" />
+        </mxCell>
+        <mxCell id="domain" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Validar dominio&lt;br&gt;institucional" vertex="1">
+          <mxGeometry height="62" width="190" x="460" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="unique" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Validar unicidad&lt;br&gt;de cuenta" vertex="1">
+          <mxGeometry height="62" width="190" x="750" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="confirm" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Enviar confirmación&lt;br&gt;de registro" vertex="1">
+          <mxGeometry height="62" width="190" x="720" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="identity" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Validar identidad&lt;br&gt;institucional" vertex="1">
+          <mxGeometry height="62" width="190" x="450" y="332" as="geometry" />
+        </mxCell>
+        <mxCell id="permissions" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Resolver permisos&lt;br&gt;efectivos" vertex="1">
+          <mxGeometry height="62" width="190" x="730" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="session" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Crear sesión segura" vertex="1">
+          <mxGeometry height="62" width="190" x="750" y="447.5" as="geometry" />
+        </mxCell>
+        <mxCell id="token" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Generar mecanismo&lt;br&gt;temporal" vertex="1">
+          <mxGeometry height="62" width="190" x="400" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="sendtoken" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Enviar mecanismo&lt;br&gt;de recuperación" vertex="1">
+          <mxGeometry height="62" width="190" x="770" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="password" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Actualizar contraseña" vertex="1">
+          <mxGeometry height="62" width="190" x="670" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="oauthlogin" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Autenticarse&lt;br&gt;mediante OAuth" vertex="1">
+          <mxGeometry height="62" width="190" x="570" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="edge0" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="register" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="login" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="recovery" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" edge="1" parent="1" source="oauth" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="oauthlogin" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" edge="1" parent="1" source="mail" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="confirm" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" edge="1" parent="1" source="mail" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="sendtoken" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge6" edge="1" parent="1" source="register" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="domain" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge7" edge="1" parent="1" source="register" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="unique" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge8" edge="1" parent="1" source="register" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="confirm" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge9" edge="1" parent="1" source="login" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="identity" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge10" edge="1" parent="1" source="login" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="permissions" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge11" edge="1" parent="1" source="login" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="session" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge12" edge="1" parent="1" source="recovery" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="token" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge13" edge="1" parent="1" source="recovery" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="sendtoken" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge14" edge="1" parent="1" source="recovery" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="password" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge15" edge="1" parent="1" source="oauthlogin" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="login" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt; [elige OAuth]">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,2 +1,49 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" modified="2026-07-28T00:00:00.000Z" agent="Codex" version="27.0.5"><diagram id="08-cu-au-03-recuperar-acceso" name="Página-1"><mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="700" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="header" value="Plataforma YoUSAC — CU-AU-03 — Recuperar acceso" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="60" width="1160" height="38" as="geometry"/></mxCell><mxCell id="boundary" value="Plataforma YoUSAC" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="170" y="115" width="970" height="545" as="geometry"/></mxCell><mxCell id="user" value="Usuario institucional" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="30" y="330" width="40" height="65" as="geometry"/></mxCell><mxCell id="mail" value="Servicio de correo&lt;br&gt;institucional" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="1080" y="350" width="40" height="65" as="geometry"/></mxCell><mxCell id="recovery" value="Recuperar acceso" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="260" y="300" width="190" height="62" as="geometry"/></mxCell><mxCell id="token" value="Generar mecanismo&lt;br&gt;temporal" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="600" y="150" width="190" height="62" as="geometry"/></mxCell><mxCell id="send" value="Enviar mecanismo&lt;br&gt;de recuperación" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="830" y="300" width="190" height="62" as="geometry"/></mxCell><mxCell id="password" value="Actualizar contraseña" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="600" y="460" width="190" height="62" as="geometry"/></mxCell><mxCell id="edge0" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="user" target="recovery"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge1" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="mail" target="send"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="recovery" target="token"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge3" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="recovery" target="send"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge4" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="recovery" target="password"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel></diagram></mxfile>
+<mxfile host="Electron" agent="Codex">
+  <diagram id="08-cu-au-03-recuperar-acceso" name="Página-1">
+    <mxGraphModel dx="2228" dy="1446" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="300" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" value="Plataforma YoUSAC — CU-AU-03 — Recuperar acceso" vertex="1">
+          <mxGeometry height="38" width="640" x="-150" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Plataforma YoUSAC" vertex="1">
+          <mxGeometry height="545" width="470" x="-60" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="user" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Usuario institucional" vertex="1">
+          <mxGeometry height="65" width="40" x="-200" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="mail" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Servicio de correo&lt;br&gt;institucional" vertex="1">
+          <mxGeometry height="65" width="40" x="480" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="recovery" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Recuperar acceso" vertex="1">
+          <mxGeometry height="62" width="190" x="-30" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="token" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Generar mecanismo&lt;br&gt;temporal" vertex="1">
+          <mxGeometry height="62" width="190" x="130" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="send" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Enviar mecanismo&lt;br&gt;de recuperación" vertex="1">
+          <mxGeometry height="62" width="190" x="190" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="password" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Actualizar contraseña" vertex="1">
+          <mxGeometry height="62" width="190" x="-20" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="edge0" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="recovery" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" edge="1" parent="1" source="mail" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="send" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" edge="1" parent="1" source="recovery" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="token" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" edge="1" parent="1" source="recovery" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="send" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" edge="1" parent="1" source="recovery" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="password" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

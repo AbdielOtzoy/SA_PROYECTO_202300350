@@ -1,2 +1,88 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" modified="2026-07-28T00:00:00.000Z" agent="Codex" version="27.0.5"><diagram id="04-reproduccion" name="Página-1"><mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1480" pageHeight="812" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="header" value="Plataforma YoUSAC — Reproductor, checkpoint y valoración" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="60" width="1400" height="38" as="geometry"/></mxCell><mxCell id="boundary" value="Plataforma YoUSAC" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="170" y="115" width="1210" height="657" as="geometry"/></mxCell><mxCell id="user" value="Usuario institucional" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1"><mxGeometry x="30" y="340" width="40" height="65" as="geometry"/></mxCell><mxCell id="play" value="Reproducir&lt;br&gt;grabación" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="250" y="180" width="190" height="62" as="geometry"/></mxCell><mxCell id="resume" value="Reanudar grabación" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="250" y="410" width="190" height="62" as="geometry"/></mxCell><mxCell id="history" value="Consultar historial de&lt;br&gt;reproducción" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="250" y="590" width="190" height="62" as="geometry"/></mxCell><mxCell id="rate" value="Valorar grabación" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="510" y="590" width="190" height="62" as="geometry"/></mxCell><mxCell id="stream" value="Transmitir video" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="570" y="100" width="190" height="62" as="geometry"/></mxCell><mxCell id="checkpoint" value="Registrar checkpoint" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="800" y="180" width="190" height="62" as="geometry"/></mxCell><mxCell id="pause" value="Guardar posición al&lt;br&gt;pausar o finalizar" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="570" y="280" width="190" height="62" as="geometry"/></mxCell><mxCell id="getcheck" value="Recuperar checkpoint" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="570" y="410" width="190" height="62" as="geometry"/></mxCell><mxCell id="recent" value="Obtener últimas 20&lt;br&gt;reproducciones" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="570" y="590" width="190" height="62" as="geometry"/></mxCell><mxCell id="vote" value="Registrar o modificar&lt;br&gt;voto" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="800" y="520" width="190" height="62" as="geometry"/></mxCell><mxCell id="percent" value="Calcular porcentaje&lt;br&gt;de recomendación" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" vertex="1" parent="1"><mxGeometry x="800" y="650" width="190" height="62" as="geometry"/></mxCell><mxCell id="edge0" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="user" target="play"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge1" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="user" target="resume"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge2" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="user" target="history"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge3" value="" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" edge="1" parent="1" source="user" target="rate"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge4" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="play" target="stream"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge5" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="play" target="checkpoint"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge6" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="play" target="pause"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge7" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt; [existe checkpoint]" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="resume" target="play"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge8" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="resume" target="getcheck"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge9" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="history" target="recent"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge10" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="rate" target="vote"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="edge11" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="rate" target="percent"><mxGeometry relative="1" as="geometry"/></mxCell></root></mxGraphModel></diagram></mxfile>
+<mxfile host="Electron" agent="Codex">
+  <diagram id="04-reproduccion" name="Página-1">
+    <mxGraphModel dx="3054" dy="2066" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="300" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" value="Plataforma YoUSAC — Reproductor, checkpoint y valoración" vertex="1">
+          <mxGeometry height="38" width="800" x="40" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Plataforma YoUSAC" vertex="1">
+          <mxGeometry height="825" width="600" x="170" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="user" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Usuario institucional" vertex="1">
+          <mxGeometry height="65" width="40" x="-60" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="play" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Reproducir&lt;br&gt;grabación" vertex="1">
+          <mxGeometry height="62" width="190" x="200" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="resume" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Reanudar grabación" vertex="1">
+          <mxGeometry height="62" width="190" x="190" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="history" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Consultar historial de&lt;br&gt;reproducción" vertex="1">
+          <mxGeometry height="62" width="190" x="200" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="rate" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Valorar grabación" vertex="1">
+          <mxGeometry height="62" width="190" x="210" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="stream" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Transmitir video" vertex="1">
+          <mxGeometry height="62" width="190" x="440" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="checkpoint" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Registrar checkpoint" vertex="1">
+          <mxGeometry height="62" width="190" x="520" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="pause" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Guardar posición al&lt;br&gt;pausar o finalizar" vertex="1">
+          <mxGeometry height="62" width="190" x="420" y="418" as="geometry" />
+        </mxCell>
+        <mxCell id="getcheck" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Recuperar checkpoint" vertex="1">
+          <mxGeometry height="62" width="190" x="480" y="496.5" as="geometry" />
+        </mxCell>
+        <mxCell id="recent" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Obtener últimas 20&lt;br&gt;reproducciones" vertex="1">
+          <mxGeometry height="62" width="190" x="540" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="vote" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Registrar o modificar&lt;br&gt;voto" vertex="1">
+          <mxGeometry height="62" width="190" x="510" y="588" as="geometry" />
+        </mxCell>
+        <mxCell id="percent" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Calcular porcentaje&lt;br&gt;de recomendación" vertex="1">
+          <mxGeometry height="62" width="190" x="530" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="edge0" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="play" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="resume" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="history" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="rate" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" edge="1" parent="1" source="play" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="stream" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" edge="1" parent="1" source="play" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="checkpoint" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge6" edge="1" parent="1" source="play" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="pause" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge7" edge="1" parent="1" source="resume" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="play" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt; [existe checkpoint]">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge8" edge="1" parent="1" source="resume" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="getcheck" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge9" edge="1" parent="1" source="history" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="recent" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge10" edge="1" parent="1" source="rate" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="vote" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge11" edge="1" parent="1" source="rate" style="endArrow=open;endFill=0;dashed=1;dashPattern=6 4;html=1;rounded=0;strokeColor=#000000;fontSize=10;fontColor=#000000;labelBackgroundColor=#ffffff;" target="percent" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

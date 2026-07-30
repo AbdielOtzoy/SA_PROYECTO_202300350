@@ -15,7 +15,7 @@ El modelo de vistas 4+1 es una metodología de diseño de arquitectura de softwa
 
 Las vistas contempladas son: Lógica, Procesos, Desarrollo (Componentes), Física (Despliegue) y la vista de Escenarios, que actúa como el hilo conductor que valida todas las demás. En el caso de YoUSAC, las cinco vistas detallan explícitamente la **matriz políglota** (TypeScript, Go y Python) y la **comunicación interna vía gRPC sobre HTTP/2** con contratos Protocol Buffers.
 
-[![Diagrama de Vistas 4+1](img/modelo-4-1.drawio.svg)](img/modelo-4-1.drawio)
+[![Diagrama de Vistas 4+1](img/vista-4-1.drawio.svg)](img/vista-4-1.drawio)
 
 ---
 
