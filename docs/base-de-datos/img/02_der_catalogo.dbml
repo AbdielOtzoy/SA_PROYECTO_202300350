@@ -1,0 +1,104 @@
+Project catalog_db {
+  database_type: 'PostgreSQL'
+  Note: 'DER de Catálogo. user_id en ratings es una referencia lógica a identity_db.users.id y no una clave foránea física.'
+}
+
+Table schools {
+  id uuid [pk]
+  name varchar(100) [not null]
+  code varchar(10) [unique, not null]
+
+  Note: 'Escuelas o áreas académicas'
+}
+
+Table courses {
+  id uuid [pk]
+  code varchar(10) [unique, not null]
+  name varchar(150) [not null]
+  school_id uuid [not null]
+  credits int
+
+  Note: 'Cursos de cada escuela'
+}
+
+Table semesters {
+  id uuid [pk]
+  year int [not null]
+  term int [not null, note: '1 = primer semestre; 2 = segundo semestre']
+
+  Note: 'Períodos académicos'
+}
+
+Table professors {
+  id uuid [pk]
+  full_name varchar(150) [not null]
+  email varchar(255) [unique, not null]
+
+  Note: 'Catedráticos y auxiliares'
+}
+
+Table recordings {
+  id uuid [pk]
+  title varchar(200) [not null]
+  course_id uuid [not null]
+  semester_id uuid [not null]
+  lecture_date date
+  unit varchar(100)
+  topic varchar(200)
+  video_path text
+  is_published boolean [not null, default: false]
+  created_at timestamptz [not null, default: `now()`]
+
+  Note: 'Grabaciones de clases publicadas'
+}
+
+Table recording_professors {
+  recording_id uuid [pk, not null]
+  professor_id uuid [pk, not null]
+  role_type varchar(20) [not null, note: 'Valores permitidos: professor | assistant']
+
+  Note: 'Asignación de catedráticos a grabaciones'
+}
+
+Table topics {
+  id uuid [pk]
+  name varchar(100) [unique, not null]
+
+  Note: 'Temas y etiquetas académicas'
+}
+
+Table recording_topics {
+  recording_id uuid [pk, not null]
+  topic_id uuid [pk, not null]
+
+  Note: 'Asignación de temas a grabaciones'
+}
+
+Table attachments {
+  id uuid [pk]
+  recording_id uuid [not null]
+  filename varchar(255) [not null]
+  file_path text [not null]
+  file_type varchar(50)
+
+  Note: 'Materiales adjuntos a grabaciones'
+}
+
+Table ratings {
+  user_id uuid [pk, not null, note: 'Referencia lógica a identity_db.users.id']
+  recording_id uuid [pk, not null]
+  vote boolean [not null, note: 'true = positivo']
+  updated_at timestamptz [not null, default: `now()`]
+
+  Note: 'Valoraciones de usuarios sobre grabaciones'
+}
+
+Ref: courses.school_id > schools.id
+Ref: recordings.course_id > courses.id
+Ref: recordings.semester_id > semesters.id
+Ref: recording_professors.recording_id > recordings.id
+Ref: recording_professors.professor_id > professors.id
+Ref: recording_topics.recording_id > recordings.id
+Ref: recording_topics.topic_id > topics.id
+Ref: attachments.recording_id > recordings.id
+Ref: ratings.recording_id > recordings.id
