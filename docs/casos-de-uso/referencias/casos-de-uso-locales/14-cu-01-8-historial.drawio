@@ -1,22 +1,22 @@
 <mxfile host="Electron" agent="Codex">
-  <diagram id="13-cu-rp-03-historial" name="Página-1">
+  <diagram id="14-cu-01-8-historial" name="Página-1">
     <mxGraphModel dx="1205" dy="904" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="200" pageHeight="700" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" value="Plataforma YoUSAC — CU-RP-03 — Consultar historial de reproducción" vertex="1">
+        <mxCell id="header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" value="Plataforma YoUSAC — CU-01.8 — Consultar historial de reproducción" vertex="1">
           <mxGeometry height="38" width="580" x="100" y="60" as="geometry" />
         </mxCell>
-        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Plataforma YoUSAC" vertex="1">
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Sistema YoUSAC" vertex="1">
           <mxGeometry height="545" width="340" x="230" y="115" as="geometry" />
         </mxCell>
         <mxCell id="user" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Usuario institucional" vertex="1">
           <mxGeometry height="65" width="40" x="90" y="330" as="geometry" />
         </mxCell>
-        <mxCell id="history" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Consultar historial de&lt;br&gt;reproducción" vertex="1">
+        <mxCell id="history" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="CU-01.8: Consultar historial&lt;br&gt;de reproducción" vertex="1">
           <mxGeometry height="62" width="190" x="270" y="268" as="geometry" />
         </mxCell>
-        <mxCell id="recent" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Obtener últimas 20&lt;br&gt;reproducciones" vertex="1">
+        <mxCell id="recent" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="CU-01.8a: Obtener últimas 20&lt;br&gt;reproducciones" vertex="1">
           <mxGeometry height="62" width="190" x="300" y="450" as="geometry" />
         </mxCell>
         <mxCell id="edge0" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="history" value="">

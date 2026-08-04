@@ -49,3 +49,12 @@ Table email_log {
 
 Ref: email_queue.template_id > templates.id
 Ref: email_log.template_id > templates.id
+
+Note programmable_objects {
+'''
+OBJETOS PROGRAMABLES
+
+SP — sp_enqueue_notification
+VW — vw_queue_status
+'''
+}

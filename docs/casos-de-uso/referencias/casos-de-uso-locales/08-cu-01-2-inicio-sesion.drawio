@@ -1,13 +1,13 @@
 <mxfile host="Electron" agent="Codex">
-  <diagram id="07-cu-au-02-inicio-sesion" name="Página-1">
+  <diagram id="08-cu-01-2-inicio-sesion" name="Página-1">
     <mxGraphModel dx="2228" dy="1446" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="300" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" value="Plataforma YoUSAC — CU-AU-02 — Iniciar sesión institucional" vertex="1">
+        <mxCell id="header" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" value="Plataforma YoUSAC — CU-01.2 — Iniciar sesión institucional" vertex="1">
           <mxGeometry height="38" width="750" x="-90" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Plataforma YoUSAC" vertex="1">
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=10;fontSize=13;fontStyle=1;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Sistema YoUSAC" vertex="1">
           <mxGeometry height="625" width="560" x="40" y="165" as="geometry" />
         </mxCell>
         <mxCell id="user" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Usuario institucional" vertex="1">
@@ -16,19 +16,19 @@
         <mxCell id="oauth" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" value="Proveedor OAuth&lt;br&gt;institucional" vertex="1">
           <mxGeometry height="65" width="40" x="690" y="490" as="geometry" />
         </mxCell>
-        <mxCell id="login" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Iniciar sesión&lt;br&gt;institucional" vertex="1">
+        <mxCell id="login" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="CU-01.2: Iniciar sesión&lt;br&gt;institucional" vertex="1">
           <mxGeometry height="62" width="190" x="80" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="identity" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Validar identidad&lt;br&gt;institucional" vertex="1">
+        <mxCell id="identity" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="CU-01.2b: Validar identidad&lt;br&gt;institucional" vertex="1">
           <mxGeometry height="62" width="190" x="170" y="210" as="geometry" />
         </mxCell>
-        <mxCell id="permissions" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Resolver permisos&lt;br&gt;efectivos" vertex="1">
+        <mxCell id="permissions" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="CU-01.2c: Resolver permisos&lt;br&gt;efectivos" vertex="1">
           <mxGeometry height="62" width="190" x="370" y="290" as="geometry" />
         </mxCell>
-        <mxCell id="session" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Crear sesión segura" vertex="1">
+        <mxCell id="session" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="CU-01.2d: Crear sesión segura" vertex="1">
           <mxGeometry height="62" width="190" x="80" y="600" as="geometry" />
         </mxCell>
-        <mxCell id="oauthlogin" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="Autenticarse&lt;br&gt;mediante OAuth" vertex="1">
+        <mxCell id="oauthlogin" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#000000;strokeColor=#000000;strokeWidth=1;fillColor=#ffffff;" value="CU-01.2a: Autenticarse&lt;br&gt;mediante OAuth" vertex="1">
           <mxGeometry height="62" width="190" x="290" y="490" as="geometry" />
         </mxCell>
         <mxCell id="edge0" edge="1" parent="1" source="user" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1;" target="login" value="">

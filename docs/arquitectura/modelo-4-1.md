@@ -147,19 +147,19 @@ La vista de escenarios, también conocida como vista de casos de uso, interactú
 
 El modelo completo de casos de uso (alto nivel, primera descomposición y narrativas expandidas con sus diagramas locales) se encuentra documentado en [Modelo de Casos de Uso](../casos-de-uso/modelo-casos-de-uso.md).
 
-[![Diagrama de casos de uso de alto nivel](../casos-de-uso/referencias/casos-de-uso/01-alto-nivel.drawio.svg)](../casos-de-uso/referencias/casos-de-uso/01-alto-nivel.drawio)
+[![Diagrama de casos de uso — primera descomposición](../casos-de-uso/referencias/casos-de-uso/02-primera-descomposicion.drawio.svg)](../casos-de-uso/referencias/casos-de-uso/02-primera-descomposicion.drawio)
 
 ### Escenarios que validan la arquitectura
 
 | Escenario (caso de uso) | Vistas que valida | Elementos arquitectónicos ejercitados |
 |---|---|---|
-| CU-AU-02 Iniciar sesión institucional | Lógica, Procesos, Componentes, Física | Gateway REST, Identidad gRPC, JWT, cookies seguras, PostgreSQL Identidad |
-| CU-CA-01 Explorar y filtrar catálogo | Lógica, Componentes | Catálogo gRPC, vistas de PostgreSQL, caché Redis (TTL 15 min) |
-| CU-RP-01 Reproducir grabación | Procesos, Física | Streaming, Reproducción (Go) ↔ Catálogo (gRPC), volumen/GCS |
-| CU-RP-02 Reanudar grabación | Procesos, Lógica | Checkpoint en MongoDB, posición exacta guardada cada 10 s |
-| CU-RP-04 Valorar grabación | Procesos, Componentes | Función almacenada de % de recomendación en PostgreSQL |
-| CU-AP-02 Gestionar roles y permisos | Lógica, Componentes | RBAC, SP de asignación, triggers de auditoría, unión de permisos |
-| CU-AP-01 Consultar cursos inscritos | Lógica | Inscripciones por semestre, estado y credenciales académicas |
+| CU-01.2 Iniciar sesión institucional | Lógica, Procesos, Componentes, Física | Gateway REST, Identidad gRPC, JWT, cookies seguras, PostgreSQL Identidad |
+| CU-01.4 Explorar y filtrar catálogo | Lógica, Componentes | Catálogo gRPC, vistas de PostgreSQL, caché Redis (TTL 15 min) |
+| CU-01.6 Reproducir grabación | Procesos, Física | Streaming, Reproducción (Go) ↔ Catálogo (gRPC), volumen/GCS |
+| CU-01.7 Reanudar grabación | Procesos, Lógica | Checkpoint en MongoDB, posición exacta guardada cada 10 s |
+| CU-01.9 Valorar grabación | Procesos, Componentes | Función almacenada de % de recomendación en PostgreSQL |
+| CU-01.11 Gestionar roles y permisos | Lógica, Componentes | RBAC, SP de asignación, triggers de auditoría, unión de permisos |
+| CU-01.10 Consultar cursos inscritos | Lógica | Inscripciones por semestre, estado y credenciales académicas |
 
 ---
 
