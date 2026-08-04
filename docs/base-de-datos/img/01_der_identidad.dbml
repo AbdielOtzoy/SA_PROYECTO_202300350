@@ -76,3 +76,17 @@ Ref: user_roles.role_id > roles.id
 Ref: user_roles.assigned_by > users.id
 Ref: user_enrollments.user_id > users.id
 Ref: credential_audit_log.user_id > users.id
+
+Note programmable_objects {
+'''
+OBJETOS PROGRAMABLES
+
+SP — sp_assign_role
+SP — sp_revoke_role
+SP — sp_import_enrollments_csv
+FN — fn_accumulated_permissions
+VW — vw_user_profile
+TG — trg_audit_credentials
+TG — trg_audit_roles
+'''
+}
