@@ -4,7 +4,7 @@ La definición escrita, las narrativas expandidas y las convenciones están en [
 
 Las referencias visuales se publican como SVG exportados desde draw.io; cada imagen enlaza a su fuente `.drawio` editable.
 
-- [Diagramas de casos de uso](referencias/casos-de-uso/): alto nivel y descomposiciones por módulo.
+- [Diagramas de casos de uso](referencias/casos-de-uso/): alto nivel (`CU-01`), primera descomposición (`CU-01.1` a `CU-01.11`) y descomposiciones por módulo.
 - [Diagramas locales de casos de uso](referencias/casos-de-uso-locales/): un diagrama reducido para cada caso expandido.
 
 Cada diagrama conserva el patrón `nombre.drawio` (fuente) y `nombre.drawio.svg` (exportación publicada).

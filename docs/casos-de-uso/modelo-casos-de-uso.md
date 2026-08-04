@@ -13,7 +13,9 @@ Quedan fuera de esta entrega la analítica avanzada, recomendaciones personaliza
 
 ## Convenciones aplicadas
 
-- El rectángulo delimita a **Plataforma YoUSAC**; los actores se ubican fuera de él.
+- El modelo se organiza en **tres niveles de descomposición**: el diagrama de **alto nivel** presenta un único caso de uso que representa la meta global del sistema (`CU-01`); la **primera descomposición** presenta los once casos de uso del alcance (`CU-01.1` a `CU-01.11`); y los **diagramas locales** muestran un diagrama reducido por cada caso expandido, con sus relaciones inmediatas.
+- La numeración es **jerárquica** y refleja esa descomposición: `CU-01` es la meta global; `CU-01.1` a `CU-01.11` son su primera descomposición; las letras (`CU-01.1a`, `CU-01.1b`…) identifican los casos incluidos o extendidos dentro de cada caso expandido.
+- El rectángulo delimita al **Sistema YoUSAC**; los actores se ubican fuera de él.
 - Los actores se nombran por el rol que desempeñan, no por personas concretas. `Usuario institucional` es el actor general; Estudiante, Docente, Auxiliar y Administrador son especializaciones suyas.
 - Los casos de uso se nombran con verbo en infinitivo y expresan una meta útil para un actor: por ejemplo, `Explorar catálogo`, no `Hacer clic en buscar`.
 - La asociación actor–caso de uso es una línea sólida sin flecha.
@@ -42,32 +44,34 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 | ID | Caso de uso | Actor principal | Requerimientos de referencia |
 |---|---|---|---|
-| CU-AU-01 | Registrarse con correo institucional | Usuario institucional | RF-001 |
-| CU-AU-02 | Iniciar sesión institucional | Usuario institucional | RF-002 |
-| CU-AU-03 | Recuperar acceso | Usuario institucional | RF-003 |
-| CU-CA-01 | Explorar y filtrar catálogo | Usuario institucional | RF-009 |
-| CU-CA-02 | Consultar ficha de grabación | Usuario institucional | RF-010 |
-| CU-RP-01 | Reproducir grabación | Usuario institucional | RF-013, RF-014 |
-| CU-RP-02 | Reanudar grabación | Usuario institucional | RF-015 |
-| CU-RP-03 | Consultar historial de reproducción | Usuario institucional | RF-016 |
-| CU-RP-04 | Valorar grabación | Usuario institucional | RF-017, RF-018 |
-| CU-AP-01 | Consultar cursos inscritos | Estudiante | RF-008 |
-| CU-AP-02 | Gestionar roles y permisos | Administrador | RF-006, RF-007 |
+| CU-01 | Acceder a contenido académico audiovisual (meta global) | Usuario institucional | Todos los del alcance |
+| CU-01.1 | Registrarse con correo institucional | Usuario institucional | RF-001 |
+| CU-01.2 | Iniciar sesión institucional | Usuario institucional | RF-002 |
+| CU-01.3 | Recuperar acceso | Usuario institucional | RF-003 |
+| CU-01.4 | Explorar y filtrar catálogo | Usuario institucional | RF-009 |
+| CU-01.5 | Consultar ficha de grabación | Usuario institucional | RF-010 |
+| CU-01.6 | Reproducir grabación | Usuario institucional | RF-013, RF-014 |
+| CU-01.7 | Reanudar grabación | Usuario institucional | RF-015 |
+| CU-01.8 | Consultar historial de reproducción | Usuario institucional | RF-016 |
+| CU-01.9 | Valorar grabación | Usuario institucional | RF-017, RF-018 |
+| CU-01.10 | Consultar cursos inscritos | Estudiante | RF-008 |
+| CU-01.11 | Gestionar roles y permisos | Administrador | RF-006, RF-007 |
 
 ## Diagramas que deben elaborarse
 
-| Archivo visual | Tipo | Propósito |
+| Archivo visual | Nivel | Propósito |
 |---|---|---|
-| [![Diagrama de alto nivel](referencias/casos-de-uso/01-alto-nivel.drawio.svg)](referencias/casos-de-uso/01-alto-nivel.drawio) | Casos de uso | Presenta actores y los once objetivos del alcance. |
-| [![Diagrama de autenticación](referencias/casos-de-uso/02-autenticacion.drawio.svg)](referencias/casos-de-uso/02-autenticacion.drawio) | Descomposición | Detalla registro, inicio de sesión y recuperación. |
-| [![Diagrama de catálogo](referencias/casos-de-uso/03-catalogo.drawio.svg)](referencias/casos-de-uso/03-catalogo.drawio) | Descomposición | Detalla exploración, filtros y ficha. |
-| [![Diagrama de reproducción](referencias/casos-de-uso/04-reproduccion.drawio.svg)](referencias/casos-de-uso/04-reproduccion.drawio) | Descomposición | Detalla streaming, checkpoint, reanudación, historial y valoración. |
-| [![Diagrama de asignaciones y permisos](referencias/casos-de-uso/05-asignaciones-permisos.drawio.svg)](referencias/casos-de-uso/05-asignaciones-permisos.drawio) | Descomposición | Detalla consulta de cursos y gestión RBAC. |
-| [Diagramas locales 06 a 16](referencias/casos-de-uso-locales/) | Casos de uso locales | Un diagrama reducido por cada caso expandido, con sus relaciones inmediatas. |
+| [![Diagrama de alto nivel](referencias/casos-de-uso/01-alto-nivel.drawio.svg)](referencias/casos-de-uso/01-alto-nivel.drawio) | Alto nivel | Presenta la meta global del sistema (`CU-01`) y todos los actores. |
+| [![Diagrama de primera descomposición](referencias/casos-de-uso/02-primera-descomposicion.drawio.svg)](referencias/casos-de-uso/02-primera-descomposicion.drawio) | Primera descomposición | Presenta los once casos de uso del alcance (`CU-01.1` a `CU-01.11`) y sus actores. |
+| [![Diagrama de autenticación](referencias/casos-de-uso/03-autenticacion.drawio.svg)](referencias/casos-de-uso/03-autenticacion.drawio) | Descomposición por módulo | Detalla registro, inicio de sesión y recuperación con sus `include`/`extend`. |
+| [![Diagrama de catálogo](referencias/casos-de-uso/04-catalogo.drawio.svg)](referencias/casos-de-uso/04-catalogo.drawio) | Descomposición por módulo | Detalla exploración, filtros y ficha con sus `include`/`extend`. |
+| [![Diagrama de reproducción](referencias/casos-de-uso/05-reproduccion.drawio.svg)](referencias/casos-de-uso/05-reproduccion.drawio) | Descomposición por módulo | Detalla streaming, checkpoint, reanudación, historial y valoración con sus `include`/`extend`. |
+| [![Diagrama de asignaciones y permisos](referencias/casos-de-uso/06-asignaciones-permisos.drawio.svg)](referencias/casos-de-uso/06-asignaciones-permisos.drawio) | Descomposición por módulo | Detalla consulta de cursos y gestión RBAC con sus `include`. |
+| [Diagramas locales 07 a 17](referencias/casos-de-uso-locales/) | Casos de uso locales | Un diagrama reducido por cada caso expandido, con sus relaciones inmediatas. |
 
 ---
 
-## CU-AU-01 — Registrarse con correo institucional
+## CU-01.1 — Registrarse con correo institucional
 
 | Campo | Definición |
 |---|---|
@@ -90,14 +94,14 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 **Alternativos y excepciones**
 
 - A1. Si el correo no pertenece a un dominio permitido, el sistema rechaza el registro y solicita un correo institucional válido.
-- A2. Si el correo ya está registrado, el sistema informa la situación y ofrece el flujo `CU-AU-03 — Recuperar acceso`.
+- A2. Si el correo ya está registrado, el sistema informa la situación y ofrece el flujo `CU-01.3 — Recuperar acceso`.
 - E1. Si falla el envío de la confirmación, la cuenta se conserva y el sistema informa que se reintentará el envío.
 
-**Relaciones locales**: `Registrarse` incluye `Validar dominio institucional`, `Validar unicidad de cuenta` y `Enviar confirmación de registro`.
+**Relaciones locales**: `CU-01.1 — Registrarse` incluye `CU-01.1a — Validar dominio institucional`, `CU-01.1b — Validar unicidad de cuenta` y `CU-01.1c — Enviar confirmación de registro`.
 
-[![Diagrama local de registro](referencias/casos-de-uso-locales/06-cu-au-01-registro.drawio.svg)](referencias/casos-de-uso-locales/06-cu-au-01-registro.drawio)
+[![Diagrama local de registro](referencias/casos-de-uso-locales/07-cu-01-1-registro.drawio.svg)](referencias/casos-de-uso-locales/07-cu-01-1-registro.drawio)
 
-## CU-AU-02 — Iniciar sesión institucional
+## CU-01.2 — Iniciar sesión institucional
 
 | Campo | Definición |
 |---|---|
@@ -122,11 +126,11 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - E1. Si las credenciales son inválidas o la cuenta está inhabilitada, el sistema niega el acceso sin crear sesión.
 - E2. Si el Proveedor OAuth rechaza o cancela la autorización, el sistema muestra el acceso como no completado.
 
-**Relaciones locales**: `Autenticarse mediante OAuth` extiende `Iniciar sesión institucional` cuando el usuario selecciona OAuth. `Iniciar sesión institucional` incluye `Validar identidad institucional`, `Resolver permisos efectivos` y `Crear sesión segura`.
+**Relaciones locales**: `CU-01.2a — Autenticarse mediante OAuth` extiende `CU-01.2 — Iniciar sesión institucional` cuando el usuario selecciona OAuth. `CU-01.2 — Iniciar sesión institucional` incluye `CU-01.2b — Validar identidad institucional`, `CU-01.2c — Resolver permisos efectivos` y `CU-01.2d — Crear sesión segura`.
 
-[![Diagrama local de inicio de sesión](referencias/casos-de-uso-locales/07-cu-au-02-inicio-sesion.drawio.svg)](referencias/casos-de-uso-locales/07-cu-au-02-inicio-sesion.drawio)
+[![Diagrama local de inicio de sesión](referencias/casos-de-uso-locales/08-cu-01-2-inicio-sesion.drawio.svg)](referencias/casos-de-uso-locales/08-cu-01-2-inicio-sesion.drawio)
 
-## CU-AU-03 — Recuperar acceso
+## CU-01.3 — Recuperar acceso
 
 | Campo | Definición |
 |---|---|
@@ -152,11 +156,11 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - E1. Si el mecanismo es inválido o venció, el sistema solicita iniciar una nueva recuperación.
 - E2. Si el correo no puede entregarse, el sistema informa el fallo y permite solicitar un nuevo envío.
 
-**Relaciones locales**: `Recuperar acceso` incluye `Generar mecanismo temporal`, `Enviar mecanismo de recuperación` y `Actualizar contraseña`.
+**Relaciones locales**: `CU-01.3 — Recuperar acceso` incluye `CU-01.3a — Generar mecanismo temporal`, `CU-01.3b — Enviar mecanismo de recuperación` y `CU-01.3c — Actualizar contraseña`.
 
-[![Diagrama local de recuperación de acceso](referencias/casos-de-uso-locales/08-cu-au-03-recuperar-acceso.drawio.svg)](referencias/casos-de-uso-locales/08-cu-au-03-recuperar-acceso.drawio)
+[![Diagrama local de recuperación de acceso](referencias/casos-de-uso-locales/09-cu-01-3-recuperar-acceso.drawio.svg)](referencias/casos-de-uso-locales/09-cu-01-3-recuperar-acceso.drawio)
 
-## CU-CA-01 — Explorar y filtrar catálogo
+## CU-01.4 — Explorar y filtrar catálogo
 
 | Campo | Definición |
 |---|---|
@@ -180,11 +184,11 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - A2. Si la búsqueda no obtiene resultados, el sistema informa la ausencia de coincidencias y mantiene disponibles los filtros.
 - E1. Si un criterio es inválido, el sistema lo señala y no ejecuta ese filtro.
 
-**Relaciones locales**: `Explorar y filtrar catálogo` incluye `Consultar grabaciones publicadas` y `Aplicar filtros académicos`.
+**Relaciones locales**: `CU-01.4 — Explorar y filtrar catálogo` incluye `CU-01.4a — Consultar grabaciones publicadas` y `CU-01.4b — Aplicar filtros académicos`.
 
-[![Diagrama local de exploración del catálogo](referencias/casos-de-uso-locales/09-cu-ca-01-explorar-catalogo.drawio.svg)](referencias/casos-de-uso-locales/09-cu-ca-01-explorar-catalogo.drawio)
+[![Diagrama local de exploración del catálogo](referencias/casos-de-uso-locales/10-cu-01-4-explorar-catalogo.drawio.svg)](referencias/casos-de-uso-locales/10-cu-01-4-explorar-catalogo.drawio)
 
-## CU-CA-02 — Consultar ficha de grabación
+## CU-01.5 — Consultar ficha de grabación
 
 | Campo | Definición |
 |---|---|
@@ -206,11 +210,11 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - A1. Si la grabación no tiene sílabo o material adjunto, el sistema muestra la ficha sin ese elemento.
 - E1. Si la grabación dejó de estar publicada, el sistema informa que ya no está disponible y retorna al catálogo.
 
-**Relaciones locales**: `Consultar ficha de grabación` extiende `Explorar y filtrar catálogo` cuando el usuario selecciona una grabación; incluye `Mostrar ficha técnica`.
+**Relaciones locales**: `CU-01.5 — Consultar ficha de grabación` extiende `CU-01.4 — Explorar y filtrar catálogo` cuando el usuario selecciona una grabación; incluye `CU-01.5a — Mostrar ficha técnica`.
 
-[![Diagrama local de ficha de grabación](referencias/casos-de-uso-locales/10-cu-ca-02-ficha-grabacion.drawio.svg)](referencias/casos-de-uso-locales/10-cu-ca-02-ficha-grabacion.drawio)
+[![Diagrama local de ficha de grabación](referencias/casos-de-uso-locales/11-cu-01-5-ficha-grabacion.drawio.svg)](referencias/casos-de-uso-locales/11-cu-01-5-ficha-grabacion.drawio)
 
-## CU-RP-01 — Reproducir grabación
+## CU-01.6 — Reproducir grabación
 
 | Campo | Definición |
 |---|---|
@@ -230,15 +234,15 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 **Alternativos y excepciones**
 
-- A1. Si existe un checkpoint previo, se aplica `CU-RP-02 — Reanudar grabación` antes de iniciar el streaming.
+- A1. Si existe un checkpoint previo, se aplica `CU-01.7 — Reanudar grabación` antes de iniciar el streaming.
 - E1. Si el video no está disponible, el sistema informa el error y no inicia la reproducción.
 - E2. Si no se puede persistir un checkpoint, el sistema conserva la reproducción activa e informa que el progreso no fue guardado.
 
-**Relaciones locales**: `Reproducir grabación` incluye `Transmitir video`, `Registrar checkpoint` y `Guardar posición al pausar o finalizar`. `Reanudar grabación` lo extiende cuando existe un checkpoint.
+**Relaciones locales**: `CU-01.6 — Reproducir grabación` incluye `CU-01.6a — Transmitir video`, `CU-01.6b — Registrar checkpoint` y `CU-01.6c — Guardar posición al pausar o finalizar`. `CU-01.7 — Reanudar grabación` lo extiende cuando existe un checkpoint.
 
-[![Diagrama local de reproducción](referencias/casos-de-uso-locales/11-cu-rp-01-reproducir.drawio.svg)](referencias/casos-de-uso-locales/11-cu-rp-01-reproducir.drawio)
+[![Diagrama local de reproducción](referencias/casos-de-uso-locales/12-cu-01-6-reproducir.drawio.svg)](referencias/casos-de-uso-locales/12-cu-01-6-reproducir.drawio)
 
-## CU-RP-02 — Reanudar grabación
+## CU-01.7 — Reanudar grabación
 
 | Campo | Definición |
 |---|---|
@@ -260,11 +264,11 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - A1. Si no hay checkpoint, el sistema ofrece comenzar desde el inicio.
 - E1. Si el checkpoint es inválido para la duración actual del video, el sistema inicia desde el principio e informa el ajuste.
 
-**Relaciones locales**: `Reanudar grabación` extiende `Reproducir grabación` bajo la condición `[existe checkpoint]`; incluye `Recuperar checkpoint`.
+**Relaciones locales**: `CU-01.7 — Reanudar grabación` extiende `CU-01.6 — Reproducir grabación` bajo la condición `[existe checkpoint]`; incluye `CU-01.7a — Recuperar checkpoint`.
 
-[![Diagrama local de reanudación](referencias/casos-de-uso-locales/12-cu-rp-02-reanudar.drawio.svg)](referencias/casos-de-uso-locales/12-cu-rp-02-reanudar.drawio)
+[![Diagrama local de reanudación](referencias/casos-de-uso-locales/13-cu-01-7-reanudar.drawio.svg)](referencias/casos-de-uso-locales/13-cu-01-7-reanudar.drawio)
 
-## CU-RP-03 — Consultar historial de reproducción
+## CU-01.8 — Consultar historial de reproducción
 
 | Campo | Definición |
 |---|---|
@@ -286,11 +290,11 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - A1. Si el usuario aún no ha reproducido grabaciones, el sistema muestra un historial vacío.
 - E1. Si no se puede obtener el historial, el sistema informa que no está disponible temporalmente.
 
-**Relaciones locales**: `Consultar historial de reproducción` incluye `Obtener últimas 20 reproducciones`.
+**Relaciones locales**: `CU-01.8 — Consultar historial de reproducción` incluye `CU-01.8a — Obtener últimas 20 reproducciones`.
 
-[![Diagrama local de historial](referencias/casos-de-uso-locales/13-cu-rp-03-historial.drawio.svg)](referencias/casos-de-uso-locales/13-cu-rp-03-historial.drawio)
+[![Diagrama local de historial](referencias/casos-de-uso-locales/14-cu-01-8-historial.drawio.svg)](referencias/casos-de-uso-locales/14-cu-01-8-historial.drawio)
 
-## CU-RP-04 — Valorar grabación
+## CU-01.9 — Valorar grabación
 
 | Campo | Definición |
 |---|---|
@@ -313,11 +317,11 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - A1. Si el voto coincide con el ya registrado, el sistema conserva la valoración e informa que no hubo cambio.
 - E1. Si no puede actualizarse la valoración, el sistema conserva el valor anterior e informa el fallo.
 
-**Relaciones locales**: `Valorar grabación` incluye `Registrar o modificar voto` y `Calcular porcentaje de recomendación`.
+**Relaciones locales**: `CU-01.9 — Valorar grabación` incluye `CU-01.9a — Registrar o modificar voto` y `CU-01.9b — Calcular porcentaje de recomendación`.
 
-[![Diagrama local de valoración](referencias/casos-de-uso-locales/14-cu-rp-04-valorar.drawio.svg)](referencias/casos-de-uso-locales/14-cu-rp-04-valorar.drawio)
+[![Diagrama local de valoración](referencias/casos-de-uso-locales/15-cu-01-9-valorar.drawio.svg)](referencias/casos-de-uso-locales/15-cu-01-9-valorar.drawio)
 
-## CU-AP-01 — Consultar cursos inscritos
+## CU-01.10 — Consultar cursos inscritos
 
 | Campo | Definición |
 |---|---|
@@ -340,11 +344,11 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - A1. Si no existen inscripciones para los criterios seleccionados, el sistema muestra una lista vacía.
 - E1. Si la cuenta no tiene rol de estudiante, el sistema no muestra el panel de asignaciones.
 
-**Relaciones locales**: `Consultar cursos inscritos` incluye `Obtener asignaciones` y `Filtrar inscripciones`.
+**Relaciones locales**: `CU-01.10 — Consultar cursos inscritos` incluye `CU-01.10a — Obtener asignaciones` y `CU-01.10b — Filtrar inscripciones`.
 
-[![Diagrama local de cursos inscritos](referencias/casos-de-uso-locales/15-cu-ap-01-cursos-inscritos.drawio.svg)](referencias/casos-de-uso-locales/15-cu-ap-01-cursos-inscritos.drawio)
+[![Diagrama local de cursos inscritos](referencias/casos-de-uso-locales/16-cu-01-10-cursos-inscritos.drawio.svg)](referencias/casos-de-uso-locales/16-cu-01-10-cursos-inscritos.drawio)
 
-## CU-AP-02 — Gestionar roles y permisos
+## CU-01.11 — Gestionar roles y permisos
 
 | Campo | Definición |
 |---|---|
@@ -370,6 +374,6 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - E1. Si el administrador no cuenta con autorización, el sistema rechaza la operación.
 - E2. Si la cuenta no existe o no está disponible, el sistema informa el error y no cambia roles.
 
-**Relaciones locales**: `Gestionar roles y permisos` incluye `Asignar rol`, `Revocar rol`, `Validar autorización` y `Resolver permisos acumulados`.
+**Relaciones locales**: `CU-01.11 — Gestionar roles y permisos` incluye `CU-01.11a — Asignar rol`, `CU-01.11b — Revocar rol`, `CU-01.11c — Validar autorización` y `CU-01.11d — Resolver permisos acumulados`.
 
-[![Diagrama local de roles y permisos](referencias/casos-de-uso-locales/16-cu-ap-02-roles-permisos.drawio.svg)](referencias/casos-de-uso-locales/16-cu-ap-02-roles-permisos.drawio)
+[![Diagrama local de roles y permisos](referencias/casos-de-uso-locales/17-cu-01-11-roles-permisos.drawio.svg)](referencias/casos-de-uso-locales/17-cu-01-11-roles-permisos.drawio)
