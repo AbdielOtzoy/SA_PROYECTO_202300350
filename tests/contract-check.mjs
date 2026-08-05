@@ -6,5 +6,16 @@ for(const service of ['identity:','catalog:','playback:','analytics:','notificat
 const gateway=readFileSync('gateway/src/main.ts','utf8');
 assert.match(gateway,/httpOnly:true,secure:true,sameSite:'strict'/);
 assert.match(gateway,/clients\.playback\.StreamVideo/);
+const grpc=readFileSync('gateway/src/grpc.ts','utf8');
+for(const name of ['IDENTITY_GRPC_ADDRESS','CATALOG_GRPC_ADDRESS','PLAYBACK_GRPC_ADDRESS','ANALYTICS_GRPC_ADDRESS','NOTIFICATIONS_GRPC_ADDRESS']) assert.match(grpc,new RegExp(`process\\.env\\.${name}`));
+assert.match(grpc,/GRPC_TIMEOUT_MS/);
+assert.match(grpc,/deadline:grpcDeadline\(\)/);
+assert.match(gateway,/GatewayTimeoutException/);
+for (const [grpcCode,httpStatus] of [[16,401],[7,403],[5,404],[4,504],[14,503]]) assert.match(gateway,new RegExp(`${grpcCode}:${httpStatus}`));
+assert.match(gateway,/StreamVideo\([^\n]+deadline:grpcDeadline\(\)/);
+const playback=readFileSync('services/playback/cmd/main.go','utf8');
+assert.match(playback,/CATALOG_GRPC_ADDRESS/);
+assert.match(playback,/PLAYBACK_GRPC_BIND/);
+assert.match(compose,/mongosh --quiet/);
+assert.match(compose,/redis-cli/);
 console.log('Contratos, topología y cookie segura verificados.');
-
