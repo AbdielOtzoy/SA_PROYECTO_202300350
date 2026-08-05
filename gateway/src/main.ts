@@ -1,20 +1,60 @@
 import 'reflect-metadata';
-import {Body, Controller, Get, Module, Param, Post, Put, Query, Req, Res, UnauthorizedException, ForbiddenException} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Get, Module, Param, Post, Put, Query, Req, Res, UnauthorizedException, ForbiddenException, ServiceUnavailableException} from '@nestjs/common';
 import {NestFactory} from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import * as jwt from 'jsonwebtoken';
+import {OAuth2Client} from 'google-auth-library';
 import {existsSync, readFileSync} from 'fs';
 import {join} from 'path';
 import {clients, unary} from './grpc';
+import {createOAuthState, sameOAuthState, validInstitutionalEmail} from './oauth';
 
-const secret = process.env.JWT_SECRET || 'development-secret-must-be-replaced';
+const secret = process.env.JWT_SECRET || '';
+if (!secret) throw new Error('JWT_SECRET debe estar definido en el entorno');
 const cookie = 'yousac_session';
+const oauthStateCookie = 'yousac_oauth_state';
+const frontendUrl = process.env.FRONTEND_URL || 'https://localhost:3000';
+const oauthSuccessUrl = process.env.OAUTH_SUCCESS_URL || `${frontendUrl}/catalogo`;
+const oauthFailureUrl = process.env.OAUTH_FAILURE_URL || `${frontendUrl}/?oauth=error`;
+function googleClient() {
+  const {GOOGLE_CLIENT_ID: clientId, GOOGLE_CLIENT_SECRET: clientSecret, GOOGLE_CALLBACK_URL: redirectUri} = process.env;
+  if (!clientId || !clientSecret || !redirectUri) throw new ServiceUnavailableException('OAuth institucional no está configurado');
+  return {client: new OAuth2Client({clientId, clientSecret, redirectUri}), clientId};
+}
 function session(req:any) { const token = req.cookies?.[cookie] || req.headers.authorization?.replace(/^Bearer\s+/i, ''); if (!token) throw new UnauthorizedException(); try { return {token, claims:jwt.verify(token, secret) as any}; } catch { throw new UnauthorizedException('Sesión inválida o vencida'); } }
 function admin(req:any) { const current = session(req); if (!current.claims.roles?.includes('admin')) throw new ForbiddenException('Se requiere rol administrador'); return current; }
+function setSession(res:any, token:string) { res.cookie(cookie, token, {httpOnly:true,secure:true,sameSite:'strict',path:'/'}); }
+function notifyRegistration(reply:any) { if (!reply.created) return; unary(clients.notifications, 'Send', {user_id:reply.user.id, recipient:reply.user.email, type:'registration', subject:'Bienvenido a YoUSAC', body:'Tu cuenta fue creada.'}, reply.token).catch(() => undefined); }
 
 @Controller('api') class Api {
-  @Post('auth/register') async register(@Body() data:any, @Res({passthrough:true}) res:any) { const reply = await unary(clients.identity, 'Register', data); res.cookie(cookie, reply.token, {httpOnly:true,secure:true,sameSite:'strict',path:'/'}); unary(clients.notifications, 'Send', {user_id:reply.user.id, recipient:reply.user.email, type:'registration', subject:'Bienvenido a YoUSAC', body:'Tu cuenta fue creada.'}, reply.token).catch(() => undefined); return {user:reply.user}; }
-  @Post('auth/login') async login(@Body() data:any, @Res({passthrough:true}) res:any) { const reply = await unary(clients.identity, 'Login', data); res.cookie(cookie, reply.token, {httpOnly:true,secure:true,sameSite:'strict',path:'/'}); return {user:reply.user}; }
+  @Post('auth/register') async register(@Body() data:any, @Res({passthrough:true}) res:any) { if (!validInstitutionalEmail(data.email || '')) throw new BadRequestException('El correo debe pertenecer a @ingenieria.usac.edu.gt o @ing.usac.edu.gt'); const reply = await unary(clients.identity, 'Register', data); setSession(res, reply.token); notifyRegistration(reply); return {user:reply.user}; }
+  @Post('auth/login') async login(@Body() data:any, @Res({passthrough:true}) res:any) { if (!validInstitutionalEmail(data.email || '')) throw new BadRequestException('El correo debe pertenecer a @ingenieria.usac.edu.gt o @ing.usac.edu.gt'); const reply = await unary(clients.identity, 'Login', data); setSession(res, reply.token); return {user:reply.user}; }
+  @Get('auth/google') googleStart(@Res() res:any) {
+    const {client} = googleClient();
+    const state = createOAuthState();
+    res.cookie(oauthStateCookie, state, {httpOnly:true,secure:true,sameSite:'lax',path:'/api/auth/google',maxAge:10 * 60 * 1000});
+    return res.redirect(client.generateAuthUrl({access_type:'offline',scope:['openid','email','profile'],include_granted_scopes:true,state,prompt:'select_account'}));
+  }
+  @Get('auth/google/callback') async googleCallback(@Req() req:any, @Res() res:any) {
+    try {
+      const {code,state} = req.query;
+      if (typeof code !== 'string' || !sameOAuthState(req.cookies?.[oauthStateCookie], typeof state === 'string' ? state : undefined)) return res.status(400).send('Callback OAuth inválido');
+      const {client,clientId} = googleClient();
+      res.clearCookie(oauthStateCookie, {httpOnly:true,secure:true,sameSite:'lax',path:'/api/auth/google'});
+      const {tokens} = await client.getToken(code);
+      if (!tokens.id_token) return res.status(401).send('Google no devolvió una identidad verificable');
+      const ticket = await client.verifyIdToken({idToken:tokens.id_token,audience:clientId});
+      const payload = ticket.getPayload();
+      const email = payload?.email?.trim().toLowerCase() || '';
+      if (payload?.email_verified !== true || !validInstitutionalEmail(email)) return res.status(403).send('La cuenta no pertenece a un dominio institucional permitido');
+      const reply = await unary(clients.identity, 'OAuthLogin', {email,full_name:payload?.name || email.split('@')[0],verified:true});
+      setSession(res, reply.token);
+      notifyRegistration(reply);
+      return res.redirect(oauthSuccessUrl);
+    } catch (error) {
+      return res.redirect(oauthFailureUrl);
+    }
+  }
   @Post('auth/logout') logout(@Res({passthrough:true}) res:any) { res.clearCookie(cookie, {httpOnly:true,secure:true,sameSite:'strict',path:'/'}); return {ok:true}; }
   @Get('session') async getSession(@Req() req:any) { const current = session(req); return unary(clients.identity, 'GetSession', {user_id:current.claims.sub}, current.token); }
   @Get('catalog') async catalog(@Req() req:any, @Query() query:any) { const current = session(req); return unary(clients.catalog, 'ListRecordings', {query:query.q || '', school:query.school || '', course:query.course || '', semester:query.semester || ''}, current.token); }
