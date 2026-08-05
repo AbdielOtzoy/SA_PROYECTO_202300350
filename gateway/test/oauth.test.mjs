@@ -20,3 +20,9 @@ test('OAuth valida state y dominios institucionales configurables', () => {
   assert.match(gateway, /validInstitutionalEmail\(email\)/);
   assert.match(gateway, /@ingenieria\.usac\.edu\.gt o @ing\.usac\.edu\.gt/);
 });
+
+test('el registro institucional está disponible detrás del Gateway', () => {
+  assert.match(gateway, /@Post\('auth\/register'\)/);
+  assert.match(gateway, /validInstitutionalEmail\(data\.email \|\| ''\)/);
+  assert.match(gateway, /setSession\(res, reply\.token\)/);
+});
