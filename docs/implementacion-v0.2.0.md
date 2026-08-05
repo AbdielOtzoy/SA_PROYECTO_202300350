@@ -2,47 +2,45 @@
 
 ## Arranque
 
-1. Copiar `.env.example` como `.env`, cambiar `JWT_SECRET` y completar `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET`.
-2. Instalar `mkcert` una sola vez (`brew install mkcert` en macOS) y ejecutar `./infrastructure/tls/generate-dev-cert.sh`. El comando instala una CA de desarrollo confiable en tu sistema y crea el certificado compartido de `localhost`.
-3. Ejecutar `docker compose --env-file .env -f docker-compose.local.yml up --build`.
-4. Abrir `https://localhost:3000`. El frontend reenvía internamente `/api` hacia el Gateway; ambos usan el mismo certificado local confiable. El Gateway atiende también en `https://localhost:443` para pruebas directas; Mailpit queda en `http://localhost:8025`.
-5. En Google Cloud registrar exactamente `https://localhost:3000/api/auth/google/callback` como URI de redirección autorizada. Ingresar con `admin@ingenieria.usac.edu.gt` y contraseña `Admin123!`. La contraseña hash de la semilla corresponde a esa clave.
+1. Copie `.env.example` como `.env`, cambie `JWT_SECRET` y complete las credenciales OAuth si se demostrará ese flujo.
+2. Instale `mkcert` y ejecute `./infrastructure/tls/generate-dev-cert.sh` para crear el certificado local de `localhost`.
+3. Ejecute `docker compose --env-file .env -f docker-compose.local.yml up --build`.
+4. Abra `https://localhost:3000`. El frontend Next.js reenvía `/api` al Gateway NestJS HTTPS. Los microservicios no publican REST ni puertos de host.
 
-El vídeo fixture se encuentra en `videos/sample.mp4`; el reproductor lo transmite en chunks gRPC desde el servicio Go. Para volver a inicializar las semillas, ejecutar `docker compose -f docker-compose.local.yml down -v` (esto elimina los volúmenes locales de esta práctica).
+El callback que debe registrarse en Google es `https://localhost:3000/api/auth/google/callback`.
 
-## Límites de red
+## Registro y sesión
 
-El navegador habla sólo con el Gateway HTTPS. Gateway convierte REST/JSON en gRPC y reenvía el JWT en metadatos internos. Los cinco servicios no publican rutas REST ni puertos de host. La cookie `yousac_session` se emite con `HttpOnly`, `Secure` y `SameSite=Strict`.
+El inicio de sesión ofrece contraseña y OAuth institucional. El enlace **Regístrate aquí** abre `/registro`, que valida visualmente los dominios configurados para la práctica y envía `POST /api/auth/register`; una respuesta correcta emite la cookie segura de sesión y redirige al catálogo. La validación definitiva también se realiza en Gateway e Identidad.
 
-OAuth utiliza Authorization Code Flow en el Gateway. El estado de la solicitud se guarda en una cookie temporal `HttpOnly`, `Secure` y `SameSite=Lax`; el callback valida `state`, intercambia el código con Google, verifica el `id_token` para el `GOOGLE_CLIENT_ID` y vuelve a validar que el correo termine en `@ingenieria.usac.edu.gt` o `@ing.usac.edu.gt` antes de crear la sesión.
+Los dominios locales por defecto son `ingenieria.usac.edu.gt` e `ing.usac.edu.gt`, definidos por `ALLOWED_EMAIL_DOMAINS`. El JWT expira según `JWT_EXPIRES_IN`; no se implementa un temporizador de inactividad independiente.
 
-| Dominio | Persistencia | Puerto gRPC |
+## gRPC y persistencia
+
+| Dominio | Persistencia | Dirección/bind configurable |
 |---|---|---|
-| Identidad (NestJS) | PostgreSQL `identity_db` | 50051 |
-| Catálogo (NestJS) | PostgreSQL `catalog_db` | 50052 |
-| Reproducción (Go) | MongoDB `playback_db` + volumen | 50053 |
-| Analítica (Python) | MongoDB `analytics_db`, Redis sólo caché | 50054 |
-| Notificaciones (NestJS) | PostgreSQL `notification_db`, Mailpit | 50055 |
+| Identidad (NestJS) | PostgreSQL `identity_db` | `IDENTITY_GRPC_ADDRESS`, `IDENTITY_GRPC_BIND` |
+| Catálogo (NestJS) | PostgreSQL `catalog_db` | `CATALOG_GRPC_ADDRESS`, `CATALOG_GRPC_BIND` |
+| Reproducción (Go) | MongoDB `playback_db` + vídeos locales | `PLAYBACK_GRPC_ADDRESS`, `PLAYBACK_GRPC_BIND` |
+| Analítica (Python) | MongoDB `analytics_db` + Redis para tendencias | `ANALYTICS_GRPC_ADDRESS`, `ANALYTICS_GRPC_BIND` |
+| Notificaciones (NestJS) | PostgreSQL `notification_db` + Mailpit | `NOTIFICATIONS_GRPC_ADDRESS`, `NOTIFICATIONS_GRPC_BIND` |
+
+El Gateway usa `GRPC_TIMEOUT_MS` (5000 por defecto) para llamadas unary y streaming. Los errores internos se expresan como HTTP coherente: no autenticado 401, sin permiso 403, inexistente 404, no disponible 503 y deadline agotado 504.
+
+Identidad usa el procedimiento PostgreSQL `set_user_role` con `CALL set_user_role(...)`; se conservan la función de permisos, las vistas y los triggers de auditoría existentes.
+En un volumen creado por una versión anterior, aplique una vez `databases/identity/03-migrate-set-user-role.sql`; las instalaciones nuevas reciben el procedimiento desde `01-schema.sql`.
+
+Docker Compose espera los healthchecks de PostgreSQL, MongoDB y Redis antes de iniciar los servicios que los consumen y reinicia los servicios de aplicación con `unless-stopped`.
 
 ## Recorrido de demostración
 
-Inicie sesión, abra Catálogo, seleccione la clase seed, reproduzca unos segundos, pause y recargue: el checkpoint decimal vuelve como posición inicial. En la misma pantalla cambie la valoración. En Administración asigne o revoque un rol al UUID del estudiante que aparece por defecto. El historial se expone en `GET /api/history` y se limita a 20 registros.
+Desde una sesión limpia:
 
-## Trazabilidad y SOLID
+1. Registre una cuenta con correo institucional y compruebe la redirección al catálogo.
+2. Intente registrar `persona@example.com` y confirme el rechazo del cliente y del Gateway.
+3. Inicie OAuth con una cuenta institucional válida y confirme el callback `/api/auth/google/callback`.
+4. Abra una grabación, reproduzca, pause, recargue y confirme que se restaura el checkpoint guardado cada cinco segundos, en pausa y al finalizar.
+5. Vote una grabación y recargue para verificar persistencia.
+6. Abra una ruta protegida sin cookie de sesión y confirme la denegación.
 
-| Requerimientos | Evidencia |
-|---|---|
-| RF-001–008 | Identidad, dominios permitidos, RBAC acumulativo y procedimiento `set_user_role` |
-| RF-009–018 | Vista `published_catalog`, ficha, votos, función de porcentaje, streaming/checkpoint/historial |
-| RF-019 | Analítica semanal en MongoDB con caché Redis |
-| RF-027 | adaptador Mailpit/registro de notificación en el Gateway y servicio Notificaciones |
-
-| Principio | Aplicación explícita |
-|---|---|
-| SRP | Cada microservicio posee un único dominio y su propia base. |
-| OCP | Los contratos `.proto` y el adaptador de almacenamiento permiten agregar proveedores sin cambiar el Gateway. |
-| LSP | El adaptador local de notificación puede sustituirse por SMTP/cloud manteniendo `NotificationService.Send`. |
-| ISP | Cada contrato gRPC contiene operaciones pequeñas por dominio, sin interfaz REST compartida. |
-| DIP | Gateway depende de contratos gRPC; reproducción depende de `CatalogService`, no de la BD de Catálogo. |
-
-Los SQL incluyen tablas, semillas, vistas, procedimientos/funciones y triggers de auditoría. Los contratos compartidos están en `proto/`. Antes de entregar, ejecutar `npm run test:contracts`, recorrer el flujo anterior y crear el tag con `git tag v0.2.0` cuando la revisión esté aprobada.
+Ejecute antes de entregar `npm test`, `npm run test:contracts`, la construcción de imágenes y `docker compose --env-file .env -f docker-compose.local.yml up --build`. No se crea ningún tag como parte de esta entrega.
