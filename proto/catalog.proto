@@ -1,0 +1,19 @@
+syntax = "proto3";
+package yousac.catalog.v1;
+option go_package = "github.com/abdielo/yousac/services/playback/gen";
+
+service CatalogService {
+  rpc ListRecordings(ListRequest) returns (RecordingsReply);
+  rpc GetRecording(RecordingRequest) returns (RecordingReply);
+  rpc CanPlay(PlaybackAuthorizationRequest) returns (AuthorizationReply);
+  rpc Vote(VoteRequest) returns (RatingReply);
+}
+message ListRequest { string query = 1; string school = 2; string course = 3; string semester = 4; }
+message RecordingRequest { string id = 1; }
+message PlaybackAuthorizationRequest { string recording_id = 1; string user_id = 2; }
+message AuthorizationReply { bool allowed = 1; string video_path = 2; }
+message RecordingsReply { repeated Recording recordings = 1; }
+message RecordingReply { Recording recording = 1; }
+message Recording { string id = 1; string title = 2; string course = 3; string course_code = 4; string school = 5; string semester = 6; string unit = 7; string topic = 8; string video_path = 9; double recommendation = 10; }
+message VoteRequest { string user_id = 1; string recording_id = 2; bool vote = 3; }
+message RatingReply { double recommendation = 1; int32 positives = 2; int32 total = 3; }
