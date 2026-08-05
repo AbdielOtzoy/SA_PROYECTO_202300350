@@ -1,0 +1,11 @@
+# Topología de referencia: las variables GCS se inyectan desde el entorno cloud.
+services:
+  playback:
+    environment:
+      VIDEO_STORAGE_MODE: gcs
+      GCS_BUCKET: ${GCS_BUCKET:?defina GCS_BUCKET}
+      GCS_PROJECT_ID: ${GCS_PROJECT_ID:?defina GCS_PROJECT_ID}
+    volumes: []
+  gateway:
+    ports: ["443:443"]
+

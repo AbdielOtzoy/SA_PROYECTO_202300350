@@ -1,0 +1,69 @@
+name: yousac
+services:
+  identity-db:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: yousac, POSTGRES_PASSWORD: yousac, POSTGRES_DB: identity_db }
+    volumes: [identity_data:/var/lib/postgresql/data, ./databases/identity:/docker-entrypoint-initdb.d:ro]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U yousac -d identity_db"], interval: 5s, timeout: 3s, retries: 12 }
+  catalog-db:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: yousac, POSTGRES_PASSWORD: yousac, POSTGRES_DB: catalog_db }
+    volumes: [catalog_data:/var/lib/postgresql/data, ./databases/catalog:/docker-entrypoint-initdb.d:ro]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U yousac -d catalog_db"], interval: 5s, timeout: 3s, retries: 12 }
+  notification-db:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: yousac, POSTGRES_PASSWORD: yousac, POSTGRES_DB: notification_db }
+    volumes: [notification_data:/var/lib/postgresql/data, ./databases/notifications:/docker-entrypoint-initdb.d:ro]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U yousac -d notification_db"], interval: 5s, timeout: 3s, retries: 12 }
+  playback-db:
+    image: mongo:7
+    volumes: [playback_data:/data/db, ./databases/playback:/docker-entrypoint-initdb.d:ro]
+  analytics-db:
+    image: mongo:7
+    volumes: [analytics_data:/data/db, ./databases/analytics:/docker-entrypoint-initdb.d:ro]
+  redis:
+    image: redis:7-alpine
+    volumes: [redis_data:/data]
+  mailpit:
+    image: axllent/mailpit:v1.20
+    ports: ["8025:8025"]
+  identity:
+    build: { context: ., dockerfile: services/identity/Dockerfile }
+    env_file: .env
+    depends_on: { identity-db: { condition: service_healthy } }
+  catalog:
+    build: { context: ., dockerfile: services/catalog/Dockerfile }
+    env_file: .env
+    depends_on: { catalog-db: { condition: service_healthy } }
+  playback:
+    build: { context: ., dockerfile: services/playback/Dockerfile }
+    env_file: .env
+    depends_on: [playback-db, catalog]
+    volumes: [./videos:/videos:ro]
+  analytics:
+    build: { context: ., dockerfile: services/analytics/Dockerfile }
+    env_file: .env
+    depends_on: [analytics-db, redis]
+  notifications:
+    build: { context: ., dockerfile: services/notifications/Dockerfile }
+    env_file: .env
+    depends_on: { notification-db: { condition: service_healthy } }
+  gateway:
+    build: { context: ., dockerfile: gateway/Dockerfile }
+    env_file: .env
+    ports: ["443:443"]
+    volumes: [./infrastructure/tls:/app/tls:ro]
+    depends_on: [identity, catalog, playback, analytics, notifications]
+  frontend:
+    build: { context: ., dockerfile: frontend/Dockerfile }
+    environment: { NEXT_PUBLIC_API_URL: /api }
+    ports: ["3000:3000"]
+    volumes: [./infrastructure/tls:/app/tls:ro]
+    depends_on: [gateway]
+volumes:
+  identity_data: {}
+  catalog_data: {}
+  notification_data: {}
+  playback_data: {}
+  analytics_data: {}
+  redis_data: {}
