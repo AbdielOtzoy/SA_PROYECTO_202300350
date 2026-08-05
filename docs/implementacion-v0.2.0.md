@@ -2,17 +2,19 @@
 
 ## Arranque
 
-1. Copiar `.env.example` como `.env` y cambiar `JWT_SECRET`.
+1. Copiar `.env.example` como `.env`, cambiar `JWT_SECRET` y completar `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET`.
 2. Instalar `mkcert` una sola vez (`brew install mkcert` en macOS) y ejecutar `./infrastructure/tls/generate-dev-cert.sh`. El comando instala una CA de desarrollo confiable en tu sistema y crea el certificado compartido de `localhost`.
 3. Ejecutar `docker compose --env-file .env -f docker-compose.local.yml up --build`.
 4. Abrir `https://localhost:3000`. El frontend reenvía internamente `/api` hacia el Gateway; ambos usan el mismo certificado local confiable. El Gateway atiende también en `https://localhost:443` para pruebas directas; Mailpit queda en `http://localhost:8025`.
-4. Ingresar con `admin@usac.edu.gt` y contraseña `Admin123!`. La contraseña hash de la semilla corresponde a esa clave.
+5. En Google Cloud registrar exactamente `https://localhost:3000/api/auth/google/callback` como URI de redirección autorizada. Ingresar con `admin@ingenieria.usac.edu.gt` y contraseña `Admin123!`. La contraseña hash de la semilla corresponde a esa clave.
 
 El vídeo fixture se encuentra en `videos/sample.mp4`; el reproductor lo transmite en chunks gRPC desde el servicio Go. Para volver a inicializar las semillas, ejecutar `docker compose -f docker-compose.local.yml down -v` (esto elimina los volúmenes locales de esta práctica).
 
 ## Límites de red
 
 El navegador habla sólo con el Gateway HTTPS. Gateway convierte REST/JSON en gRPC y reenvía el JWT en metadatos internos. Los cinco servicios no publican rutas REST ni puertos de host. La cookie `yousac_session` se emite con `HttpOnly`, `Secure` y `SameSite=Strict`.
+
+OAuth utiliza Authorization Code Flow en el Gateway. El estado de la solicitud se guarda en una cookie temporal `HttpOnly`, `Secure` y `SameSite=Lax`; el callback valida `state`, intercambia el código con Google, verifica el `id_token` para el `GOOGLE_CLIENT_ID` y vuelve a validar que el correo termine en `@ingenieria.usac.edu.gt` o `@ing.usac.edu.gt` antes de crear la sesión.
 
 | Dominio | Persistencia | Puerto gRPC |
 |---|---|---|
