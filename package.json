@@ -1,0 +1,23 @@
+{
+  "name": "yousac-v0.2.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "gateway",
+    "services/identity",
+    "services/catalog",
+    "services/notifications"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test:contracts": "node tests/contract-check.mjs"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/nodemailer": "^8.0.1",
+    "@types/pg": "^8.20.3"
+  }
+}
