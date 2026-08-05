@@ -3,3 +3,15 @@
 .opencode
 .tmp
 context/
+node_modules/
+.next/
+dist/
+coverage/
+.env
+.playwright-cli/
+*.log
+__pycache__/
+*.pyc
+services/analytics/.venv/
+infrastructure/tls/*.key
+infrastructure/tls/*.crt
