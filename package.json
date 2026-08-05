@@ -9,9 +9,10 @@
     "services/notifications"
   ],
   "scripts": {
-    "test": "npm run test --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present && npm run test:go",
     "lint": "npm run lint --workspaces --if-present",
-    "test:contracts": "node tests/contract-check.mjs"
+    "test:contracts": "node tests/contract-check.mjs",
+    "test:go": "cd services/playback && go test ./..."
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

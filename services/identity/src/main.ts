@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import { Controller, Module, Injectable } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { Transport, GrpcMethod } from '@nestjs/microservices';
+import { Transport, GrpcMethod, RpcException } from '@nestjs/microservices';
+import { status as GrpcStatus } from '@grpc/grpc-js';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -14,6 +15,7 @@ const secret = process.env.JWT_SECRET || '';
 if (!secret) throw new Error('JWT_SECRET debe estar definido en el entorno');
 const domains = (process.env.ALLOWED_EMAIL_DOMAINS || 'ingenieria.usac.edu.gt,ing.usac.edu.gt').split(',').map(x => x.trim().toLowerCase()).filter(Boolean);
 const validInstitutionalEmail = (email: string) => /^[^\s@]+@[^\s@]+$/.test(email) && domains.includes(email.split('@')[1]?.toLowerCase());
+const grpcError = (code: number, details: string) => new RpcException({ code, details, message: details });
 
 @Injectable()
 class IdentityDomain {
@@ -22,22 +24,22 @@ class IdentityDomain {
     if (!result.rowCount) throw new Error('Cuenta no encontrada');
     const row=result.rows[0]; return {id:row.id,email:row.email,fullName:row.full_name,roles:row.roles,permissions:row.permissions};
   }
-  async token(user: any) { return jwt.sign({ sub: user.id, email: user.email, roles: user.roles, permissions: user.permissions }, secret, { expiresIn: (process.env.JWT_EXPIRES_IN || '8h') as jwt.SignOptions['expiresIn'] }); }
+  async token(user: any) { return jwt.sign({ sub: user.id, email: user.email, roles: user.roles, permissions: user.permissions }, secret, { expiresIn: (process.env.JWT_EXPIRES_IN || '60m') as jwt.SignOptions['expiresIn'] }); }
   async register(input: any) {
-    if (!validInstitutionalEmail(input.email)) throw new Error('El correo debe pertenecer a un dominio institucional permitido');
-    const fullName=input.full_name || input.fullName; if (!input.password || input.password.length < 8 || !fullName) throw new Error('Datos obligatorios inválidos');
+    if (!validInstitutionalEmail(input.email)) throw grpcError(GrpcStatus.INVALID_ARGUMENT, 'El correo debe pertenecer a un dominio institucional permitido');
+    const fullName=input.full_name || input.fullName; if (!input.password || input.password.length < 8 || !fullName) throw grpcError(GrpcStatus.INVALID_ARGUMENT, 'Datos obligatorios inválidos');
     const hash = await bcrypt.hash(input.password, 12);
     try {
       const created = await pool.query('INSERT INTO users(email,password_hash,full_name) VALUES($1,$2,$3) RETURNING id', [input.email.toLowerCase(), hash, fullName]);
       const student = await pool.query("SELECT id FROM roles WHERE name='student'");
       await pool.query('INSERT INTO user_roles(user_id,role_id) VALUES($1,$2)', [created.rows[0].id, student.rows[0].id]);
       const user = await this.user(created.rows[0].id); return { token: await this.token(user), user, created:true };
-    } catch (error: any) { if (error.code === '23505') throw new Error('El correo ya está registrado'); throw error; }
+    } catch (error: any) { if (error.code === '23505') throw grpcError(GrpcStatus.ALREADY_EXISTS, 'El correo ya está registrado'); throw error; }
   }
   async login(input: any) {
-    if (!validInstitutionalEmail(input.email || '')) throw new Error('El correo debe pertenecer a un dominio institucional permitido');
+    if (!validInstitutionalEmail(input.email || '')) throw grpcError(GrpcStatus.INVALID_ARGUMENT, 'El correo debe pertenecer a un dominio institucional permitido');
     const result = await pool.query('SELECT id,password_hash FROM users WHERE email=$1 AND is_active', [input.email?.toLowerCase()]);
-    if (!result.rowCount || !(await bcrypt.compare(input.password || '', result.rows[0].password_hash))) throw new Error('Credenciales inválidas');
+    if (!result.rowCount || !(await bcrypt.compare(input.password || '', result.rows[0].password_hash))) throw grpcError(GrpcStatus.UNAUTHENTICATED, 'Credenciales inválidas');
     const user = await this.user(result.rows[0].id); return { token: await this.token(user), user };
   }
   async oauthLogin(input:any) {

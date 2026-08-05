@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import {BadRequestException, Body, Controller, Get, Module, Param, Post, Put, Query, Req, Res, UnauthorizedException, ForbiddenException, ServiceUnavailableException, NotFoundException, GatewayTimeoutException} from '@nestjs/common';
+import {BadGatewayException, BadRequestException, Body, ConflictException, Controller, Get, Module, Param, Post, Put, Query, Req, Res, UnauthorizedException, ForbiddenException, ServiceUnavailableException, NotFoundException, GatewayTimeoutException} from '@nestjs/common';
 import {NestFactory} from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import * as jwt from 'jsonwebtoken';
@@ -27,12 +27,14 @@ function setSession(res:any, token:string) { res.cookie(cookie, token, {httpOnly
 function notifyRegistration(reply:any) { if (!reply.created) return; unary(clients.notifications, 'Send', {user_id:reply.user.id, recipient:reply.user.email, type:'registration', subject:'Bienvenido a YoUSAC', body:'Tu cuenta fue creada.'}, reply.token).catch(() => undefined); }
 function grpcHttpError(error:any): never {
   switch (error?.code) {
+    case 3: throw new BadRequestException(error.details || 'Solicitud inválida');
     case 16: throw new UnauthorizedException(error.details || 'No autenticado');
+    case 6: throw new ConflictException(error.details || 'El recurso ya existe');
     case 7: throw new ForbiddenException(error.details || 'Sin permisos');
     case 5: throw new NotFoundException(error.details || 'Recurso no encontrado');
     case 4: throw new GatewayTimeoutException('La operación interna excedió el tiempo de espera');
     case 14: throw new ServiceUnavailableException('Servicio interno no disponible');
-    default: throw error;
+    default: throw new BadGatewayException('No fue posible completar la operación interna');
   }
 }
 

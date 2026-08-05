@@ -11,8 +11,15 @@ for(const name of ['IDENTITY_GRPC_ADDRESS','CATALOG_GRPC_ADDRESS','PLAYBACK_GRPC
 assert.match(grpc,/GRPC_TIMEOUT_MS/);
 assert.match(grpc,/deadline:grpcDeadline\(\)/);
 assert.match(gateway,/GatewayTimeoutException/);
-for (const [grpcCode,httpStatus] of [[16,401],[7,403],[5,404],[4,504],[14,503]]) assert.match(gateway,new RegExp(`${grpcCode}:${httpStatus}`));
+for (const grpcCode of [3,16,6,7,5,4,14]) assert.match(gateway,new RegExp(`case ${grpcCode}:`));
 assert.match(gateway,/StreamVideo\([^\n]+deadline:grpcDeadline\(\)/);
+const identity=readFileSync('services/identity/src/main.ts','utf8');
+assert.match(identity,/GrpcStatus\.INVALID_ARGUMENT/);
+assert.match(identity,/GrpcStatus\.UNAUTHENTICATED/);
+assert.match(identity,/GrpcStatus\.ALREADY_EXISTS/);
+assert.match(identity,/JWT_EXPIRES_IN \|\| '60m'/);
+assert.ok(existsSync('services/playback/gen/catalog.pb.go'),'Falta el contrato Go generado de catálogo');
+assert.ok(existsSync('services/playback/gen/playback.pb.go'),'Falta el contrato Go generado de reproducción');
 const playback=readFileSync('services/playback/cmd/main.go','utf8');
 assert.match(playback,/CATALOG_GRPC_ADDRESS/);
 assert.match(playback,/PLAYBACK_GRPC_BIND/);
