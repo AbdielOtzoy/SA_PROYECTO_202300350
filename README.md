@@ -14,3 +14,4 @@ Repositorio para el proyecto del laboratorio de software avanzado
 - [Modelo de arquitectura 4+1](docs/arquitectura/modelo-4-1.md)
 - [Modelo entidad-relación](docs/base-de-datos/modelo-entidad-relacion.md)
 - [Mockups UI/UX](docs/mockups/README.md)
+- [Implementación v0.2.0 y guía de ejecución](docs/implementacion-v0.2.0.md)
