@@ -41,6 +41,6 @@ class Analytics(analytics_pb2_grpc.AnalyticsServiceServicer):
 def main():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=8))
     analytics_pb2_grpc.add_AnalyticsServiceServicer_to_server(Analytics(), server)
-    server.add_insecure_port('[::]:50054')
+    server.add_insecure_port(os.getenv('ANALYTICS_GRPC_BIND', '0.0.0.0:50054'))
     server.start(); server.wait_for_termination()
 if __name__ == '__main__': main()
