@@ -136,16 +136,18 @@ func main() {
 		log.Fatal(err)
 	}
 	defer client.Disconnect(ctx)
-	conn, err := grpc.Dial("catalog:50052", grpc.WithInsecure())
+	conn, err := grpc.Dial(envOrDefault("CATALOG_GRPC_ADDRESS", "catalog:50052"), grpc.WithInsecure())
 	if err != nil {
 		log.Fatal(err)
 	}
-	lis, err := net.Listen("tcp", ":50053")
+	lis, err := net.Listen("tcp", envOrDefault("PLAYBACK_GRPC_BIND", "0.0.0.0:50053"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	g := grpc.NewServer()
 	pb.RegisterPlaybackServiceServer(g, &server{db: client.Database("playback_db"), catalog: pb.NewCatalogServiceClient(conn)})
-	log.Println("playback gRPC :50053")
+	log.Println("playback gRPC", envOrDefault("PLAYBACK_GRPC_BIND", "0.0.0.0:50053"))
 	log.Fatal(g.Serve(lis))
 }
+
+func envOrDefault(name, fallback string) string { if value := os.Getenv(name); value != "" { return value }; return fallback }
