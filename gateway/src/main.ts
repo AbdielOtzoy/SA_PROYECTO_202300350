@@ -1,0 +1,54 @@
+import 'reflect-metadata';
+import {Body, Controller, Get, Module, Param, Post, Put, Query, Req, Res, UnauthorizedException, ForbiddenException} from '@nestjs/common';
+import {NestFactory} from '@nestjs/core';
+import cookieParser from 'cookie-parser';
+import * as jwt from 'jsonwebtoken';
+import {existsSync, readFileSync} from 'fs';
+import {join} from 'path';
+import {clients, unary} from './grpc';
+
+const secret = process.env.JWT_SECRET || 'development-secret-must-be-replaced';
+const cookie = 'yousac_session';
+function session(req:any) { const token = req.cookies?.[cookie] || req.headers.authorization?.replace(/^Bearer\s+/i, ''); if (!token) throw new UnauthorizedException(); try { return {token, claims:jwt.verify(token, secret) as any}; } catch { throw new UnauthorizedException('Sesión inválida o vencida'); } }
+function admin(req:any) { const current = session(req); if (!current.claims.roles?.includes('admin')) throw new ForbiddenException('Se requiere rol administrador'); return current; }
+
+@Controller('api') class Api {
+  @Post('auth/register') async register(@Body() data:any, @Res({passthrough:true}) res:any) { const reply = await unary(clients.identity, 'Register', data); res.cookie(cookie, reply.token, {httpOnly:true,secure:true,sameSite:'strict',path:'/'}); unary(clients.notifications, 'Send', {user_id:reply.user.id, recipient:reply.user.email, type:'registration', subject:'Bienvenido a YoUSAC', body:'Tu cuenta fue creada.'}, reply.token).catch(() => undefined); return {user:reply.user}; }
+  @Post('auth/login') async login(@Body() data:any, @Res({passthrough:true}) res:any) { const reply = await unary(clients.identity, 'Login', data); res.cookie(cookie, reply.token, {httpOnly:true,secure:true,sameSite:'strict',path:'/'}); return {user:reply.user}; }
+  @Post('auth/logout') logout(@Res({passthrough:true}) res:any) { res.clearCookie(cookie, {httpOnly:true,secure:true,sameSite:'strict',path:'/'}); return {ok:true}; }
+  @Get('session') async getSession(@Req() req:any) { const current = session(req); return unary(clients.identity, 'GetSession', {user_id:current.claims.sub}, current.token); }
+  @Get('catalog') async catalog(@Req() req:any, @Query() query:any) { const current = session(req); return unary(clients.catalog, 'ListRecordings', {query:query.q || '', school:query.school || '', course:query.course || '', semester:query.semester || ''}, current.token); }
+  @Get('catalog/:id') async detail(@Req() req:any, @Param('id') id:string) { const current = session(req); return unary(clients.catalog, 'GetRecording', {id}, current.token); }
+  @Put('catalog/:id/rating') async vote(@Req() req:any, @Param('id') recording_id:string, @Body() body:any) { const current = session(req); return unary(clients.catalog, 'Vote', {user_id:current.claims.sub, recording_id, vote:!!body.vote}, current.token); }
+  @Post('playback/:id') async playback(@Req() req:any, @Param('id') recording_id:string) { const current = session(req); const reply = await unary(clients.playback, 'GetPlayback', {user_id:current.claims.sub, recording_id}, current.token); unary(clients.analytics, 'RecordView', {user_id:current.claims.sub, recording_id}, current.token).catch(() => undefined); return reply; }
+  @Put('playback/:id/checkpoint') async checkpoint(@Req() req:any, @Param('id') recording_id:string, @Body() body:any) { const current = session(req); return unary(clients.playback, 'SaveCheckpoint', {user_id:current.claims.sub, recording_id, seconds:Number(body.seconds), event_type:body.event_type || 'checkpoint'}, current.token); }
+  @Get('history') async history(@Req() req:any) { const current = session(req); return unary(clients.playback, 'GetHistory', {user_id:current.claims.sub}, current.token); }
+  @Get('playback/:id/stream') stream(@Req() req:any, @Res() res:any, @Param('id') recording_id:string) {
+    const current = session(req);
+    const metadata = new (require('@grpc/grpc-js').Metadata)();
+    metadata.set('authorization', `Bearer ${current.token}`);
+    const chunks:Buffer[] = [];
+    const call = clients.playback.StreamVideo({user_id:current.claims.sub, recording_id}, metadata);
+    call.on('data', (chunk:any) => chunks.push(Buffer.from(chunk.data)));
+    call.on('error', () => { if (!res.headersSent) res.status(404).end(); });
+    call.on('end', () => {
+      const video = Buffer.concat(chunks);
+      const total = video.length;
+      const requestedRange = String(req.headers.range || '');
+      const match = /^bytes=(\d*)-(\d*)$/.exec(requestedRange);
+      if (match) {
+        const start = match[1] === '' ? 0 : Number(match[1]);
+        const end = match[2] === '' ? total - 1 : Math.min(Number(match[2]), total - 1);
+        if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || start > end || start >= total) return res.status(416).set('Content-Range', `bytes */${total}`).end();
+        return res.status(206).set({'Content-Type':'video/mp4', 'Accept-Ranges':'bytes', 'Content-Length':end - start + 1, 'Content-Range':`bytes ${start}-${end}/${total}`}).end(video.subarray(start, end + 1));
+      }
+      return res.status(200).set({'Content-Type':'video/mp4', 'Accept-Ranges':'bytes', 'Content-Length':total}).end(video);
+    });
+  }
+  @Get('admin/analytics/most-viewed') analytics(@Req() req:any, @Query('week_start') week_start:string) { const current = admin(req); return unary(clients.analytics, 'MostViewed', {week_start:week_start || ''}, current.token); }
+  @Put('admin/users/:id/roles') async role(@Req() req:any, @Param('id') user_id:string, @Body() body:any) { const current = admin(req); return unary(clients.identity, 'ChangeRole', {user_id, role:body.role, assign:!!body.assign, actor_id:current.claims.sub}, current.token); }
+}
+
+@Module({controllers:[Api]}) class AppModule {}
+async function bootstrap() { const tlsRoot = process.env.TLS_DIR || join(process.cwd(), 'tls'); const cert = join(tlsRoot, 'localhost.crt'); const key = join(tlsRoot, 'localhost.key'); if (!existsSync(cert) || !existsSync(key)) throw new Error('Falta certificado local TLS'); const app = await NestFactory.create(AppModule, {httpsOptions:{cert:readFileSync(cert), key:readFileSync(key)}} as any); app.use(cookieParser()); app.enableCors({origin:'https://localhost:3000', credentials:true}); await app.listen(Number(process.env.GATEWAY_PORT || 443), '0.0.0.0'); }
+bootstrap();
