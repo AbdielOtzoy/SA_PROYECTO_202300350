@@ -7,5 +7,5 @@ services:
       GCS_PROJECT_ID: ${GCS_PROJECT_ID:?defina GCS_PROJECT_ID}
     volumes: []
   gateway:
-    ports: ["443:443"]
-
+    ports:
+      - '443:443'

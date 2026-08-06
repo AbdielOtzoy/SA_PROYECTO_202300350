@@ -29,7 +29,7 @@ Navegador → Frontend Next.js → Gateway NestJS/HTTPS → gRPC → microservic
 
 El Gateway es el único punto de entrada. Los diagramas de las vistas lógica, procesos, componentes y despliegue se encuentran en `docs/arquitectura/img/`; el modelo 4+1 se documenta en `docs/arquitectura/modelo-4-1.md`.
 
-La implementación TypeScript usa módulos NestJS por dominio. `main.ts` sólo inicializa el proceso; `app.module.ts` registra módulos y providers; los controllers exponen transporte, los services contienen casos de uso, los repositories encapsulan PostgreSQL y los DTOs/mappers aíslan los mensajes de Protocol Buffers. El Gateway concentra configuración, sesión/JWT, clientes gRPC y el filtro de traducción de errores en `src/common/`.
+La implementación TypeScript usa módulos NestJS por dominio. `main.ts` sólo inicializa el proceso; `app.module.ts` registra módulos y providers; los controllers exponen transporte, los services contienen casos de uso, los repositories encapsulan PostgreSQL y los DTOs/mappers aíslan los mensajes de Protocol Buffers. El Gateway concentra configuración, sesión/JWT, clientes gRPC y el filtro de traducción de errores en `src/common/`. El frontend mantiene sus respuestas de API tipadas y captura errores como `unknown`.
 
 ```text
 gateway/src/
@@ -48,6 +48,12 @@ services/{identity,catalog,notifications}/src/
 services/playback/
 ├── cmd/playback/         bootstrap del proceso
 └── internal/{auth,catalog,playback,repository,config}/
+
+services/analytics/
+├── app/main.py            bootstrap del proceso
+├── app/common/            configuración, JWT y caché
+├── app/analytics/         modelos, servicio y repositorio MongoDB
+└── app/transport/         adaptador gRPC y codec protobuf de caché
 ```
 
 | Servicio | Responsabilidad | Persistencia |
@@ -101,10 +107,10 @@ Compose espera los healthchecks de PostgreSQL, MongoDB y Redis; las aplicaciones
 | Principio | Evidencia en el código |
 |---|---|
 | SRP | Cada controller sólo adapta RPC/HTTP; `IdentityService`, `CatalogService`, `NotificationsService` y `playback.Service` contienen casos de uso separados de sus repositories. |
-| OCP | `GrpcCallService`, `GrpcErrorMapper` y las interfaces `auth.Authorizer`, `catalog.Client` y `repository.Repository` permiten extender adaptadores sin cambiar los casos de uso. |
+| OCP | `GrpcCallService`, `GrpcErrorMapper` y las interfaces `auth.Authorizer`, `catalog.Client`, `repository.Repository` y `analytics.ViewRepository` permiten extender adaptadores sin cambiar los casos de uso. |
 | LSP | Los controllers NestJS implementan los métodos de los cinco servicios protobuf y Go embebe `UnimplementedPlaybackServiceServer`; ambos respetan los contratos existentes. |
-| ISP | Los contratos permanecen separados por dominio y las interfaces Go exponen sólo las operaciones que necesita reproducción. |
-| DIP | Pool, SMTP, clientes gRPC y repositorios se registran como providers NestJS; playback recibe autenticador, cliente de Catálogo y repositorio por interfaces. |
+| ISP | Los contratos permanecen separados por dominio y las interfaces Go/Python exponen sólo las operaciones que necesita cada caso de uso. |
+| DIP | Pool, SMTP, clientes gRPC y repositorios se registran como providers NestJS; playback recibe autenticador, cliente de Catálogo y repositorio por interfaces; Analítica recibe repositorio, caché y codec por constructor. |
 
 ## Pruebas y demostración
 
@@ -117,7 +123,7 @@ docker compose --env-file .env -f docker-compose.local.yml build
 docker compose --env-file .env -f docker-compose.local.yml up -d
 ```
 
-Los scripts reproducibles son `format`, `format:check`, `lint`, `typecheck`, `test`, `test:contracts` y `verify`. `npm test` ejecuta las pruebas de los workspaces y `go test ./...` dentro de `services/playback`; `npm run typecheck` añade `go vet ./...`. Antes de la entrega se debe comprobar manualmente que el frontend responde, una ruta protegida sin sesión devuelve 401, un correo externo devuelve 400, credenciales incorrectas devuelven 401, un duplicado devuelve 409, una sesión válida consulta el catálogo y reproducción conserva checkpoint/streaming.
+Los scripts reproducibles son `format`, `format:check`, `lint`, `typecheck`, `test`, `test:analytics`, `test:contracts` y `verify`. `format:human` y `format:human:check` cubren TypeScript, JavaScript, tests, CSS, YAML y configuración JSON; los SQL y Protocol Buffers se mantienen con formato expandido y claro. Ruff y `unittest` se configuran en `services/analytics/requirements-dev.txt`; el adaptador protobuf de Analítica se genera dentro de su imagen Docker. `npm test` ejecuta las pruebas de los workspaces, Go y Python; `npm run typecheck` incluye el frontend y añade `go vet ./...`. `verify` no ejecuta comandos Git; `verify:git` queda disponible para revisar espacios en blanco cuando se prepare el commit. Antes de la entrega se debe comprobar manualmente que el frontend responde, una ruta protegida sin sesión devuelve 401, un correo externo devuelve 400, credenciales incorrectas devuelven 401, un duplicado devuelve 409, una sesión válida consulta el catálogo y reproducción conserva checkpoint/streaming; la consulta administrativa de Analítica debe responder 200 con JWT válido.
 
 ## Limitaciones y conclusiones
 

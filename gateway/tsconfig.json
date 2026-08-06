@@ -1,2 +1,11 @@
-{"compilerOptions":{"module":"commonjs","target":"ES2022","experimentalDecorators":true,"emitDecoratorMetadata":true,"esModuleInterop":true,"strict":false,"skipLibCheck":true}}
-
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2022",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "strict": false,
+    "skipLibCheck": true
+  }
+}

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import { readFileSync } from 'node:fs';
 
 const gateway = readFileSync('src/common/grpc/grpc-error.ts', 'utf8');
 const identity = readFileSync('../services/identity/src/identity/identity.service.ts', 'utf8');

@@ -73,7 +73,13 @@ func (s *Service) StreamVideo(request *pb.PlaybackRequest, stream grpc.ServerStr
 	if err := s.authorizer.Authorize(stream.Context()); err != nil {
 		return err
 	}
-	authorization, err := s.catalog.CanPlay(catalog.ForwardIncomingMetadata(stream.Context()), &pb.PlaybackAuthorizationRequest{RecordingId: request.GetRecordingId(), UserId: request.GetUserId()})
+	authorization, err := s.catalog.CanPlay(
+		catalog.ForwardIncomingMetadata(stream.Context()),
+		&pb.PlaybackAuthorizationRequest{
+			RecordingId: request.GetRecordingId(),
+			UserId:      request.GetUserId(),
+		},
+	)
 	if err != nil || !authorization.GetAllowed() {
 		return status.Error(codes.PermissionDenied, "grabación no autorizada")
 	}

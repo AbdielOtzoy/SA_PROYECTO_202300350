@@ -9,17 +9,24 @@
     "services/notifications"
   ],
   "scripts": {
-    "test": "npm run test --workspaces --if-present && npm run test:go",
-    "lint": "eslint gateway/src services/identity/src services/catalog/src services/notifications/src",
+    "test": "npm run test --workspaces --if-present && npm run test:go && npm run test:analytics",
+    "test:analytics": "PYTHONPATH=services/analytics python3 -m unittest discover -s services/analytics/tests -p 'test_*.py'",
+    "lint": "eslint gateway/src services/identity/src services/catalog/src services/notifications/src && npm run lint:analytics",
+    "lint:analytics": "python3 -m ruff check services/analytics/app services/analytics/tests",
     "typecheck": "npm run typecheck --workspaces --if-present && npm run typecheck:go",
     "typecheck:go": "cd services/playback && go vet ./...",
     "test:contracts": "node tests/contract-check.mjs",
     "test:go": "cd services/playback && go test ./...",
-    "format": "prettier --write \"gateway/src/**/*.ts\" \"services/identity/src/**/*.ts\" \"services/catalog/src/**/*.ts\" \"services/notifications/src/**/*.ts\" && npm run format:go",
+    "format": "npm run format:human && npm run format:go && npm run format:analytics",
+    "format:human": "prettier --write \"frontend/**/*.{ts,tsx}\" \"frontend/app/globals.css\" \"gateway/src/**/*.ts\" \"services/identity/src/**/*.ts\" \"services/catalog/src/**/*.ts\" \"services/notifications/src/**/*.ts\" \"tests/**/*.mjs\" \"gateway/test/**/*.mjs\" \"services/*/test/**/*.mjs\" \"databases/**/*.js\" \"docker-compose*.yml\" package.json frontend/package.json gateway/package.json services/identity/package.json services/catalog/package.json services/notifications/package.json",
     "format:go": "gofmt -w services/playback/cmd services/playback/internal",
-    "format:check": "prettier --check \"gateway/src/**/*.ts\" \"services/identity/src/**/*.ts\" \"services/catalog/src/**/*.ts\" \"services/notifications/src/**/*.ts\" && npm run format:go:check",
+    "format:analytics": "python3 -m ruff format services/analytics/app services/analytics/tests",
+    "format:check": "npm run format:human:check && npm run format:go:check && npm run format:analytics:check",
+    "format:human:check": "prettier --check \"frontend/**/*.{ts,tsx}\" \"frontend/app/globals.css\" \"gateway/src/**/*.ts\" \"services/identity/src/**/*.ts\" \"services/catalog/src/**/*.ts\" \"services/notifications/src/**/*.ts\" \"tests/**/*.mjs\" \"gateway/test/**/*.mjs\" \"services/*/test/**/*.mjs\" \"databases/**/*.js\" \"docker-compose*.yml\" package.json frontend/package.json gateway/package.json services/identity/package.json services/catalog/package.json services/notifications/package.json",
+    "format:analytics:check": "python3 -m ruff format --check services/analytics/app services/analytics/tests",
     "format:go:check": "test -z \"$(gofmt -l services/playback/cmd services/playback/internal)\"",
-    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run test:contracts && git diff --check"
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run test:contracts",
+    "verify:git": "git diff --check"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.18.0",

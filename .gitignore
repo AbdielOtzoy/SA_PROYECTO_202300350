@@ -12,6 +12,9 @@ coverage/
 *.log
 __pycache__/
 *.pyc
+*.tsbuildinfo
+.ruff_cache/
 services/analytics/.venv/
+services/analytics/.ruff_cache/
 infrastructure/tls/*.key
 infrastructure/tls/*.crt

@@ -1,5 +1,7 @@
 syntax = "proto3";
+
 package yousac.playback.v1;
+
 option go_package = "github.com/abdielo/yousac/services/playback/gen";
 
 service PlaybackService {
@@ -8,11 +10,42 @@ service PlaybackService {
   rpc GetHistory(HistoryRequest) returns (HistoryReply);
   rpc StreamVideo(PlaybackRequest) returns (stream VideoChunk);
 }
-message PlaybackRequest { string user_id = 1; string recording_id = 2; }
-message PlaybackReply { string stream_url = 1; double checkpoint_seconds = 2; }
-message CheckpointRequest { string user_id = 1; string recording_id = 2; double seconds = 3; string event_type = 4; }
-message CheckpointReply { double seconds = 1; }
-message HistoryRequest { string user_id = 1; }
-message HistoryItem { string recording_id = 1; string started_at = 2; double last_position_seconds = 3; }
-message HistoryReply { repeated HistoryItem items = 1; }
-message VideoChunk { bytes data = 1; }
+
+message PlaybackRequest {
+  string user_id = 1;
+  string recording_id = 2;
+}
+
+message PlaybackReply {
+  string stream_url = 1;
+  double checkpoint_seconds = 2;
+}
+
+message CheckpointRequest {
+  string user_id = 1;
+  string recording_id = 2;
+  double seconds = 3;
+  string event_type = 4;
+}
+
+message CheckpointReply {
+  double seconds = 1;
+}
+
+message HistoryRequest {
+  string user_id = 1;
+}
+
+message HistoryItem {
+  string recording_id = 1;
+  string started_at = 2;
+  double last_position_seconds = 3;
+}
+
+message HistoryReply {
+  repeated HistoryItem items = 1;
+}
+
+message VideoChunk {
+  bytes data = 1;
+}

@@ -1,6 +1,19 @@
 syntax = "proto3";
-package yousac.notifications.v1;
-service NotificationService { rpc Send(SendRequest) returns (SendReply); }
-message SendRequest { string user_id = 1; string recipient = 2; string type = 3; string subject = 4; string body = 5; }
-message SendReply { bool accepted = 1; }
 
+package yousac.notifications.v1;
+
+service NotificationService {
+  rpc Send(SendRequest) returns (SendReply);
+}
+
+message SendRequest {
+  string user_id = 1;
+  string recipient = 2;
+  string type = 3;
+  string subject = 4;
+  string body = 5;
+}
+
+message SendReply {
+  bool accepted = 1;
+}

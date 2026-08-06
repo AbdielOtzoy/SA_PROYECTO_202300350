@@ -1,10 +1,10 @@
 'use client';
 
-import {useEffect, useState} from 'react';
-import {api} from './api';
-import {Icon} from './Icon';
+import { useEffect, useState } from 'react';
+import { api } from './api';
+import { Icon } from './Icon';
 
-export function VideoPreview({recordingId, className}:{recordingId:string; className:string}) {
+export function VideoPreview({ recordingId, className }: { recordingId: string; className: string }) {
   const [thumbnail, setThumbnail] = useState('');
 
   useEffect(() => {
@@ -20,15 +20,26 @@ export function VideoPreview({recordingId, className}:{recordingId:string; class
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height);
-      setThumbnail(canvas.toDataURL('image/jpeg', .82));
+      setThumbnail(canvas.toDataURL('image/jpeg', 0.82));
     };
     video.onloadeddata = capture;
     video.onerror = () => active && setThumbnail('');
     video.load();
-    return () => { active = false; video.removeAttribute('src'); video.load(); };
+    return () => {
+      active = false;
+      video.removeAttribute('src');
+      video.load();
+    };
   }, [recordingId]);
 
-  return <div className={`${className} ${thumbnail ? 'has-video-preview' : ''}`} style={thumbnail ? {backgroundImage:`url(${thumbnail})`} : undefined}>
-    <span className="preview-play"><Icon name="play" size={30}/></span>
-  </div>;
+  return (
+    <div
+      className={`${className} ${thumbnail ? 'has-video-preview' : ''}`}
+      style={thumbnail ? { backgroundImage: `url(${thumbnail})` } : undefined}
+    >
+      <span className="preview-play">
+        <Icon name="play" size={30} />
+      </span>
+    </div>
+  );
 }

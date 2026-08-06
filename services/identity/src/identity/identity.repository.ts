@@ -24,7 +24,18 @@ export class IdentityRepository {
 
   async findUser(id: string): Promise<UserRow | undefined> {
     const result = await this.pool.query<UserRow>(
-      `SELECT u.id,u.email,u.full_name,COALESCE(array_agg(DISTINCT r.name) FILTER (WHERE r.name IS NOT NULL),'{}') roles,COALESCE(array_agg(DISTINCT p.code) FILTER (WHERE p.code IS NOT NULL),'{}') permissions FROM users u LEFT JOIN user_roles ur ON ur.user_id=u.id LEFT JOIN roles r ON r.id=ur.role_id LEFT JOIN role_permissions rp ON rp.role_id=r.id LEFT JOIN permissions p ON p.id=rp.permission_id WHERE u.id=$1 AND u.is_active GROUP BY u.id`,
+      `SELECT u.id,
+              u.email,
+              u.full_name,
+              COALESCE(array_agg(DISTINCT r.name) FILTER (WHERE r.name IS NOT NULL), '{}') roles,
+              COALESCE(array_agg(DISTINCT p.code) FILTER (WHERE p.code IS NOT NULL), '{}') permissions
+         FROM users u
+         LEFT JOIN user_roles ur ON ur.user_id = u.id
+         LEFT JOIN roles r ON r.id = ur.role_id
+         LEFT JOIN role_permissions rp ON rp.role_id = r.id
+         LEFT JOIN permissions p ON p.id = rp.permission_id
+        WHERE u.id = $1 AND u.is_active
+        GROUP BY u.id`,
       [id],
     );
     return result.rows[0];

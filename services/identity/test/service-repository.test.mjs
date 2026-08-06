@@ -13,7 +13,12 @@ test('la validación acepta sólo dominios institucionales configurados', () => 
 
 test('el repositorio delega el cambio de rol al procedimiento SQL', async () => {
   const calls = [];
-  const pool = { query: async (sql, values) => { calls.push({ sql, values }); return { rows: [] }; } };
+  const pool = {
+    query: async (sql, values) => {
+      calls.push({ sql, values });
+      return { rows: [] };
+    },
+  };
   const repository = new IdentityRepository(pool);
   await repository.changeRole('u-1', 'admin', true, 'admin-1');
   assert.match(calls[0].sql, /CALL set_user_role\(\$1,\$2,\$3,\$4\)/);

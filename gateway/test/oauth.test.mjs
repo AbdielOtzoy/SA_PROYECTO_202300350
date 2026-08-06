@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import { readFileSync } from 'node:fs';
 
 const gateway = readFileSync('src/auth/auth.controller.ts', 'utf8');
 const service = readFileSync('src/auth/auth.service.ts', 'utf8');

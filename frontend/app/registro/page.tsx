@@ -1,14 +1,109 @@
 'use client';
-import {useState} from 'react';
-import {useRouter} from 'next/navigation';
-import {request} from '../../components/api';
-import {Icon} from '../../components/Icon';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { errorMessage, request } from '../../components/api';
+import { Icon } from '../../components/Icon';
 
-const allowedDomains=['ingenieria.usac.edu.gt','ing.usac.edu.gt'];
-const institutionalEmail=(email:string)=>{const parts=email.trim().toLowerCase().split('@'); return parts.length===2 && !!parts[0] && allowedDomains.includes(parts[1]);};
+const allowedDomains = ['ingenieria.usac.edu.gt', 'ing.usac.edu.gt'];
+const institutionalEmail = (email: string) => {
+  const parts = email.trim().toLowerCase().split('@');
+  return parts.length === 2 && !!parts[0] && allowedDomains.includes(parts[1]);
+};
 
-export default function Register(){
- const [fullName,setFullName]=useState(''); const [email,setEmail]=useState(''); const [password,setPassword]=useState(''); const [error,setError]=useState(''); const router=useRouter();
- async function submit(e:React.FormEvent){e.preventDefault();setError('');if(!institutionalEmail(email)){setError('Usa un correo @ingenieria.usac.edu.gt o @ing.usac.edu.gt.');return;}try{await request('/auth/register',{method:'POST',body:JSON.stringify({full_name:fullName,email,password})});router.push('/catalogo');}catch(err:any){setError(err.message)}}
- return <main className="login-page"><section className="login-visual"><div className="login-brand">yoUSAC</div><div className="login-visual-content"><span className="login-kicker">ACERVO ACADÉMICO DIGITAL</span><h1>Tu cuenta institucional.</h1><p>Crea una cuenta para acceder a las grabaciones académicas de la Facultad de Ingeniería.</p></div><div className="login-progress"/><div className="login-faculty">Facultad de Ingeniería · USAC</div></section><section className="login-form-wrap"><h1>Crea tu cuenta</h1><p className="login-lead">Regístrate con tu correo institucional.</p><form className="login-form" onSubmit={submit}><label className="form-label">Nombre completo</label><div className="input-wrap"><Icon name="user"/><input className="field" value={fullName} onChange={e=>setFullName(e.target.value)} autoComplete="name" required aria-label="Nombre completo"/></div><label className="form-label">Correo institucional</label><div className="input-wrap"><Icon name="mail"/><input className="field" value={email} onChange={e=>setEmail(e.target.value)} type="email" autoComplete="email" placeholder="usuario@ingenieria.usac.edu.gt" required aria-label="Correo institucional"/></div><label className="form-label">Contraseña</label><div className="input-wrap"><Icon name="lock"/><input className="field" value={password} onChange={e=>setPassword(e.target.value)} type="password" minLength={8} autoComplete="new-password" required aria-label="Contraseña"/></div><button className="button full" type="submit">Crear cuenta</button>{error&&<p className="notice">{error}</p>}<div className="or">o</div><button className="oauth" type="button" onClick={()=>window.location.assign('/api/auth/google')}><Icon name="shield" color="#0969ff"/>Continuar con OAuth institucional</button></form><p className="login-register">¿Ya tienes cuenta? <a href="/">Inicia sesión</a></p><p className="login-domains">Solo se admiten correos @ingenieria.usac.edu.gt y @ing.usac.edu.gt.</p></section></main>
+export default function Register() {
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    if (!institutionalEmail(email)) {
+      setError('Usa un correo @ingenieria.usac.edu.gt o @ing.usac.edu.gt.');
+      return;
+    }
+    try {
+      await request('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ full_name: fullName, email, password }),
+      });
+      router.push('/catalogo');
+    } catch (err: unknown) {
+      setError(errorMessage(err));
+    }
+  }
+  return (
+    <main className="login-page">
+      <section className="login-visual">
+        <div className="login-brand">yoUSAC</div>
+        <div className="login-visual-content">
+          <span className="login-kicker">ACERVO ACADÉMICO DIGITAL</span>
+          <h1>Tu cuenta institucional.</h1>
+          <p>Crea una cuenta para acceder a las grabaciones académicas de la Facultad de Ingeniería.</p>
+        </div>
+        <div className="login-progress" />
+        <div className="login-faculty">Facultad de Ingeniería · USAC</div>
+      </section>
+      <section className="login-form-wrap">
+        <h1>Crea tu cuenta</h1>
+        <p className="login-lead">Regístrate con tu correo institucional.</p>
+        <form className="login-form" onSubmit={submit}>
+          <label className="form-label">Nombre completo</label>
+          <div className="input-wrap">
+            <Icon name="user" />
+            <input
+              className="field"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              autoComplete="name"
+              required
+              aria-label="Nombre completo"
+            />
+          </div>
+          <label className="form-label">Correo institucional</label>
+          <div className="input-wrap">
+            <Icon name="mail" />
+            <input
+              className="field"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              autoComplete="email"
+              placeholder="usuario@ingenieria.usac.edu.gt"
+              required
+              aria-label="Correo institucional"
+            />
+          </div>
+          <label className="form-label">Contraseña</label>
+          <div className="input-wrap">
+            <Icon name="lock" />
+            <input
+              className="field"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              minLength={8}
+              autoComplete="new-password"
+              required
+              aria-label="Contraseña"
+            />
+          </div>
+          <button className="button full" type="submit">
+            Crear cuenta
+          </button>
+          {error && <p className="notice">{error}</p>}
+          <div className="or">o</div>
+          <button className="oauth" type="button" onClick={() => window.location.assign('/api/auth/google')}>
+            <Icon name="shield" color="#0969ff" />
+            Continuar con OAuth institucional
+          </button>
+        </form>
+        <p className="login-register">
+          ¿Ya tienes cuenta? <a href="/">Inicia sesión</a>
+        </p>
+        <p className="login-domains">Solo se admiten correos @ingenieria.usac.edu.gt y @ing.usac.edu.gt.</p>
+      </section>
+    </main>
+  );
 }

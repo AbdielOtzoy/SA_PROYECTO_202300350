@@ -17,7 +17,16 @@ export class CatalogRepository {
 
   async list(input: ListRequest): Promise<RecordingMessage[]> {
     const result = await this.pool.query<RecordingRow>(
-      `SELECT * FROM published_catalog WHERE ($1='' OR title ILIKE '%' || $1 || '%' OR topic ILIKE '%' || $1 || '%' OR course ILIKE '%' || $1 || '%' OR course_code ILIKE '%' || $1 || '%') AND ($2='' OR school=$2) AND ($3='' OR course_code=$3) AND ($4='' OR semester=$4) ORDER BY title`,
+      `SELECT *
+         FROM published_catalog
+        WHERE ($1 = '' OR title ILIKE '%' || $1 || '%'
+                    OR topic ILIKE '%' || $1 || '%'
+                    OR course ILIKE '%' || $1 || '%'
+                    OR course_code ILIKE '%' || $1 || '%')
+          AND ($2 = '' OR school = $2)
+          AND ($3 = '' OR course_code = $3)
+          AND ($4 = '' OR semester = $4)
+        ORDER BY title`,
       [input.query || '', input.school || '', input.course || '', input.semester || ''],
     );
     return result.rows.map(toRecordingMessage);
