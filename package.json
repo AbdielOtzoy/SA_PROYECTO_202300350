@@ -10,15 +10,26 @@
   ],
   "scripts": {
     "test": "npm run test --workspaces --if-present && npm run test:go",
-    "lint": "npm run lint --workspaces --if-present",
+    "lint": "eslint gateway/src services/identity/src services/catalog/src services/notifications/src",
+    "typecheck": "npm run typecheck --workspaces --if-present && npm run typecheck:go",
+    "typecheck:go": "cd services/playback && go vet ./...",
     "test:contracts": "node tests/contract-check.mjs",
-    "test:go": "cd services/playback && go test ./..."
+    "test:go": "cd services/playback && go test ./...",
+    "format": "prettier --write \"gateway/src/**/*.ts\" \"services/identity/src/**/*.ts\" \"services/catalog/src/**/*.ts\" \"services/notifications/src/**/*.ts\" && npm run format:go",
+    "format:go": "gofmt -w services/playback/cmd services/playback/internal",
+    "format:check": "prettier --check \"gateway/src/**/*.ts\" \"services/identity/src/**/*.ts\" \"services/catalog/src/**/*.ts\" \"services/notifications/src/**/*.ts\" && npm run format:go:check",
+    "format:go:check": "test -z \"$(gofmt -l services/playback/cmd services/playback/internal)\"",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run test:contracts && git diff --check"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/nodemailer": "^8.0.1",
-    "@types/pg": "^8.20.3"
+    "@types/pg": "^8.20.3",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3"
   }
 }

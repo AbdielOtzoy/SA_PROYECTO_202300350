@@ -29,6 +29,27 @@ Navegador → Frontend Next.js → Gateway NestJS/HTTPS → gRPC → microservic
 
 El Gateway es el único punto de entrada. Los diagramas de las vistas lógica, procesos, componentes y despliegue se encuentran en `docs/arquitectura/img/`; el modelo 4+1 se documenta en `docs/arquitectura/modelo-4-1.md`.
 
+La implementación TypeScript usa módulos NestJS por dominio. `main.ts` sólo inicializa el proceso; `app.module.ts` registra módulos y providers; los controllers exponen transporte, los services contienen casos de uso, los repositories encapsulan PostgreSQL y los DTOs/mappers aíslan los mensajes de Protocol Buffers. El Gateway concentra configuración, sesión/JWT, clientes gRPC y el filtro de traducción de errores en `src/common/`.
+
+```text
+gateway/src/
+├── main.ts, app.module.ts
+├── common/       configuración, sesión, clientes gRPC y filtro
+├── auth/         OAuth, registro, login y sesión
+├── catalog/      consulta y valoración
+├── playback/     streaming y checkpoints
+└── admin/        analítica y asignación de roles
+
+services/{identity,catalog,notifications}/src/
+├── main.ts, app.module.ts
+├── common/       configuración, autenticación interna y tokens de DB
+└── <dominio>/    controller, service, repository, dto y mappers
+
+services/playback/
+├── cmd/playback/         bootstrap del proceso
+└── internal/{auth,catalog,playback,repository,config}/
+```
+
 | Servicio | Responsabilidad | Persistencia |
 |---|---|---|
 | Identidad | Registro, login, roles y sesiones | PostgreSQL `identity_db` |
@@ -41,13 +62,13 @@ El Gateway es el único punto de entrada. Los diagramas de las vistas lógica, p
 
 Los contratos por dominio están en `proto/*.proto`: `identity.proto`, `catalog.proto`, `playback.proto`, `analytics.proto` y `notifications.proto`. Las direcciones y binds se controlan con `*_GRPC_ADDRESS` y `*_GRPC_BIND`; el Gateway aplica `GRPC_TIMEOUT_MS` (5000 ms por defecto) tanto a llamadas unary como al streaming.
 
-Para que Go sea reproducible en un checkout limpio, los stubs de catálogo y reproducción están versionados en `services/playback/gen/`. El Dockerfile los compila directamente, por lo que no genera contratos durante la imagen.
+El adaptador dinámico de `proto-loader` es el único límite sin tipos del Gateway; controllers y dominio usan DTOs TypeScript explícitos. Para que Go sea reproducible en un checkout limpio, los stubs de catálogo y reproducción están versionados en `services/playback/gen/` y no se editan manualmente. El Dockerfile compila `cmd/playback` sin regenerar contratos durante la imagen.
 
 ## Autenticación y sesión
 
 Registro y login verifican los dominios definidos en `ALLOWED_EMAIL_DOMAINS` (por defecto `ingenieria.usac.edu.gt` e `ing.usac.edu.gt`) en Gateway e Identidad. La cookie `yousac_session` es `HttpOnly`, `Secure` y `SameSite=Strict`.
 
-El JWT vence de forma fija a los **60 minutos** (`JWT_EXPIRES_IN=60m`). Esta entrega no implementa renovación, refresh token ni sesión deslizante. OAuth institucional mantiene el callback `https://localhost:3000/api/auth/google/callback` y no fue modificado en este cierre.
+El JWT vence de forma fija a los **60 minutos** (`JWT_EXPIRES_IN=60m`). Esta entrega no implementa renovación, refresh token ni sesión deslizante. OAuth institucional mantiene el callback `https://localhost:3000/api/auth/google/callback`, la cookie de state y la validación de dominios; su lógica ahora vive en el módulo `gateway/src/auth/`.
 
 Los errores de credenciales, datos y duplicados se tipan en gRPC y el Gateway los traduce sin exponer detalles internos:
 
@@ -79,24 +100,24 @@ Compose espera los healthchecks de PostgreSQL, MongoDB y Redis; las aplicaciones
 
 | Principio | Evidencia en el código |
 |---|---|
-| SRP | `IdentityGrpc` transporta RPC; `IdentityDomain` concentra registro, login y usuarios en `services/identity/src/main.ts`. |
-| OCP | Gateway añade clientes por servicio en `gateway/src/grpc.ts` y extiende contratos sin acoplar implementaciones. |
-| LSP | Los servidores de Identidad, Catálogo y Reproducción respetan los métodos y mensajes definidos por Protocol Buffers. |
-| ISP | Los contratos están separados por dominio: `identity.proto`, `catalog.proto`, `playback.proto`, `analytics.proto` y `notifications.proto`. |
-| DIP | Gateway y Reproducción consumen clientes y contratos gRPC; no importan implementaciones internas de otros servicios. |
+| SRP | Cada controller sólo adapta RPC/HTTP; `IdentityService`, `CatalogService`, `NotificationsService` y `playback.Service` contienen casos de uso separados de sus repositories. |
+| OCP | `GrpcCallService`, `GrpcErrorMapper` y las interfaces `auth.Authorizer`, `catalog.Client` y `repository.Repository` permiten extender adaptadores sin cambiar los casos de uso. |
+| LSP | Los controllers NestJS implementan los métodos de los cinco servicios protobuf y Go embebe `UnimplementedPlaybackServiceServer`; ambos respetan los contratos existentes. |
+| ISP | Los contratos permanecen separados por dominio y las interfaces Go exponen sólo las operaciones que necesita reproducción. |
+| DIP | Pool, SMTP, clientes gRPC y repositorios se registran como providers NestJS; playback recibe autenticador, cliente de Catálogo y repositorio por interfaces. |
 
 ## Pruebas y demostración
 
 En un checkout limpio ejecute:
 
 ```sh
-npm test
+npm run verify
 npm run test:contracts
 docker compose --env-file .env -f docker-compose.local.yml build
 docker compose --env-file .env -f docker-compose.local.yml up -d
 ```
 
-`npm test` también ejecuta `go test ./...` dentro de `services/playback`. Antes de la entrega se debe comprobar manualmente que el frontend responde, una ruta protegida sin sesión devuelve 401, un correo externo devuelve 400, credenciales incorrectas devuelven 401 y una sesión válida consulta el catálogo.
+Los scripts reproducibles son `format`, `format:check`, `lint`, `typecheck`, `test`, `test:contracts` y `verify`. `npm test` ejecuta las pruebas de los workspaces y `go test ./...` dentro de `services/playback`; `npm run typecheck` añade `go vet ./...`. Antes de la entrega se debe comprobar manualmente que el frontend responde, una ruta protegida sin sesión devuelve 401, un correo externo devuelve 400, credenciales incorrectas devuelven 401, un duplicado devuelve 409, una sesión válida consulta el catálogo y reproducción conserva checkpoint/streaming.
 
 ## Limitaciones y conclusiones
 
