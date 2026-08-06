@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { AppShell } from '../../components/AppShell';
 import { api, errorMessage, request } from '../../components/api';
@@ -27,19 +27,13 @@ export default function Catalog() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [durations, setDurations] = useState<Record<string, number>>({});
   const [q, setQ] = useState('');
-  const [semester, setSemester] = useState('');
-  const [course, setCourse] = useState('');
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const [error, setError] = useState('');
 
-  async function load(overrides: Partial<{ q: string; semester: string; course: string }> = {}) {
+  async function load(query = q) {
     try {
       setError('');
-      const criteria = { q, semester, course, ...overrides };
       const params = new URLSearchParams();
-      if (criteria.q.trim()) params.set('q', criteria.q.trim());
-      if (criteria.semester) params.set('semester', criteria.semester);
-      if (criteria.course) params.set('course', criteria.course);
+      if (query.trim()) params.set('q', query.trim());
       const [catalog, playbackHistory] = await Promise.all([
         request<CatalogResponse>(`/catalog?${params}`),
         request<HistoryResponse>('/history'),
@@ -66,9 +60,6 @@ export default function Catalog() {
     });
   }, [items, durations]);
 
-  const visible = items;
-  const courses = useMemo(() => [...new Map(items.map((item) => [item.course_code, item.course])).entries()], [items]);
-  const semesters = useMemo(() => [...new Set(items.map((item) => item.semester))], [items]);
   const recent = history.find(
     (entry) => entry.last_position_seconds > 0 && items.some((item) => item.id === entry.recording_id),
   );
@@ -96,60 +87,7 @@ export default function Catalog() {
             Buscar
           </button>
         </div>
-        <select
-          className="control-select"
-          value={semester}
-          onChange={(event) => {
-            setSemester(event.target.value);
-            void load({ semester: event.target.value });
-          }}
-          aria-label="Filtrar por semestre"
-        >
-          <option value="">Todos los semestres</option>
-          {semesters.map((value) => (
-            <option key={value} value={value}>
-              {value}
-            </option>
-          ))}
-        </select>
-        <button className="filter-button" onClick={() => setFiltersOpen((open) => !open)} aria-expanded={filtersOpen}>
-          <Icon name="filter" />
-          Filtros
-        </button>
       </div>
-      {filtersOpen && (
-        <div className="filter-panel panel">
-          <label>
-            Curso
-            <select
-              className="field"
-              value={course}
-              onChange={(event) => {
-                setCourse(event.target.value);
-                void load({ course: event.target.value });
-              }}
-            >
-              <option value="">Todos los cursos</option>
-              {courses.map(([code, name]) => (
-                <option key={code} value={code}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
-            className="button alt"
-            onClick={() => {
-              setQ('');
-              setSemester('');
-              setCourse('');
-              void load({ q: '', semester: '', course: '' });
-            }}
-          >
-            Limpiar filtros
-          </button>
-        </div>
-      )}
       {error && <p className="notice">{error}</p>}
       <section>
         <div className="catalog-section-head">
@@ -157,7 +95,7 @@ export default function Catalog() {
           <span>{items.length} resultados</span>
         </div>
         <div className="recordings-grid">
-          {visible.map((recording) => (
+          {items.map((recording) => (
             <Link className="recording-card panel" key={recording.id} href={`/reproductor/${recording.id}`}>
               <VideoPreview recordingId={recording.id} className="recording-preview" />
               <h3>{recording.title}</h3>

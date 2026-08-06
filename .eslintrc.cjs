@@ -11,11 +11,12 @@ module.exports = {
       path.join(__dirname, 'services/identity/tsconfig.json'),
       path.join(__dirname, 'services/catalog/tsconfig.json'),
       path.join(__dirname, 'services/notifications/tsconfig.json'),
+      path.join(__dirname, 'frontend/tsconfig.json'),
     ],
   },
   plugins: ['@typescript-eslint'],
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-  env: { node: true, es2022: true },
+  env: { browser: true, node: true, es2022: true },
   ignorePatterns: ['node_modules/', 'dist/'],
   rules: {
     '@typescript-eslint/no-explicit-any': 'error',

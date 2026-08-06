@@ -33,7 +33,8 @@ function initials(name: string) {
 export function AppShell({ children, admin = false }: { children: React.ReactNode; admin?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [profileOpen, setProfileOpen] = useState(false);
+  const [sidebarProfileOpen, setSidebarProfileOpen] = useState(false);
+  const [topbarProfileOpen, setTopbarProfileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [profile, setProfile] = useState<SessionUser | null>(null);
   const links = admin ? control : study;
@@ -89,13 +90,17 @@ export function AppShell({ children, admin = false }: { children: React.ReactNod
           ))}
         </nav>
         <div className="side-user-wrap">
-          {profileOpen && (
+          {sidebarProfileOpen && (
             <button className="logout-button" onClick={logout} disabled={loggingOut}>
               <Icon name="logout" size={18} />
               {loggingOut ? 'Cerrando sesión…' : 'Cerrar sesión'}
             </button>
           )}
-          <button className="side-user" onClick={() => setProfileOpen((open) => !open)} aria-expanded={profileOpen}>
+          <button
+            className="side-user"
+            onClick={() => setSidebarProfileOpen((open) => !open)}
+            aria-expanded={sidebarProfileOpen}
+          >
             <span>{displayInitials}</span>
             <div>
               <strong>{displayName}</strong>
@@ -110,7 +115,23 @@ export function AppShell({ children, admin = false }: { children: React.ReactNod
           <button className="icon-button" aria-label="Notificaciones">
             <Icon name="bell" />
           </button>
-          <div className="avatar">{displayInitials}</div>
+          <div className="topbar-profile">
+            {topbarProfileOpen && (
+              <button className="topbar-logout" onClick={logout} disabled={loggingOut}>
+                <Icon name="logout" size={18} />
+                {loggingOut ? 'Cerrando sesión…' : 'Cerrar sesión'}
+              </button>
+            )}
+            <button
+              className="avatar avatar-button"
+              onClick={() => setTopbarProfileOpen((open) => !open)}
+              aria-expanded={topbarProfileOpen}
+              aria-haspopup="menu"
+              aria-label="Abrir menú de usuario"
+            >
+              {displayInitials}
+            </button>
+          </div>
         </header>
         {children}
       </main>

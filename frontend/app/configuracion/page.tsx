@@ -18,8 +18,6 @@ function initials(name: string) {
 }
 
 export default function Settings() {
-  const [classes, setClasses] = useState(true);
-  const [admin, setAdmin] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   useEffect(() => {
     request<SessionResponse>('/session')
@@ -32,14 +30,9 @@ export default function Settings() {
       <section className="page-heading">
         <p className="eyebrow">REFERENCIAS</p>
         <h1>Configuración de cuenta</h1>
-        <p>Administra tu información, preferencias y seguridad.</p>
+        <p>Consulta la información personal asociada a tu cuenta.</p>
       </section>
-      <div className="tabs">
-        <button className="tab active">Perfil</button>
-        <button className="tab">Notificaciones</button>
-        <button className="tab">Seguridad</button>
-      </div>
-      <section className="account-grid">
+      <section className="account-grid profile-only">
         <article className="personal-card panel">
           <h2>Información personal</h2>
           <div className="personal-info">
@@ -53,51 +46,7 @@ export default function Settings() {
               </span>
             </div>
           </div>
-          <button className="button alt">Editar información</button>
         </article>
-        <article className="preferences-card panel">
-          <h2>Preferencias de correo</h2>
-          <div className="pref">
-            <div>
-              <strong>Nuevas clases publicadas</strong>
-              <span>Avisos de tus cursos inscritos</span>
-            </div>
-            <button
-              onClick={() => setClasses(!classes)}
-              className={`switch ${classes ? 'on' : ''}`}
-              aria-label="Cambiar avisos de clases"
-            />
-          </div>
-          <div className="pref">
-            <div>
-              <strong>Avisos administrativos</strong>
-              <span>Puedes deshabilitar tus avisos administrativos</span>
-            </div>
-            <button
-              onClick={() => setAdmin(!admin)}
-              className={`switch ${admin ? 'on' : ''}`}
-              aria-label="Cambiar avisos administrativos"
-            />
-          </div>
-        </article>
-        <article className="security-card panel">
-          <Icon name="shield" size={34} />
-          <div>
-            <h2>Seguridad de la cuenta</h2>
-            <p>Las alertas de seguridad y recuperación siempre están activas.</p>
-            <div className="security-row">
-              <div>
-                <h3>Sesión web</h3>
-                <p>Expira después de 60 minutos de inactividad</p>
-                <button className="button alt" style={{ marginTop: 20 }}>
-                  Cambiar contraseña
-                </button>
-              </div>
-              <span className="badge green">Protegida · HttpOnly</span>
-            </div>
-          </div>
-        </article>
-        <p className="last-access">Último acceso: hoy, 08:42 · Ciudad de Guatemala</p>
       </section>
     </AppShell>
   );

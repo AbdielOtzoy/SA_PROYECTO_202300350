@@ -10,6 +10,7 @@ type Detail = { title: string; course: string; semester: string; unit?: string; 
 type PlaybackResponse = { checkpoint_seconds: number };
 type RecordingResponse = { recording: Detail };
 type RatingResponse = { recommendation: number };
+type Vote = true | false;
 const time = (seconds: number) =>
   `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 
@@ -27,6 +28,9 @@ export default function Player() {
   const [savedCheckpoint, setSavedCheckpoint] = useState(0);
   const [duration, setDuration] = useState(0);
   const [rating, setRating] = useState<number>();
+  const [vote, setVote] = useState<Vote>();
+  const [voting, setVoting] = useState(false);
+  const [ratingError, setRatingError] = useState('');
   const [detail, setDetail] = useState<Detail>();
   const [error, setError] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -49,6 +53,23 @@ export default function Player() {
       });
     } catch (cause: unknown) {
       setError(errorMessage(cause));
+    }
+  }
+
+  async function submitVote(nextVote: Vote) {
+    setVoting(true);
+    setRatingError('');
+    try {
+      const response = await request<RatingResponse>(`/catalog/${id}/rating`, {
+        method: 'PUT',
+        body: JSON.stringify({ vote: nextVote }),
+      });
+      setVote(nextVote);
+      setRating(response.recommendation);
+    } catch (cause: unknown) {
+      setRatingError(errorMessage(cause));
+    } finally {
+      setVoting(false);
     }
   }
 
@@ -272,38 +293,25 @@ export default function Player() {
               </div>
               <div className="rating-actions">
                 <button
-                  className="button success"
-                  onClick={async () =>
-                    setRating(
-                      (
-                        await request<RatingResponse>(`/catalog/${id}/rating`, {
-                          method: 'PUT',
-                          body: JSON.stringify({ vote: true }),
-                        })
-                      ).recommendation,
-                    )
-                  }
+                  className={`button success ${vote === true ? 'selected' : ''}`}
+                  onClick={() => void submitVote(true)}
+                  disabled={voting}
+                  aria-pressed={vote === true}
                 >
                   <Icon name="thumbUp" />
                   Sí
                 </button>
                 <button
-                  className="button danger"
-                  onClick={async () =>
-                    setRating(
-                      (
-                        await request<RatingResponse>(`/catalog/${id}/rating`, {
-                          method: 'PUT',
-                          body: JSON.stringify({ vote: false }),
-                        })
-                      ).recommendation,
-                    )
-                  }
+                  className={`button danger ${vote === false ? 'selected' : ''}`}
+                  onClick={() => void submitVote(false)}
+                  disabled={voting}
+                  aria-pressed={vote === false}
                 >
                   <Icon name="thumbDown" />
                   No
                 </button>
               </div>
+              {ratingError && <p className="rating-error">{ratingError}</p>}
             </section>
           </div>
           <aside className="player-side">
