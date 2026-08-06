@@ -102,3 +102,16 @@ Ref: recording_topics.recording_id > recordings.id
 Ref: recording_topics.topic_id > topics.id
 Ref: attachments.recording_id > recordings.id
 Ref: ratings.recording_id > recordings.id
+
+Note programmable_objects {
+'''
+OBJETOS PROGRAMABLES
+
+VW — vw_catalog
+VW — vw_recording_detail
+FN — fn_recommendation_pct(recording_id UUID)
+FN — fn_top_rated(limit INT)
+SP — sp_import_catalog_csv
+SP — sp_import_recordings_csv
+'''
+}

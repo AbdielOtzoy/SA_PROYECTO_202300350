@@ -7,10 +7,10 @@
         <mxCell id="ttl_p1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#7d8659;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" value="Proceso — Autenticación y sesión segura" vertex="1">
           <mxGeometry height="38" width="1180" x="10" y="60" as="geometry" />
         </mxCell>
-        <mxCell id="ln_p1_app" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="App Web" vertex="1">
+        <mxCell id="ln_p1_app" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="Frontend Next.js" vertex="1">
           <mxGeometry height="2090" width="230" x="270" y="98" as="geometry" />
         </mxCell>
-        <mxCell id="ln_p1_gw" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="API Gateway" vertex="1">
+        <mxCell id="ln_p1_gw" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="Gateway NestJS" vertex="1">
           <mxGeometry height="2090" width="230" x="500" y="98" as="geometry" />
         </mxCell>
         <mxCell id="ln_p1_u" parent="ln_p1_gw" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="Usuario" vertex="1">
@@ -94,7 +94,7 @@
         <mxCell id="p1_b1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;arcSize=20;" value="Accede con OAuth institucional" vertex="1">
           <mxGeometry height="56" width="190" x="60" y="1560" as="geometry" />
         </mxCell>
-        <mxCell id="p1_b2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;arcSize=20;" value="Redirige al proveedor y recibe GET /auth/oauth/callback" vertex="1">
+        <mxCell id="p1_b2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;arcSize=20;" value="Redirige al proveedor y recibe GET /api/auth/google/callback" vertex="1">
           <mxGeometry height="56" width="170" x="310" y="1640" as="geometry" />
         </mxCell>
         <mxCell id="p1_b3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;arcSize=20;" value="Reenvía ValidarTokenOAuth" vertex="1">
@@ -271,10 +271,10 @@
         <mxCell id="dgddmLWIasFSZwhKOuVM-6" parent="ln_p2_u" style="ellipse;html=1;fillColor=none;strokeColor=#000000;" value="" vertex="1">
           <mxGeometry height="30" width="30" x="100" y="2720" as="geometry" />
         </mxCell>
-        <mxCell id="ln_p2_app" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="App Web" vertex="1">
+        <mxCell id="ln_p2_app" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="Frontend Next.js" vertex="1">
           <mxGeometry height="2790" width="230" x="1470" y="98" as="geometry" />
         </mxCell>
-        <mxCell id="ln_p2_gw" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="API Gateway" vertex="1">
+        <mxCell id="ln_p2_gw" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="Gateway NestJS" vertex="1">
           <mxGeometry height="2790" width="230" x="1700" y="98" as="geometry" />
         </mxCell>
         <mxCell id="ln_p2_rep" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="Svc Reproducción" vertex="1">
@@ -340,7 +340,7 @@
         <mxCell id="p2_s13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;arcSize=20;" value="Ve la grabación" vertex="1">
           <mxGeometry height="56" width="170" x="1280" y="1110" as="geometry" />
         </mxCell>
-        <mxCell id="p2_s14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;arcSize=20;" value="Reporta progreso cada 10 s" vertex="1">
+        <mxCell id="p2_s14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;arcSize=20;" value="Reporta progreso cada 5 s" vertex="1">
           <mxGeometry height="56" width="160" x="1520" y="1190" as="geometry" />
         </mxCell>
         <mxCell id="p2_s15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;arcSize=20;" value="Reenvía GuardarProgreso&amp;nbsp;" vertex="1">
@@ -624,10 +624,10 @@
         <mxCell id="dgddmLWIasFSZwhKOuVM-7" parent="ln_p3_u" style="ellipse;html=1;fillColor=none;strokeColor=#000000;" value="" vertex="1">
           <mxGeometry height="30" width="30" x="100" y="1662" as="geometry" />
         </mxCell>
-        <mxCell id="ln_p3_app" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="App Web" vertex="1">
+        <mxCell id="ln_p3_app" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="Frontend Next.js" vertex="1">
           <mxGeometry height="1710" width="230" x="3150" y="98" as="geometry" />
         </mxCell>
-        <mxCell id="ln_p3_gw" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="API Gateway" vertex="1">
+        <mxCell id="ln_p3_gw" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="Gateway NestJS" vertex="1">
           <mxGeometry height="1710" width="230" x="3380" y="98" as="geometry" />
         </mxCell>
         <mxCell id="ln_p3_cat" parent="1" style="swimlane;html=1;startSize=26;horizontal=0;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#000000;" value="Svc Catálogo" vertex="1">

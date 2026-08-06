@@ -101,7 +101,7 @@ El modelo identifica los actores y objetivos principales de la plataforma. Las n
 
 ### 4.1 Diagrama de alto nivel
 
-El siguiente diagrama presenta los actores principales y los objetivos generales de YoUSAC.
+El siguiente diagrama presenta la meta global del sistema (`CU-01`) y los actores que interactúan con ella.
 
 [![Diagrama de casos de uso de alto nivel](casos-de-uso/referencias/casos-de-uso/01-alto-nivel.drawio.svg)](casos-de-uso/referencias/casos-de-uso/01-alto-nivel.drawio)
 
@@ -116,29 +116,33 @@ Actores considerados:
 
 ### 4.2 Primera descomposición
 
-La primera descomposición separa los objetivos por módulo y utiliza relaciones `include` y `extend` cuando una funcionalidad depende de otra o representa una variación del flujo principal.
+La primera descomposición separa la meta global en los once casos de uso del alcance (`CU-01.1` a `CU-01.11`) y los relaciona con sus actores.
+
+[![Diagrama de primera descomposición](casos-de-uso/referencias/casos-de-uso/02-primera-descomposicion.drawio.svg)](casos-de-uso/referencias/casos-de-uso/02-primera-descomposicion.drawio)
+
+A continuación, cada módulo se detalla con relaciones `include` y `extend`, que se utilizan cuando una funcionalidad depende de otra o representa una variación del flujo principal.
 
 #### Autenticación
 
-[![Descomposición de autenticación](casos-de-uso/referencias/casos-de-uso/02-autenticacion.drawio.svg)](casos-de-uso/referencias/casos-de-uso/02-autenticacion.drawio)
+[![Descomposición de autenticación](casos-de-uso/referencias/casos-de-uso/03-autenticacion.drawio.svg)](casos-de-uso/referencias/casos-de-uso/03-autenticacion.drawio)
 
 Incluye registro institucional, inicio de sesión y recuperación de acceso.
 
 #### Catálogo
 
-[![Descomposición de catálogo](casos-de-uso/referencias/casos-de-uso/03-catalogo.drawio.svg)](casos-de-uso/referencias/casos-de-uso/03-catalogo.drawio)
+[![Descomposición de catálogo](casos-de-uso/referencias/casos-de-uso/04-catalogo.drawio.svg)](casos-de-uso/referencias/casos-de-uso/04-catalogo.drawio)
 
 Incluye exploración, filtrado y consulta de la ficha técnica de una grabación.
 
 #### Reproducción
 
-[![Descomposición de reproducción](casos-de-uso/referencias/casos-de-uso/04-reproduccion.drawio.svg)](casos-de-uso/referencias/casos-de-uso/04-reproduccion.drawio)
+[![Descomposición de reproducción](casos-de-uso/referencias/casos-de-uso/05-reproduccion.drawio.svg)](casos-de-uso/referencias/casos-de-uso/05-reproduccion.drawio)
 
 Incluye streaming, checkpoint, reanudación, historial y valoración.
 
 #### Asignaciones y permisos
 
-[![Descomposición de asignaciones y permisos](casos-de-uso/referencias/casos-de-uso/05-asignaciones-permisos.drawio.svg)](casos-de-uso/referencias/casos-de-uso/05-asignaciones-permisos.drawio)
+[![Descomposición de asignaciones y permisos](casos-de-uso/referencias/casos-de-uso/06-asignaciones-permisos.drawio.svg)](casos-de-uso/referencias/casos-de-uso/06-asignaciones-permisos.drawio)
 
 Incluye consulta de cursos inscritos y gestión de roles y permisos.
 
@@ -148,17 +152,17 @@ Cada caso de uso expandido cuenta con una narrativa y un diagrama local editable
 
 | Código | Caso de uso | Diagrama local |
 |---|---|---|
-| CU-AU-01 | Registrarse con correo institucional | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/06-cu-au-01-registro.drawio) |
-| CU-AU-02 | Iniciar sesión institucional | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/07-cu-au-02-inicio-sesion.drawio) |
-| CU-AU-03 | Recuperar acceso | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/08-cu-au-03-recuperar-acceso.drawio) |
-| CU-CA-01 | Explorar y filtrar catálogo | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/09-cu-ca-01-explorar-catalogo.drawio) |
-| CU-CA-02 | Consultar ficha de grabación | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/10-cu-ca-02-ficha-grabacion.drawio) |
-| CU-RP-01 | Reproducir grabación | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/11-cu-rp-01-reproducir.drawio) |
-| CU-RP-02 | Reanudar grabación | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/12-cu-rp-02-reanudar.drawio) |
-| CU-RP-03 | Consultar historial de reproducción | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/13-cu-rp-03-historial.drawio) |
-| CU-RP-04 | Valorar grabación | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/14-cu-rp-04-valorar.drawio) |
-| CU-AP-01 | Consultar cursos inscritos | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/15-cu-ap-01-cursos-inscritos.drawio) |
-| CU-AP-02 | Gestionar roles y permisos | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/16-cu-ap-02-roles-permisos.drawio) |
+| CU-01.1 | Registrarse con correo institucional | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/07-cu-01-1-registro.drawio) |
+| CU-01.2 | Iniciar sesión institucional | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/08-cu-01-2-inicio-sesion.drawio) |
+| CU-01.3 | Recuperar acceso | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/09-cu-01-3-recuperar-acceso.drawio) |
+| CU-01.4 | Explorar y filtrar catálogo | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/10-cu-01-4-explorar-catalogo.drawio) |
+| CU-01.5 | Consultar ficha de grabación | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/11-cu-01-5-ficha-grabacion.drawio) |
+| CU-01.6 | Reproducir grabación | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/12-cu-01-6-reproducir.drawio) |
+| CU-01.7 | Reanudar grabación | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/13-cu-01-7-reanudar.drawio) |
+| CU-01.8 | Consultar historial de reproducción | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/14-cu-01-8-historial.drawio) |
+| CU-01.9 | Valorar grabación | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/15-cu-01-9-valorar.drawio) |
+| CU-01.10 | Consultar cursos inscritos | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/16-cu-01-10-cursos-inscritos.drawio) |
+| CU-01.11 | Gestionar roles y permisos | [Diagrama](casos-de-uso/referencias/casos-de-uso-locales/17-cu-01-11-roles-permisos.drawio) |
 
 ## 5. Vista de arquitectura 4+1
 
@@ -206,9 +210,9 @@ La vista física contempla el despliegue local mediante Docker Compose y el desp
 
 ### 5.5 Vista de escenarios
 
-La vista de escenarios conecta las demás vistas mediante los casos de uso principales. El diagrama de alto nivel resume los objetivos que validan la arquitectura propuesta.
+La vista de escenarios conecta las demás vistas mediante los casos de uso principales. El diagrama de primera descomposición resume los objetivos que validan la arquitectura propuesta.
 
-[![Vista de escenarios](casos-de-uso/referencias/casos-de-uso/01-alto-nivel.drawio.svg)](casos-de-uso/referencias/casos-de-uso/01-alto-nivel.drawio)
+[![Vista de escenarios](casos-de-uso/referencias/casos-de-uso/02-primera-descomposicion.drawio.svg)](casos-de-uso/referencias/casos-de-uso/02-primera-descomposicion.drawio)
 
 ## 6. Diseño del modelo de datos
 
