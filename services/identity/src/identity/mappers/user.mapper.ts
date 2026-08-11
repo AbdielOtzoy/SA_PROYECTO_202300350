@@ -6,6 +6,7 @@ export interface UserRow {
   full_name: string;
   roles: string[];
   permissions: string[];
+  is_active?: boolean;
 }
 
 export function toUserMessage(row: UserRow): UserMessage {
@@ -15,5 +16,6 @@ export function toUserMessage(row: UserRow): UserMessage {
     fullName: row.full_name,
     roles: row.roles || [],
     permissions: row.permissions || [],
+    isActive: row.is_active !== false,
   };
 }

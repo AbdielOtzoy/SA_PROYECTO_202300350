@@ -12,6 +12,11 @@ export class CatalogController {
     return this.catalog.list(request, query);
   }
 
+  @Get('options')
+  options(@Req() request: Request) {
+    return this.catalog.options(request);
+  }
+
   @Get(':id')
   detail(@Req() request: Request, @Param('id') id: string) {
     return this.catalog.detail(request, id);

@@ -18,6 +18,14 @@ interface EnrollmentRow {
   credentials: string;
 }
 
+interface ImportRow {
+  user_email: string;
+  course_id: string;
+  semester_id: string;
+  status: string;
+  credentials: string;
+}
+
 @Injectable()
 export class IdentityRepository {
   constructor(@Inject(IDENTITY_POOL) private readonly pool: Pool) {}
@@ -27,6 +35,7 @@ export class IdentityRepository {
       `SELECT u.id,
               u.email,
               u.full_name,
+              u.is_active,
               COALESCE(array_agg(DISTINCT r.name) FILTER (WHERE r.name IS NOT NULL), '{}') roles,
               COALESCE(array_agg(DISTINCT p.code) FILTER (WHERE p.code IS NOT NULL), '{}') permissions
          FROM users u
@@ -39,6 +48,25 @@ export class IdentityRepository {
       [id],
     );
     return result.rows[0];
+  }
+
+  async listUsers(): Promise<UserRow[]> {
+    const result = await this.pool.query<UserRow>(
+      `SELECT u.id,
+              u.email,
+              u.full_name,
+              u.is_active,
+              COALESCE(array_agg(DISTINCT r.name) FILTER (WHERE r.name IS NOT NULL), '{}') roles,
+              COALESCE(array_agg(DISTINCT p.code) FILTER (WHERE p.code IS NOT NULL), '{}') permissions
+         FROM users u
+         LEFT JOIN user_roles ur ON ur.user_id = u.id
+         LEFT JOIN roles r ON r.id = ur.role_id
+         LEFT JOIN role_permissions rp ON rp.role_id = r.id
+         LEFT JOIN permissions p ON p.id = rp.permission_id
+        GROUP BY u.id
+        ORDER BY u.full_name`,
+    );
+    return result.rows;
   }
 
   async findCredentials(email: string): Promise<CredentialsRow | undefined> {
@@ -90,6 +118,10 @@ export class IdentityRepository {
 
   changeRole(userId: string, role: string, assign: boolean, actorId: string): Promise<unknown> {
     return this.pool.query('CALL set_user_role($1,$2,$3,$4)', [userId, role, assign, actorId]);
+  }
+
+  importEnrollments(rows: ImportRow[]): Promise<unknown> {
+    return this.pool.query('CALL sp_import_enrollments_csv($1::jsonb)', [JSON.stringify(rows)]);
   }
 
   isDuplicate(error: unknown): boolean {

@@ -10,6 +10,7 @@ export interface RecordingRow {
   unit: string;
   topic: string;
   video_path: string;
+  professor?: string;
   recommendation: number | string | null;
 }
 
@@ -24,6 +25,7 @@ export function toRecordingMessage(row: RecordingRow): RecordingMessage {
     unit: row.unit,
     topic: row.topic,
     videoPath: row.video_path,
+    professor: row.professor || '',
     recommendation: Number(row.recommendation || 0),
   };
 }
