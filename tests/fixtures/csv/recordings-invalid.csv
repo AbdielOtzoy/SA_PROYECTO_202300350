@@ -1,0 +1,3 @@
+recording_id,title,course_code,semester_year,semester_term,lecture_date,unit,topic,video_path,is_published,professor_emails,assistant_emails
+00000000-0000-0000-0000-000000000051,Grabación válida antes del error,P3-IA,2027,1,2027-03-01,1,Debe revertirse,/videos/rollback-01.mp4,true,docente@ingenieria.usac.edu.gt,
+00000000-0000-0000-0000-000000000052,Grabación con docente inexistente,P3-IA,2027,1,2027-03-08,1,Debe provocar rollback,/videos/rollback-02.mp4,true,noexiste@ingenieria.usac.edu.gt,

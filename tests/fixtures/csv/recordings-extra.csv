@@ -1,0 +1,4 @@
+recording_id,title,course_code,semester_year,semester_term,lecture_date,unit,topic,video_path,is_published,professor_emails,assistant_emails
+00000000-0000-0000-0000-000000000041,Automatización · Clase 01,P3-IA,2027,1,2027-01-20,1,Introducción a automatización,sample6.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+00000000-0000-0000-0000-000000000042,Automatización · Clase 02,P3-IA,2027,1,2027-01-27,1,Flujos de trabajo,sample7.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+00000000-0000-0000-0000-000000000043,Experiencia de Usuario · Clase 01,P3-UX,2027,1,2027-02-03,1,Principios de UX,sample8.mp4,false,docente@ingenieria.usac.edu.gt,

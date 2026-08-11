@@ -25,6 +25,43 @@ test('el repositorio mapea la recomendación a número', async () => {
     }),
   };
   const repository = new CatalogRepository(pool);
-  const rows = await repository.list({ query: '', school: '', course: '', semester: '' });
-  assert.equal(rows[0].recommendation, 87.5);
+  const reply = await repository.list({ query: '', school: '', course: '', semester: '' });
+  assert.equal(reply.recordings[0].recommendation, 87.5);
+  assert.equal(reply.pageSize, 10);
+});
+
+test('calcula la página y limita el tamaño a diez registros', async () => {
+  let call;
+  const pool = {
+    query: async (_sql, values) => {
+      call = values;
+      return { rows: [] };
+    },
+  };
+  const repository = new CatalogRepository(pool);
+  const reply = await repository.list({ page: 3, page_size: 50, professor: 'Docente' });
+  assert.deepEqual(call.slice(-2), [10, 20]);
+  assert.equal(reply.totalPages, 0);
+});
+
+test('conserva todos los filtros al calcular el desplazamiento', async () => {
+  let call;
+  const pool = {
+    query: async (_sql, values) => {
+      call = values;
+      return { rows: [] };
+    },
+  };
+  const repository = new CatalogRepository(pool);
+  await repository.list({
+    query: 'CSV',
+    school: 'FIUSAC',
+    course: 'SA',
+    semester: '2026-2',
+    professor: 'Docente',
+    page: 2,
+    page_size: 3,
+  });
+  assert.deepEqual(call.slice(0, 5), ['CSV', 'FIUSAC', 'SA', '2026-2', 'Docente']);
+  assert.deepEqual(call.slice(-2), [3, 3]);
 });
