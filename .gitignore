@@ -18,3 +18,4 @@ services/analytics/.venv/
 services/analytics/.ruff_cache/
 infrastructure/tls/*.key
 infrastructure/tls/*.crt
+.DS_Store
