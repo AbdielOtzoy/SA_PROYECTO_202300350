@@ -7,6 +7,8 @@ export interface SessionUser {
   fullName?: string;
   email: string;
   roles: string[];
+  permissions?: string[];
+  is_active?: boolean;
 }
 
 export interface SessionResponse {
@@ -15,15 +17,24 @@ export interface SessionResponse {
 
 export function errorMessage(cause: unknown): string {
   if (cause instanceof Error) return cause.message;
-  if (typeof cause === 'string') return cause;
+  if (typeof cause === 'string') {
+    try {
+      const parsed = JSON.parse(cause) as { message?: string; error?: string };
+      return parsed.message || parsed.error || cause;
+    } catch {
+      return cause;
+    }
+  }
   return 'La solicitud no pudo completarse';
 }
 
 export async function request<TResponse = unknown>(path: string, options: RequestInit = {}): Promise<TResponse> {
+  const headers = new Headers(options.headers || {});
+  if (!(options.body instanceof FormData)) headers.set('Content-Type', 'application/json');
   const response = await fetch(`${api}${path}`, {
     ...options,
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+    headers,
   });
 
   if (response.status === 401 && typeof window !== 'undefined' && !path.startsWith('/auth/')) {

@@ -39,6 +39,14 @@ export class SessionService {
     return current;
   }
 
+  requireManager(request: Request): SessionContext {
+    const current = this.require(request);
+    if (!current.claims.roles?.some((role) => ['admin', 'teacher', 'assistant'].includes(role))) {
+      throw new ForbiddenException('Se requiere un rol académico autorizado');
+    }
+    return current;
+  }
+
   set(response: Response, token: string): void {
     response.cookie(SESSION_COOKIE, token, {
       httpOnly: true,

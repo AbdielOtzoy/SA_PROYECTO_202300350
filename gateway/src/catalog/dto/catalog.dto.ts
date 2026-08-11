@@ -5,6 +5,9 @@ export interface CatalogQuery {
   school?: string;
   course?: string;
   semester?: string;
+  professor?: string;
+  page?: string | number;
+  page_size?: string | number;
 }
 
 export interface VoteBody {

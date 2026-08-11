@@ -37,6 +37,10 @@ export class AppConfig {
     return Number(process.env.GRPC_TIMEOUT_MS || 5000);
   }
 
+  get csvMaxBytes(): number {
+    return Number(process.env.CSV_MAX_BYTES || 5 * 1024 * 1024);
+  }
+
   grpcAddress(service: string, fallback: string): string {
     return process.env[service] || fallback;
   }

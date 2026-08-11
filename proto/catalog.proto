@@ -9,6 +9,20 @@ service CatalogService {
   rpc GetRecording(RecordingRequest) returns (RecordingReply);
   rpc CanPlay(PlaybackAuthorizationRequest) returns (AuthorizationReply);
   rpc Vote(VoteRequest) returns (RatingReply);
+  rpc ListSchools(Empty) returns (SchoolsReply);
+  rpc ListCourses(Empty) returns (CoursesReply);
+  rpc ListSemesters(Empty) returns (SemestersReply);
+  rpc ListProfessors(Empty) returns (ProfessorsReply);
+  rpc ListCourseStaff(CourseStaffListRequest) returns (CourseStaffReply);
+  rpc UpsertSchool(SchoolRequest) returns (SchoolReply);
+  rpc UpsertCourse(CourseRequest) returns (CourseReply);
+  rpc UpsertSemester(SemesterRequest) returns (SemesterReply);
+  rpc UpsertProfessor(ProfessorRequest) returns (ProfessorReply);
+  rpc ArchiveAcademic(AcademicArchiveRequest) returns (Empty);
+  rpc AssignCourseStaff(CourseStaffRequest) returns (CourseStaffItemReply);
+  rpc RevokeCourseStaff(CourseStaffRequest) returns (Empty);
+  rpc ImportCatalogCsv(CsvImportRequest) returns (ImportReply);
+  rpc ImportRecordingsCsv(CsvImportRequest) returns (ImportReply);
 }
 
 message ListRequest {
@@ -16,6 +30,9 @@ message ListRequest {
   string school = 2;
   string course = 3;
   string semester = 4;
+  int32 page = 5;
+  int32 page_size = 6;
+  string professor = 7;
 }
 
 message RecordingRequest {
@@ -34,6 +51,10 @@ message AuthorizationReply {
 
 message RecordingsReply {
   repeated Recording recordings = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  int32 total = 4;
+  int32 total_pages = 5;
 }
 
 message RecordingReply {
@@ -51,6 +72,7 @@ message Recording {
   string topic = 8;
   string video_path = 9;
   double recommendation = 10;
+  string professor = 11;
 }
 
 message VoteRequest {
@@ -63,4 +85,83 @@ message RatingReply {
   double recommendation = 1;
   int32 positives = 2;
   int32 total = 3;
+}
+
+message Empty {}
+
+message School {
+  string id = 1;
+  string name = 2;
+  string code = 3;
+  bool is_active = 4;
+}
+
+message Course {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+  string school_id = 4;
+  int32 credits = 5;
+  bool is_active = 6;
+}
+
+message Semester {
+  string id = 1;
+  int32 year = 2;
+  int32 term = 3;
+  bool is_active = 4;
+}
+
+message Professor {
+  string id = 1;
+  string full_name = 2;
+  string email = 3;
+  bool is_active = 4;
+}
+
+message CourseStaff {
+  string course_id = 1;
+  string professor_id = 2;
+  string role_type = 3;
+  string course_code = 4;
+  string professor_name = 5;
+  string professor_email = 6;
+}
+
+message SchoolRequest { School school = 1; }
+message CourseRequest { Course course = 1; }
+message SemesterRequest { Semester semester = 1; }
+message ProfessorRequest { Professor professor = 1; }
+message SchoolReply { School school = 1; }
+message CourseReply { Course course = 1; }
+message SemesterReply { Semester semester = 1; }
+message ProfessorReply { Professor professor = 1; }
+message SchoolsReply { repeated School schools = 1; }
+message CoursesReply { repeated Course courses = 1; }
+message SemestersReply { repeated Semester semesters = 1; }
+message ProfessorsReply { repeated Professor professors = 1; }
+
+message CourseStaffListRequest { string course_id = 1; }
+message CourseStaffRequest {
+  string course_id = 1;
+  string professor_id = 2;
+  string role_type = 3;
+}
+message CourseStaffReply { repeated CourseStaff assignments = 1; }
+message CourseStaffItemReply { CourseStaff assignment = 1; }
+
+message AcademicArchiveRequest {
+  string entity = 1;
+  string id = 2;
+}
+
+message CsvImportRequest {
+  bytes content = 1;
+  string filename = 2;
+}
+
+message ImportReply {
+  bool accepted = 1;
+  int32 rows = 2;
+  string procedure = 3;
 }

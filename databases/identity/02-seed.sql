@@ -26,19 +26,36 @@ SELECT '00000000-0000-0000-0000-000000000202', id
 FROM permissions
 WHERE code IN ('catalog.read', 'playback.use', 'catalog.manage');
 
+INSERT INTO role_permissions
+SELECT '00000000-0000-0000-0000-000000000203', id
+FROM permissions
+WHERE code IN ('catalog.read', 'playback.use', 'catalog.manage');
+
 INSERT INTO users (id, email, password_hash, full_name)
 VALUES
   (
     '00000000-0000-0000-0000-000000000001',
     'admin@ingenieria.usac.edu.gt',
-    '$2b$12$AkINGORtLljZNvqC5JWLKOpw33SeaOOKULvFTshGFLvlPCwkwUyL6',
+    '$2b$12$82ybdPSYbAtXYTkZQZXxg.MpFDJb1R9wwce8eLPXNCV2j9Ws4sGM2',
     'Administración YoUSAC'
   ),
   (
     '00000000-0000-0000-0000-000000000002',
     'estudiante@ing.usac.edu.gt',
-    '$2b$12$AkINGORtLljZNvqC5JWLKOpw33SeaOOKULvFTshGFLvlPCwkwUyL6',
+    '$2b$12$82ybdPSYbAtXYTkZQZXxg.MpFDJb1R9wwce8eLPXNCV2j9Ws4sGM2',
     'Estudiante Demo'
+  ),
+  (
+    '00000000-0000-0000-0000-000000000003',
+    'docente@ingenieria.usac.edu.gt',
+    '$2b$12$82ybdPSYbAtXYTkZQZXxg.MpFDJb1R9wwce8eLPXNCV2j9Ws4sGM2',
+    'Docente Demo'
+  ),
+  (
+    '00000000-0000-0000-0000-000000000004',
+    'auxiliar@ing.usac.edu.gt',
+    '$2b$12$82ybdPSYbAtXYTkZQZXxg.MpFDJb1R9wwce8eLPXNCV2j9Ws4sGM2',
+    'Auxiliar Demo'
   );
 
 INSERT INTO user_roles (user_id, role_id, assigned_by)
@@ -51,5 +68,15 @@ VALUES
   (
     '00000000-0000-0000-0000-000000000002',
     '00000000-0000-0000-0000-000000000201',
+    '00000000-0000-0000-0000-000000000001'
+  ),
+  (
+    '00000000-0000-0000-0000-000000000003',
+    '00000000-0000-0000-0000-000000000202',
+    '00000000-0000-0000-0000-000000000001'
+  ),
+  (
+    '00000000-0000-0000-0000-000000000004',
+    '00000000-0000-0000-0000-000000000203',
     '00000000-0000-0000-0000-000000000001'
   );

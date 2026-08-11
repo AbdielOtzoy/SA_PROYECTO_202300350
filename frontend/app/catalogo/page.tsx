@@ -15,11 +15,25 @@ type Recording = {
   school: string;
   semester: string;
   topic: string;
+  professor?: string;
   recommendation: number;
 };
 type HistoryItem = { recording_id: string; last_position_seconds: number };
-type CatalogResponse = { recordings: Recording[] };
+type CatalogResponse = {
+  recordings: Recording[];
+  page?: number;
+  page_size?: number;
+  total?: number;
+  total_pages?: number;
+};
+type OptionResponse = {
+  schools: { schools: { id: string; name: string; code: string }[] };
+  courses: { courses: { id: string; name: string; code: string }[] };
+  semesters: { semesters: { id: string; year: number; term: number }[] };
+  professors: { professors: { id: string; full_name: string; email: string }[] };
+};
 type HistoryResponse = { items: HistoryItem[] };
+
 const format = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 
 export default function Catalog() {
@@ -27,27 +41,43 @@ export default function Catalog() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [durations, setDurations] = useState<Record<string, number>>({});
   const [q, setQ] = useState('');
+  const [school, setSchool] = useState('');
+  const [course, setCourse] = useState('');
+  const [semester, setSemester] = useState('');
+  const [professor, setProfessor] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [options, setOptions] = useState<OptionResponse | null>(null);
   const [error, setError] = useState('');
 
-  async function load(query = q) {
+  async function load(
+    nextPage = 1,
+    overrides: Partial<Record<'q' | 'school' | 'course' | 'semester' | 'professor', string>> = {},
+  ) {
+    const filters = { q, school, course, semester, professor, ...overrides };
     try {
       setError('');
-      const params = new URLSearchParams();
-      if (query.trim()) params.set('q', query.trim());
+      const params = new URLSearchParams({ page: String(nextPage), page_size: '10' });
+      Object.entries(filters).forEach(([key, value]) => value.trim() && params.set(key, value.trim()));
       const [catalog, playbackHistory] = await Promise.all([
         request<CatalogResponse>(`/catalog?${params}`),
         request<HistoryResponse>('/history'),
       ]);
-      setItems(catalog.recordings);
-      setHistory(playbackHistory.items);
+      setItems(catalog.recordings || []);
+      setHistory(playbackHistory.items || []);
+      setPage(catalog.page || nextPage);
+      setTotalPages(catalog.total_pages || 0);
+      setTotal(catalog.total || 0);
     } catch (cause: unknown) {
       setError(`Inicia sesión para consultar los videos. ${errorMessage(cause)}`);
     }
   }
 
   useEffect(() => {
-    void load();
+    void Promise.all([request<OptionResponse>('/catalog/options').then(setOptions), load(1)]).catch(() => undefined);
   }, []);
+
   useEffect(() => {
     const missing = items.filter((item) => durations[item.id] === undefined);
     missing.forEach((item) => {
@@ -81,18 +111,82 @@ export default function Catalog() {
             placeholder="Busca por curso o tema..."
             value={q}
             onChange={(event) => setQ(event.target.value)}
-            onKeyDown={(event) => event.key === 'Enter' && void load()}
+            onKeyDown={(event) => event.key === 'Enter' && void load(1)}
           />
-          <button className="button" onClick={() => void load()}>
+          <button className="button" onClick={() => void load(1)}>
             Buscar
           </button>
+        </div>
+        <div className="filter-row">
+          <select
+            className="field"
+            value={semester}
+            onChange={(event) => {
+              setSemester(event.target.value);
+              void load(1, { semester: event.target.value });
+            }}
+          >
+            <option value="">Todos los semestres</option>
+            {options?.semesters.semesters.map((value) => (
+              <option key={value.id} value={`${value.year}-${value.term}`}>
+                {value.year} · {value.term}° semestre
+              </option>
+            ))}
+          </select>
+          <select
+            className="field"
+            value={school}
+            onChange={(event) => {
+              setSchool(event.target.value);
+              void load(1, { school: event.target.value });
+            }}
+          >
+            <option value="">Todas las escuelas</option>
+            {options?.schools.schools.map((value) => (
+              <option key={value.id} value={value.name}>
+                {value.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="field"
+            value={course}
+            onChange={(event) => {
+              setCourse(event.target.value);
+              void load(1, { course: event.target.value });
+            }}
+          >
+            <option value="">Todos los cursos</option>
+            {options?.courses.courses.map((value) => (
+              <option key={value.id} value={value.code}>
+                {value.code} · {value.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="field"
+            value={professor}
+            onChange={(event) => {
+              setProfessor(event.target.value);
+              void load(1, { professor: event.target.value });
+            }}
+          >
+            <option value="">Todos los docentes</option>
+            {options?.professors.professors.map((value) => (
+              <option key={value.id} value={value.full_name}>
+                {value.full_name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       {error && <p className="notice">{error}</p>}
       <section>
         <div className="catalog-section-head">
           <h2>Todos los videos</h2>
-          <span>{items.length} resultados</span>
+          <span>
+            {items.length} de {total} resultados · máximo 10 por página
+          </span>
         </div>
         <div className="recordings-grid">
           {items.map((recording) => (
@@ -101,13 +195,28 @@ export default function Catalog() {
               <h3>{recording.title}</h3>
               <span className="course-link">{recording.course}</span>
               <div className="recording-meta">
-                <span>{recording.topic || 'Clase grabada'}</span>
+                <span>{recording.professor || recording.topic || 'Clase grabada'}</span>
                 <span>{durations[recording.id] ? format(durations[recording.id]) : '—'}</span>
               </div>
             </Link>
           ))}
         </div>
         {!items.length && !error && <p className="muted">No encontramos videos con esos filtros.</p>}
+        {totalPages > 0 && (
+          <nav className="pagination" aria-label="Paginación del catálogo">
+            <button className="button alt" disabled={page <= 1} onClick={() => void load(page - 1)}>
+              Anterior
+            </button>
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map((value) => (
+              <button key={value} className={`button ${value === page ? '' : 'alt'}`} onClick={() => void load(value)}>
+                {value}
+              </button>
+            ))}
+            <button className="button alt" disabled={page >= totalPages} onClick={() => void load(page + 1)}>
+              Siguiente
+            </button>
+          </nav>
+        )}
       </section>
       {continuing && recent && (
         <section className="continue-section">
