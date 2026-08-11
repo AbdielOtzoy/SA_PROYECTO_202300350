@@ -1,0 +1,13 @@
+recording_id,title,course_code,semester_year,semester_term,lecture_date,unit,topic,video_path,is_published,professor_emails,assistant_emails
+10000000-0000-0000-0000-000000000001,Práctica 3 - Introducción,SA,2026,2,2026-08-01,Unidad 1,Administración,sample.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000002,Práctica 3 - Catálogo,SA,2026,2,2026-08-02,Unidad 1,Catálogos,sample2.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000003,Práctica 3 - CSV,SA,2026,2,2026-08-03,Unidad 2,Ingesta,sample3.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000004,Práctica 3 - RBAC,SA,2026,2,2026-08-04,Unidad 2,Seguridad,sample4.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000005,Práctica 3 - Paginación,SA,2026,2,2026-08-05,Unidad 2,Paginación,sample5.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000006,Práctica 3 - Filtros,SA,2026,2,2026-08-06,Unidad 3,Filtros,sample.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000007,Práctica 3 - Transacciones,SA,2026,2,2026-08-07,Unidad 3,Transacciones,sample2.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000008,Práctica 3 - Stored Procedures,SA,2026,2,2026-08-08,Unidad 3,Stored Procedures,sample3.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000009,Práctica 3 - Escuela,SA,2026,2,2026-08-09,Unidad 4,Escuelas,sample4.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000010,Práctica 3 - Cursos,SA,2026,2,2026-08-10,Unidad 4,Cursos,sample5.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000011,Práctica 3 - Docentes,SA,2026,2,2026-08-11,Unidad 4,Docentes,sample.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+10000000-0000-0000-0000-000000000012,Práctica 3 - Inscripciones,SA,2026,2,2026-08-12,Unidad 5,Inscripciones,sample2.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt

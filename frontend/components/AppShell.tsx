@@ -1,23 +1,38 @@
 'use client';
+
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Icon } from './Icon';
+import { useEffect, useMemo, useState } from 'react';
+import { Icon, type IconName } from './Icon';
 import { request, type SessionResponse, type SessionUser } from './api';
 
-const study = [
-  ['/catalogo', 'Explorar videos', 'video'],
-  ['/historial', 'Continuar viendo', 'history'],
-  ['/cursos', 'Mis cursos', 'book'],
-  ['/configuracion', 'Configuración', 'settings'],
-] as const;
-const control = [
-  ['/admin', 'Resumen', 'grid'],
-  ['/admin', 'Usuarios y roles', 'users'],
-  ['/admin', 'Contenido', 'video'],
-  ['/admin', 'Importaciones CSV', 'upload'],
-  ['/admin', 'Auditoría', 'audit'],
-] as const;
+type NavLink = { href: string; label: string; icon: IconName };
+
+const studyLinks: NavLink[] = [
+  { href: '/catalogo', label: 'Explorar videos', icon: 'video' },
+  { href: '/historial', label: 'Continuar viendo', icon: 'history' },
+  { href: '/cursos', label: 'Mis cursos', icon: 'book' },
+  { href: '/configuracion', label: 'Configuración', icon: 'settings' },
+];
+const adminLinks: NavLink[] = [
+  { href: '/admin', label: 'Resumen', icon: 'grid' },
+  { href: '/admin/usuarios-roles', label: 'Usuarios y roles', icon: 'users' },
+  { href: '/admin/contenido', label: 'Configuración académica', icon: 'settings' },
+  { href: '/admin/importaciones', label: 'Importaciones CSV', icon: 'upload' },
+];
+const adminSystemLinks: NavLink[] = [
+  { href: '/admin/exportaciones', label: 'Exportaciones', icon: 'database' },
+  { href: '/admin/auditoria', label: 'Auditoría', icon: 'audit' },
+];
+const staffImportLink: NavLink = { href: '/admin/importaciones', label: 'Gestionar grabaciones', icon: 'upload' };
+
+const roleLabels: Record<string, string> = {
+  admin: 'Administrador',
+  teacher: 'Docente',
+  assistant: 'Auxiliar',
+  student: 'Estudiante',
+};
+
 function initials(name: string) {
   return (
     name
@@ -37,7 +52,6 @@ export function AppShell({ children, admin = false }: { children: React.ReactNod
   const [topbarProfileOpen, setTopbarProfileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [profile, setProfile] = useState<SessionUser | null>(null);
-  const links = admin ? control : study;
 
   useEffect(() => {
     request<SessionResponse>('/session')
@@ -45,12 +59,28 @@ export function AppShell({ children, admin = false }: { children: React.ReactNod
       .catch(() => undefined);
   }, []);
 
-  const isActive = (href: string, label: string) => {
-    if (pathname === '/catalogo') return label === 'Explorar videos';
-    if (pathname === '/admin') return label === 'Resumen';
-    if (pathname.startsWith('/reproductor')) return label === 'Explorar videos';
-    return pathname === href;
-  };
+  const isAdminProfile = profile?.roles.includes('admin') === true;
+  const isTeacher = profile?.roles.includes('teacher') === true;
+  const isAssistant = profile?.roles.includes('assistant') === true;
+  const staffHome = isTeacher ? '/docente' : isAssistant ? '/auxiliar' : '';
+  const staffLabel = isTeacher ? 'Área docente' : isAssistant ? 'Área auxiliar' : '';
+
+  const groups = useMemo(() => {
+    if (admin) {
+      return isAdminProfile
+        ? [{ links: adminLinks }, { title: 'SISTEMA', links: adminSystemLinks }]
+        : [{ links: [staffImportLink] }];
+    }
+
+    const roleLinks: NavLink[] = [];
+    if (staffHome && staffLabel) roleLinks.push({ href: staffHome, label: staffLabel, icon: 'book' });
+    if (isAdminProfile) roleLinks.push({ href: '/admin', label: 'Panel administrativo', icon: 'grid' });
+    if (isTeacher || isAssistant) roleLinks.push(staffImportLink);
+    return [{ links: [...studyLinks, ...roleLinks] }];
+  }, [admin, isAdminProfile, isAssistant, isTeacher, staffHome, staffLabel]);
+
+  const isActive = (href: string) =>
+    href === '/admin' ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 
   async function logout() {
     setLoggingOut(true);
@@ -62,31 +92,36 @@ export function AppShell({ children, admin = false }: { children: React.ReactNod
     }
   }
 
-  const displayName = admin ? 'Administración' : profile?.full_name || profile?.fullName || 'Usuario';
-  const displayRole = admin ? 'Administrador' : 'Estudiante';
-  const displayInitials = admin ? 'AD' : initials(profile?.full_name || profile?.fullName || 'Usuario');
+  const displayName = profile?.full_name || profile?.fullName || (admin ? 'Administración' : 'Usuario');
+  const displayRole =
+    profile?.roles?.map((role) => roleLabels[role] || role).join(' · ') ||
+    (admin ? 'Panel administrativo' : 'Estudiante');
+  const displayInitials = initials(displayName);
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <Link href={admin ? '/admin' : '/catalogo'} className="side-brand">
+        <Link
+          href={admin ? (isAdminProfile ? '/admin' : '/admin/importaciones') : staffHome || '/catalogo'}
+          className="side-brand"
+        >
           yoUSAC
         </Link>
-        <p className="side-kicker">{admin ? 'CENTRO DE CONTROL' : 'ÁREA DE ESTUDIO'}</p>
+        <p className="side-kicker">
+          {admin ? 'CENTRO DE CONTROL' : isTeacher || isAssistant ? 'ÁREA ACADÉMICA' : 'ÁREA DE ESTUDIO'}
+        </p>
         <nav className="side-nav">
-          {links.slice(0, 4).map(([href, label, icon]) => (
-            <Link key={label} href={href} className={isActive(href, label) ? 'active' : ''}>
-              <Icon name={icon} />
-              {label}
-            </Link>
-          ))}
-          <div className="side-divider" />
-          {admin && <p className="side-section">SISTEMA</p>}
-          {links.slice(4).map(([href, label, icon]) => (
-            <Link key={label} href={href} className={isActive(href, label) ? 'active' : ''}>
-              <Icon name={icon} />
-              {label}
-            </Link>
+          {groups.map((group, index) => (
+            <div className="side-nav-group" key={group.title || `group-${index}`}>
+              {group.title && <p className="side-section">{group.title}</p>}
+              {group.links.map((link) => (
+                <Link key={link.href} href={link.href} className={isActive(link.href) ? 'active' : ''}>
+                  <Icon name={link.icon} />
+                  {link.label}
+                </Link>
+              ))}
+              {index < groups.length - 1 && <div className="side-divider" />}
+            </div>
           ))}
         </nav>
         <div className="side-user-wrap">

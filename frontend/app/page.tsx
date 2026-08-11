@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { errorMessage, request } from '../components/api';
 import { Icon } from '../components/Icon';
+import { Toast } from '../components/Toast';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -14,8 +15,20 @@ export default function Login() {
     e.preventDefault();
     setError('');
     try {
-      await request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
-      router.push('/catalogo');
+      const response = await request<{ user: { roles: string[] } }>('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      const roles = response.user.roles || [];
+      router.replace(
+        roles.includes('admin')
+          ? '/admin'
+          : roles.includes('teacher')
+            ? '/docente'
+            : roles.includes('assistant')
+              ? '/auxiliar'
+              : '/catalogo',
+      );
     } catch (err: unknown) {
       setError(errorMessage(err));
     }
@@ -81,7 +94,6 @@ export default function Login() {
           <button className="button full" type="submit">
             Iniciar sesión
           </button>
-          {error && <p className="notice">{error}</p>}
           <div className="or">o</div>
           <button className="oauth" type="button" onClick={() => window.location.assign('/api/auth/google')}>
             <Icon name="shield" color="#0969ff" />
@@ -93,6 +105,7 @@ export default function Login() {
         </p>
         <p className="login-domains">Solo se admiten correos @ingenieria.usac.edu.gt y @ing.usac.edu.gt.</p>
       </section>
+      {error && <Toast message={error} variant="error" onClose={() => setError('')} />}
     </main>
   );
 }

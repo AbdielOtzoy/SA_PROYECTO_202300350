@@ -40,6 +40,7 @@ export interface UserMessage {
   fullName: string;
   roles: string[];
   permissions: string[];
+  isActive: boolean;
 }
 
 export interface AuthReply {
@@ -64,4 +65,8 @@ export interface EnrollmentsReply {
 }
 export interface RoleReply {
   user: UserMessage;
+}
+
+export interface UsersReply {
+  users: UserMessage[];
 }

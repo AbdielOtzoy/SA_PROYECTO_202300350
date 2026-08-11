@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
+import { basename } from 'node:path';
 
 const requiredFiles = [
   'proto/identity.proto',
@@ -8,11 +9,28 @@ const requiredFiles = [
   'proto/analytics.proto',
   'proto/notifications.proto',
   'docker-compose.local.yml',
-  'videos/sample.mp4',
+  'tests/fixtures/csv/recordings-samples.csv',
+  ...['sample.mp4', ...Array.from({ length: 11 }, (_, index) => `sample${index + 2}.mp4`)].map(
+    (file) => `videos/${file}`,
+  ),
 ];
 
 for (const file of requiredFiles) {
   assert.ok(existsSync(file), `Falta ${file}`);
+}
+
+for (const fixture of [
+  'tests/fixtures/csv/recordings.csv',
+  'tests/fixtures/csv/recordings-extra.csv',
+  'tests/fixtures/csv/recordings-samples.csv',
+]) {
+  const [header, ...rows] = readFileSync(fixture, 'utf8').trim().split(/\r?\n/);
+  const videoColumn = header.split(',').indexOf('video_path');
+  assert.ok(videoColumn >= 0, `Falta video_path en ${fixture}`);
+  for (const row of rows) {
+    const videoFile = basename(row.split(',')[videoColumn] || '');
+    assert.ok(existsSync(`videos/${videoFile}`), `Falta videos/${videoFile} usado por ${fixture}`);
+  }
 }
 
 const compose = readFileSync('docker-compose.local.yml', 'utf8');

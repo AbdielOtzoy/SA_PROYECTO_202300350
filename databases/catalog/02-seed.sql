@@ -105,3 +105,35 @@ VALUES
     '00000000-0000-0000-0000-000000000304',
     true
   );
+
+INSERT INTO professors (id, full_name, email)
+VALUES
+  (
+    '00000000-0000-0000-0000-000000000401',
+    'Docente Demo',
+    'docente@ingenieria.usac.edu.gt'
+  ),
+  (
+    '00000000-0000-0000-0000-000000000402',
+    'Auxiliar Demo',
+    'auxiliar@ing.usac.edu.gt'
+  );
+
+INSERT INTO course_staff (course_id, professor_id, role_type, assigned_by_email)
+VALUES
+  (
+    '00000000-0000-0000-0000-000000000302',
+    '00000000-0000-0000-0000-000000000401',
+    'professor',
+    'admin@ingenieria.usac.edu.gt'
+  ),
+  (
+    '00000000-0000-0000-0000-000000000302',
+    '00000000-0000-0000-0000-000000000402',
+    'assistant',
+    'admin@ingenieria.usac.edu.gt'
+  );
+
+INSERT INTO recording_professors (recording_id, professor_id, role_type)
+SELECT id, '00000000-0000-0000-0000-000000000401', 'professor'
+FROM recordings;

@@ -39,10 +39,10 @@ CREATE TABLE user_roles (
 CREATE TABLE user_enrollments (
   user_id uuid REFERENCES users(id),
   course_id uuid NOT NULL,
-  semester_id uuid,
+  semester_id uuid NOT NULL,
   status varchar(20) NOT NULL,
   credentials varchar(50),
-  PRIMARY KEY (user_id, course_id)
+  PRIMARY KEY (user_id, course_id, semester_id)
 );
 
 CREATE TABLE credential_audit_log (

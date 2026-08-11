@@ -9,6 +9,8 @@ service IdentityService {
   rpc GetSession(SessionRequest) returns (SessionReply);
   rpc ListEnrollments(EnrollmentsRequest) returns (EnrollmentsReply);
   rpc ChangeRole(ChangeRoleRequest) returns (RoleReply);
+  rpc ListUsers(UsersRequest) returns (UsersReply);
+  rpc ImportEnrollmentsCsv(CsvImportRequest) returns (ImportReply);
 }
 
 message RegisterRequest {
@@ -48,6 +50,7 @@ message User {
   string full_name = 3;
   repeated string roles = 4;
   repeated string permissions = 5;
+  bool is_active = 6;
 }
 
 message EnrollmentsRequest {
@@ -77,4 +80,21 @@ message ChangeRoleRequest {
 
 message RoleReply {
   User user = 1;
+}
+
+message UsersRequest {}
+
+message UsersReply {
+  repeated User users = 1;
+}
+
+message CsvImportRequest {
+  bytes content = 1;
+  string filename = 2;
+}
+
+message ImportReply {
+  bool accepted = 1;
+  int32 rows = 2;
+  string procedure = 3;
 }

@@ -1,0 +1,8 @@
+recording_id,title,course_code,semester_year,semester_term,lecture_date,unit,topic,video_path,is_published,professor_emails,assistant_emails
+00000000-0000-0000-0000-000000000061,Sample · Clase 06,SA,2026,2,2026-08-13,Unidad 5,Video sample 06,sample6.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+00000000-0000-0000-0000-000000000062,Sample · Clase 07,SA,2026,2,2026-08-14,Unidad 5,Video sample 07,sample7.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+00000000-0000-0000-0000-000000000063,Sample · Clase 08,SA,2026,2,2026-08-15,Unidad 5,Video sample 08,sample8.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+00000000-0000-0000-0000-000000000064,Sample · Clase 09,SA,2026,2,2026-08-16,Unidad 6,Video sample 09,sample9.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+00000000-0000-0000-0000-000000000065,Sample · Clase 10,SA,2026,2,2026-08-17,Unidad 6,Video sample 10,sample10.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+00000000-0000-0000-0000-000000000066,Sample · Clase 11,SA,2026,2,2026-08-18,Unidad 6,Video sample 11,sample11.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt
+00000000-0000-0000-0000-000000000067,Sample · Clase 12,SA,2026,2,2026-08-19,Unidad 6,Video sample 12,sample12.mp4,true,docente@ingenieria.usac.edu.gt,auxiliar@ing.usac.edu.gt

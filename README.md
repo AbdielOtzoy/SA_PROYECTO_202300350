@@ -15,3 +15,4 @@ Repositorio para el proyecto del laboratorio de software avanzado
 - [Modelo entidad-relación](docs/base-de-datos/modelo-entidad-relacion.md)
 - [Mockups UI/UX](docs/mockups/README.md)
 - [Implementación v0.2.0 y guía de ejecución](docs/implementacion-v0.2.0.md)
+- [Informe técnico de la Práctica 3](docs/practica-3.md)

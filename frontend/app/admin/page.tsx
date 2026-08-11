@@ -1,142 +1,144 @@
 'use client';
-import { useState } from 'react';
-import { AppShell } from '../../components/AppShell';
-import { errorMessage, request } from '../../components/api';
-import { Icon } from '../../components/Icon';
-const users = [
-  ['Ana Morales', 'Estudiante', 'Activo'],
-  ['Carlos Pérez', 'Docente · Auxiliar', 'Activo'],
-  ['María López', 'Estudiante', 'Pendiente'],
-  ['Diego Ruiz', 'Administrador', 'Activo'],
-];
-type AdminUser = { name: string; roles: string; state: 'Activo' | 'Pendiente' };
-type Metric = { label: string; value: string; change: string; color: string };
-type RoleResponse = { user: { roles: string[] } };
 
-const adminUsers: AdminUser[] = users.map(([name, roles, state]) => ({
-  name,
-  roles,
-  state: state as AdminUser['state'],
-}));
-const metrics: Metric[] = [
-  { label: 'Usuarios activos', value: '1,248', change: '▲ 8.4%', color: '' },
-  { label: 'Grabaciones publicadas', value: '386', change: '▲ 12.1%', color: '' },
-  { label: 'Cursos registrados', value: '74', change: '— 0.0%', color: 'muted' },
-  { label: 'Disponibilidad', value: '99.97%', change: '▲ 0.2%', color: 'green' },
-];
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { AppShell } from '../../components/AppShell';
+import { errorMessage, request, type SessionResponse, type SessionUser } from '../../components/api';
+import { Icon } from '../../components/Icon';
+import { Toast, type ToastVariant } from '../../components/Toast';
+import type { Course, ListResponse, Professor, School, Staff } from '../../components/admin/types';
+
+type ToastState = { message: string; variant: ToastVariant };
+
 export default function Admin() {
-  const [userId, setUserId] = useState('00000000-0000-0000-0000-000000000002');
-  const [role, setRole] = useState('teacher');
-  const [message, setMessage] = useState('');
-  async function update(assign: boolean) {
-    try {
-      const data = await request<RoleResponse>('/admin/users/' + userId + '/roles', {
-        method: 'PUT',
-        body: JSON.stringify({ role, assign }),
-      });
-      setMessage(`Roles actuales: ${data.user.roles.join(', ')}`);
-    } catch (cause: unknown) {
-      setMessage(errorMessage(cause));
-    }
+  const [profile, setProfile] = useState<SessionUser | null>(null);
+  const [counts, setCounts] = useState({ schools: 0, courses: 0, professors: 0, staff: 0 });
+  const [toast, setToast] = useState<ToastState | null>(null);
+
+  useEffect(() => {
+    request<SessionResponse>('/session')
+      .then((data) => setProfile(data.user))
+      .catch((cause: unknown) => setToast({ message: errorMessage(cause), variant: 'error' }));
+  }, []);
+
+  useEffect(() => {
+    if (!profile?.roles.includes('admin')) return;
+    Promise.all([
+      request<ListResponse<School>>('/admin/schools'),
+      request<ListResponse<Course>>('/admin/courses'),
+      request<ListResponse<Professor>>('/admin/professors'),
+      request<{ assignments: Staff[] }>('/admin/course-staff'),
+    ])
+      .then(([schools, courses, professors, staff]) =>
+        setCounts({
+          schools: schools.schools?.length || 0,
+          courses: courses.courses?.length || 0,
+          professors: professors.professors?.length || 0,
+          staff: staff.assignments?.length || 0,
+        }),
+      )
+      .catch((cause: unknown) => setToast({ message: errorMessage(cause), variant: 'error' }));
+  }, [profile]);
+
+  if (!profile) {
+    return (
+      <AppShell admin>
+        <p className="notice">Validando permisos del panel…</p>
+      </AppShell>
+    );
   }
+
+  if (!profile.roles.includes('admin')) {
+    return (
+      <AppShell admin>
+        <p className="notice">403 · Solo un administrador puede consultar este resumen.</p>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell admin>
       <section className="page-heading">
-        <p className="eyebrow">ADMINISTRACIÓN</p>
-        <h1>Resumen de la plataforma</h1>
-        <p>Supervisa accesos, contenido y asignaciones académicas.</p>
+        <p className="eyebrow">CENTRO DE CONTROL</p>
+        <h1>Administración académica</h1>
+        <p>Un espacio separado para consultar el estado y acceder a cada módulo de gestión.</p>
       </section>
+
       <section className="metrics-grid">
-        {metrics.map(({ label, value, change, color }) => (
-          <article className="metric panel" key={label}>
-            <p>{label}</p>
-            <strong>{value}</strong>
-            <small className={color}>{change}</small>
-          </article>
-        ))}
+        <Metric label="Escuelas" value={counts.schools} description="Catálogo activo" />
+        <Metric label="Cursos" value={counts.courses} description="Catálogo académico" />
+        <Metric label="Docentes" value={counts.professors} description="Roles asignables" />
+        <Metric label="Asignaciones" value={counts.staff} description="Curso · docente" />
       </section>
-      <section className="admin-content">
-        <article className="roles-panel panel">
-          <h2>Usuarios y roles</h2>
-          <p>Las cuentas pueden acumular permisos de varios roles.</p>
-          <div className="roles-tools">
-            <div className="roles-search">
-              <Icon name="search" />
-              <input placeholder="Buscar usuario..." />
-            </div>
-            <button className="button">
-              <Icon name="userAdd" />
-              Asignar roles
-            </button>
-          </div>
-          <table className="roles-table">
-            <thead>
-              <tr>
-                <th>Usuario</th>
-                <th>Roles acumulados</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {adminUsers.map(({ name, roles, state }) => (
-                <tr key={name}>
-                  <td>{name}</td>
-                  <td>{roles}</td>
-                  <td>
-                    <span className={`badge ${state === 'Activo' ? 'green' : 'yellow'}`}>{state}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <form
-            className="role-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              update(true);
-            }}
-          >
-            <label className="form-label">UUID de usuario</label>
-            <input className="field" value={userId} onChange={(e) => setUserId(e.target.value)} />
-            <label className="form-label">Rol</label>
-            <select className="field" value={role} onChange={(e) => setRole(e.target.value)}>
-              {['student', 'teacher', 'assistant', 'admin'].map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
-            <div>
-              <button className="button">Asignar</button>
-              <button type="button" className="button alt" onClick={() => update(false)} style={{ marginLeft: 12 }}>
-                Revocar
-              </button>
-            </div>
-            {message && <p className="form-message">{message}</p>}
-          </form>
-        </article>
-        <aside className="admin-side">
-          <article className="import-card panel">
-            <Icon name="upload" size={34} />
-            <h2>Importar datos</h2>
-            <p>Carga catálogo, grabaciones o inscripciones mediante CSV.</p>
-            <button className="button">Abrir importador</button>
-          </article>
-          <article className="activity-card panel">
-            <h2>Actividad reciente</h2>
-            <div className="activity">
-              <Icon name="shield" />
-              <p>
-                Rol actualizado · Ana Morales<small>hace 12 min</small>
-              </p>
-            </div>
-            <div className="activity">
-              <Icon name="database" />
-              <p>
-                CSV de catálogo procesado<small>hace 38 min</small>
-              </p>
-            </div>
-          </article>
-        </aside>
+
+      <section className="admin-shortcuts">
+        <AdminShortcut
+          href="/admin/contenido"
+          title="Configuración académica"
+          description="Semestres, escuelas, cursos, docentes y asignaciones."
+          icon="settings"
+        />
+        <AdminShortcut
+          href="/admin/usuarios-roles"
+          title="Usuarios y roles"
+          description="Consulta cuentas y administra roles autorizados."
+          icon="users"
+        />
+        <AdminShortcut
+          href="/admin/importaciones"
+          title="Importaciones CSV"
+          description="Carga catálogos, grabaciones e inscripciones con rollback."
+          icon="upload"
+        />
+        <AdminShortcut
+          href="/admin/exportaciones"
+          title="Exportaciones"
+          description="Descarga respaldos CSV de la información académica."
+          icon="database"
+        />
+        <AdminShortcut
+          href="/admin/auditoria"
+          title="Auditoría"
+          description="Consulta la actividad de reproducción más relevante."
+          icon="audit"
+        />
       </section>
+      {toast && <Toast message={toast.message} variant={toast.variant} onClose={() => setToast(null)} />}
     </AppShell>
+  );
+}
+
+function Metric({ label, value, description }: { label: string; value: number; description: string }) {
+  return (
+    <article className="metric panel">
+      <p>{label}</p>
+      <strong>{value}</strong>
+      <small>{description}</small>
+    </article>
+  );
+}
+
+function AdminShortcut({
+  href,
+  title,
+  description,
+  icon,
+}: {
+  href: string;
+  title: string;
+  description: string;
+  icon: 'video' | 'users' | 'upload' | 'database' | 'audit' | 'settings';
+}) {
+  return (
+    <Link href={href} className="admin-shortcut panel">
+      <span className="admin-shortcut-icon">
+        <Icon name={icon} />
+      </span>
+      <span>
+        <strong>{title}</strong>
+        <small>{description}</small>
+      </span>
+      <span className="admin-shortcut-arrow">→</span>
+    </Link>
   );
 }

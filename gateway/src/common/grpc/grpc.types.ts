@@ -23,6 +23,8 @@ export interface UserMessage {
   fullName?: string;
   roles: string[];
   permissions: string[];
+  is_active?: boolean;
+  isActive?: boolean;
 }
 
 export interface AuthReply {
@@ -44,10 +46,17 @@ export interface RecordingMessage {
   video_path?: string;
   videoPath?: string;
   recommendation: number;
+  professor?: string;
 }
 
 export interface ListRecordingsReply {
   recordings: RecordingMessage[];
+  page?: number;
+  page_size?: number;
+  pageSize?: number;
+  total?: number;
+  total_pages?: number;
+  totalPages?: number;
 }
 
 export interface RecordingReply {

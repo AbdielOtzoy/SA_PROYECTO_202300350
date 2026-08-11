@@ -46,4 +46,20 @@ export class IdentityController {
     const claims = this.auth.verify(metadata);
     return this.identity.changeRole(data, claims.roles?.includes('admin') === true);
   }
+
+  @GrpcMethod('IdentityService', 'ListUsers')
+  users(_: unknown, metadata: Metadata) {
+    const claims = this.auth.verify(metadata);
+    return this.identity.users(claims.roles?.includes('admin') === true);
+  }
+
+  @GrpcMethod('IdentityService', 'ImportEnrollmentsCsv')
+  importEnrollments(data: { content?: Buffer; filename?: string }, metadata: Metadata) {
+    const claims = this.auth.verify(metadata);
+    return this.identity.importEnrollments(
+      Buffer.from(data?.content || ''),
+      data?.filename || '',
+      claims.roles?.includes('admin') === true,
+    );
+  }
 }
