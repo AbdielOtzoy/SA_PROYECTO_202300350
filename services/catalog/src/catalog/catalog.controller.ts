@@ -59,7 +59,11 @@ export class CatalogController {
 
   @GrpcMethod('CatalogService', 'ListRecordings')
   list(data: ListRequest, metadata: Metadata) {
-    this.auth.verify(metadata);
+    const claims = this.auth.verify(metadata);
+    const requestedUser = data?.user_id || data?.userId || '';
+    if (requestedUser && requestedUser !== String(claims.sub || '') && !claims.roles?.includes('admin')) {
+      this.auth.denied('El usuario solicitado no coincide con la sesión');
+    }
     return this.catalog.list(data || {});
   }
 

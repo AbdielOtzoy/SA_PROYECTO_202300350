@@ -7,6 +7,8 @@ export interface ListRequest {
   page_size?: number;
   pageSize?: number;
   professor?: string;
+  user_id?: string;
+  userId?: string;
 }
 
 export interface RecordingRequest {
@@ -40,6 +42,13 @@ export interface RecordingMessage {
   videoPath: string;
   recommendation: number;
   professor: string;
+  courseId?: string;
+  lectureDate?: string;
+  positives?: number;
+  totalVotes?: number;
+  hasUserVote?: boolean;
+  userVote?: boolean;
+  views?: number;
 }
 
 export interface AuthorizationReply {

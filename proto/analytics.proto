@@ -4,7 +4,16 @@ package yousac.analytics.v1;
 
 service AnalyticsService {
   rpc RecordView(ViewRequest) returns (Empty);
+  rpc GetCatalogPage(CatalogPageRequest) returns (CatalogPageReply);
   rpc MostViewed(MostViewedRequest) returns (MostViewedReply);
+  rpc TrendingTopics(TrendingTopicsRequest) returns (TrendingTopicsReply);
+  rpc TopRated(TopRatedRequest) returns (AnalyticsRecordingsReply);
+  rpc ListExamPeriods(Empty) returns (ExamPeriodsReply);
+  rpc UpsertExamPeriod(ExamPeriodRequest) returns (ExamPeriodReply);
+  rpc DeleteExamPeriod(DeleteExamPeriodRequest) returns (Empty);
+  rpc Recommendations(RecommendationsRequest) returns (AnalyticsRecordingsReply);
+  rpc InvalidateCatalogCache(Empty) returns (Empty);
+  rpc InvalidateAnalyticsCache(Empty) returns (Empty);
 }
 
 message ViewRequest {
@@ -14,6 +23,7 @@ message ViewRequest {
 
 message MostViewedRequest {
   string week_start = 1;
+  string week_end = 2;
 }
 
 message MostViewedItem {
@@ -22,7 +32,104 @@ message MostViewedItem {
 }
 
 message MostViewedReply {
-  repeated MostViewedItem items = 1;
+  repeated AnalyticsRecording items = 1;
+}
+
+message CatalogPageRequest {
+  string query = 1;
+  string school = 2;
+  string course = 3;
+  string semester = 4;
+  int32 page = 5;
+  int32 page_size = 6;
+  string professor = 7;
+  string user_id = 8;
+}
+
+message CatalogPageReply {
+  repeated AnalyticsRecording recordings = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  int32 total = 4;
+  int32 total_pages = 5;
+}
+
+message AnalyticsRecording {
+  string recording_id = 1;
+  string title = 2;
+  string course_id = 3;
+  string course = 4;
+  string course_code = 5;
+  string school = 6;
+  string semester = 7;
+  string unit = 8;
+  string topic = 9;
+  string video_path = 10;
+  double recommendation = 11;
+  int32 positives = 12;
+  int32 total_votes = 13;
+  bool has_user_vote = 14;
+  bool user_vote = 15;
+  string professor = 16;
+  int32 views = 17;
+}
+
+message TrendingTopicsRequest {
+  string period_id = 1;
+  string start_at = 2;
+  string end_at = 3;
+  int32 limit = 4;
+  bool active_only = 5;
+}
+
+message TrendingTopic {
+  string topic = 1;
+  int32 views = 2;
+  repeated string recording_ids = 3;
+}
+
+message TrendingTopicsReply {
+  repeated TrendingTopic items = 1;
+  string period_id = 2;
+  string start_at = 3;
+  string end_at = 4;
+}
+
+message TopRatedRequest {
+  int32 limit = 1;
+}
+
+message ExamPeriod {
+  string id = 1;
+  string name = 2;
+  string start_at = 3;
+  string end_at = 4;
+  bool active = 5;
+}
+
+message ExamPeriodsReply {
+  repeated ExamPeriod items = 1;
+}
+
+message ExamPeriodRequest {
+  ExamPeriod period = 1;
+}
+
+message ExamPeriodReply {
+  ExamPeriod period = 1;
+}
+
+message DeleteExamPeriodRequest {
+  string id = 1;
+}
+
+message RecommendationsRequest {
+  string user_id = 1;
+  int32 limit = 2;
+}
+
+message AnalyticsRecordingsReply {
+  repeated AnalyticsRecording items = 1;
 }
 
 message Empty {}

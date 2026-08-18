@@ -102,9 +102,24 @@ export class CatalogRepository {
     const pageSize = Math.min(10, Math.max(1, Math.floor(Number(input.page_size ?? input.pageSize ?? 10))));
     const offset = (page - 1) * pageSize;
     const result = await this.pool.query<RecordingRow & { total_count: number }>(
-      `WITH filtered AS (
-         SELECT published_catalog.*, COUNT(*) OVER()::int AS total_count
+      `WITH rating_stats AS (
+         SELECT recording_id,
+                COUNT(*) FILTER (WHERE vote)::int AS positives,
+                COUNT(*)::int AS total_votes
+           FROM ratings
+          GROUP BY recording_id
+       ), filtered AS (
+         SELECT published_catalog.*,
+                COALESCE(rating_stats.positives, 0)::int AS positives,
+                COALESCE(rating_stats.total_votes, 0)::int AS total_votes,
+                user_rating.vote AS user_vote,
+                (user_rating.vote IS NOT NULL) AS has_user_vote,
+                COUNT(*) OVER()::int AS total_count
            FROM published_catalog
+           LEFT JOIN rating_stats ON rating_stats.recording_id = published_catalog.id
+           LEFT JOIN ratings user_rating
+             ON user_rating.recording_id = published_catalog.id
+            AND user_rating.user_id = NULLIF($6, '')::uuid
           WHERE ($1 = '' OR title ILIKE '%' || $1 || '%'
                       OR topic ILIKE '%' || $1 || '%'
                       OR course ILIKE '%' || $1 || '%'
@@ -117,13 +132,14 @@ export class CatalogRepository {
        SELECT *
          FROM filtered
         ORDER BY title, id
-        LIMIT $6 OFFSET $7`,
+        LIMIT $7 OFFSET $8`,
       [
         input.query || '',
         input.school || '',
         input.course || '',
         input.semester || '',
         input.professor || '',
+        input.user_id || input.userId || '',
         pageSize,
         offset,
       ],

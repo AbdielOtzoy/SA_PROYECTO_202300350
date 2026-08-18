@@ -33,6 +33,7 @@ message ListRequest {
   int32 page = 5;
   int32 page_size = 6;
   string professor = 7;
+  string user_id = 8;
 }
 
 message RecordingRequest {
@@ -73,6 +74,12 @@ message Recording {
   string video_path = 9;
   double recommendation = 10;
   string professor = 11;
+  string course_id = 12;
+  string lecture_date = 13;
+  int32 positives = 14;
+  int32 total_votes = 15;
+  bool has_user_vote = 16;
+  bool user_vote = 17;
 }
 
 message VoteRequest {

@@ -47,6 +47,46 @@ export interface RecordingMessage {
   videoPath?: string;
   recommendation: number;
   professor?: string;
+  course_id?: string;
+  courseId?: string;
+  lecture_date?: string;
+  lectureDate?: string;
+  positives?: number;
+  total_votes?: number;
+  totalVotes?: number;
+  has_user_vote?: boolean;
+  hasUserVote?: boolean;
+  user_vote?: boolean;
+  userVote?: boolean;
+  views?: number;
+}
+
+export interface AnalyticsRecordingMessage {
+  recording_id: string;
+  title: string;
+  course_id: string;
+  course: string;
+  course_code: string;
+  school: string;
+  semester: string;
+  unit: string;
+  topic: string;
+  video_path: string;
+  recommendation: number;
+  positives: number;
+  total_votes: number;
+  has_user_vote: boolean;
+  user_vote: boolean;
+  professor: string;
+  views: number;
+}
+
+export interface AnalyticsCatalogPageReply {
+  recordings: AnalyticsRecordingMessage[];
+  page: number;
+  page_size: number;
+  total: number;
+  total_pages: number;
 }
 
 export interface ListRecordingsReply {

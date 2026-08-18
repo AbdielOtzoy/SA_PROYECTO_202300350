@@ -18,6 +18,8 @@ type Recording = {
   professor?: string;
   recommendation: number;
 };
+type Recommendation = Recording & { id?: string; recording_id?: string; views?: number };
+type Trend = { topic: string; views: number; recording_ids: string[] };
 type HistoryItem = { recording_id: string; last_position_seconds: number };
 type CatalogResponse = {
   recordings: Recording[];
@@ -33,12 +35,16 @@ type OptionResponse = {
   professors: { professors: { id: string; full_name: string; email: string }[] };
 };
 type HistoryResponse = { items: HistoryItem[] };
+type RecommendationResponse = { items: Recommendation[] };
+type TrendResponse = { items: Trend[] };
 
 const format = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 
 export default function Catalog() {
   const [items, setItems] = useState<Recording[]>([]);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [trends, setTrends] = useState<Trend[]>([]);
   const [durations, setDurations] = useState<Record<string, number>>({});
   const [q, setQ] = useState('');
   const [school, setSchool] = useState('');
@@ -64,6 +70,12 @@ export default function Catalog() {
         request<CatalogResponse>(`/catalog?${params}`),
         request<HistoryResponse>('/history'),
       ]);
+      const [recommendationResult, trendResult] = await Promise.allSettled([
+        request<RecommendationResponse>('/analytics/recommendations'),
+        request<TrendResponse>('/analytics/trends/active'),
+      ]);
+      if (recommendationResult.status === 'fulfilled') setRecommendations(recommendationResult.value.items || []);
+      if (trendResult.status === 'fulfilled') setTrends(trendResult.value.items || []);
       setItems(catalog.recordings || []);
       setHistory(playbackHistory.items || []);
       setPage(catalog.page || nextPage);
@@ -181,6 +193,45 @@ export default function Catalog() {
         </div>
       </div>
       {error && <p className="notice">{error}</p>}
+      {trends.length > 0 && (
+        <section className="panel catalog-insights">
+          <div className="catalog-section-head">
+            <h2>Temas en tendencia</h2>
+            <span>Durante el periodo de examen activo</span>
+          </div>
+          <div className="filter-row">
+            {trends.map((trend) => (
+              <span className="badge" key={trend.topic}>
+                {trend.topic} · {trend.views}
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
+      {recommendations.length > 0 && (
+        <section className="catalog-insights">
+          <div className="catalog-section-head">
+            <h2>Recomendado para ti</h2>
+            <span>Basado en tus cursos, historial y valoraciones</span>
+          </div>
+          <div className="recordings-grid">
+            {recommendations.slice(0, 10).map((recommendation) => {
+              const recordingId = recommendation.recording_id || recommendation.id || '';
+              return (
+                <Link className="recording-card panel" key={recordingId} href={`/reproductor/${recordingId}`}>
+                  <VideoPreview recordingId={recordingId} className="recording-preview" />
+                  <h3>{recommendation.title}</h3>
+                  <span className="course-link">{recommendation.course}</span>
+                  <div className="recording-meta">
+                    <span>{recommendation.topic || 'Clase grabada'}</span>
+                    <span>{recommendation.recommendation}% recomendado</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
       <section>
         <div className="catalog-section-head">
           <h2>Todos los videos</h2>

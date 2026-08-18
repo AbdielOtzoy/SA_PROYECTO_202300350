@@ -42,9 +42,83 @@ export class AdminController {
   ) {}
 
   @Get('analytics/most-viewed')
-  mostViewed(@Req() request: Request, @Query('week_start') weekStart?: string) {
+  mostViewed(@Req() request: Request, @Query('week_start') weekStart?: string, @Query('week_end') weekEnd?: string) {
     const current = this.session.requireAdmin(request);
-    return this.grpc.unary('analytics', 'MostViewed', { week_start: weekStart || '' }, current.token);
+    return this.grpc.unary(
+      'analytics',
+      'MostViewed',
+      { week_start: weekStart || '', week_end: weekEnd || '' },
+      current.token,
+    );
+  }
+
+  @Get('analytics/trends')
+  trends(
+    @Req() request: Request,
+    @Query('period_id') periodId?: string,
+    @Query('start_at') startAt?: string,
+    @Query('end_at') endAt?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const current = this.session.requireAdmin(request);
+    return this.grpc.unary(
+      'analytics',
+      'TrendingTopics',
+      {
+        period_id: periodId || '',
+        start_at: startAt || '',
+        end_at: endAt || '',
+        limit: Math.min(10, Math.max(1, Number(limit || 10))),
+      },
+      current.token,
+    );
+  }
+
+  @Get('analytics/top-rated')
+  topRated(@Req() request: Request, @Query('limit') limit?: string) {
+    const current = this.session.requireAdmin(request);
+    return this.grpc.unary(
+      'analytics',
+      'TopRated',
+      { limit: Math.min(10, Math.max(1, Number(limit || 10))) },
+      current.token,
+    );
+  }
+
+  @Get('analytics/exam-periods')
+  examPeriods(@Req() request: Request) {
+    const current = this.session.requireAdmin(request);
+    return this.grpc.unary('analytics', 'ListExamPeriods', {}, current.token);
+  }
+
+  @Post('analytics/exam-periods')
+  examPeriod(@Req() request: Request, @Body() body: Record<string, unknown>) {
+    const current = this.session.requireAdmin(request);
+    return this.grpc.unary(
+      'analytics',
+      'UpsertExamPeriod',
+      {
+        period: { id: body.id || '', name: body.name || '', start_at: body.start_at || '', end_at: body.end_at || '' },
+      },
+      current.token,
+    );
+  }
+
+  @Put('analytics/exam-periods/:id')
+  examPeriodUpdate(@Req() request: Request, @Param('id') id: string, @Body() body: Record<string, unknown>) {
+    const current = this.session.requireAdmin(request);
+    return this.grpc.unary(
+      'analytics',
+      'UpsertExamPeriod',
+      { period: { id, name: body.name || '', start_at: body.start_at || '', end_at: body.end_at || '' } },
+      current.token,
+    );
+  }
+
+  @Delete('analytics/exam-periods/:id')
+  examPeriodDelete(@Req() request: Request, @Param('id') id: string) {
+    const current = this.session.requireAdmin(request);
+    return this.grpc.unary('analytics', 'DeleteExamPeriod', { id }, current.token);
   }
 
   @Get('users')
@@ -140,9 +214,9 @@ export class AdminController {
   }
 
   @Post('course-staff')
-  assignStaff(@Req() request: Request, @Body() body: Record<string, unknown>) {
+  async assignStaff(@Req() request: Request, @Body() body: Record<string, unknown>) {
     const current = this.session.requireAdmin(request);
-    return this.grpc.unary(
+    const result = await this.grpc.unary(
       'catalog',
       'AssignCourseStaff',
       {
@@ -152,17 +226,25 @@ export class AdminController {
       },
       current.token,
     );
+    await this.invalidateAnalyticsCaches(current.token);
+    return result;
   }
 
   @Delete('course-staff')
-  revokeStaff(@Req() request: Request, @Query('course_id') courseId = '', @Query('professor_id') professorId = '') {
+  async revokeStaff(
+    @Req() request: Request,
+    @Query('course_id') courseId = '',
+    @Query('professor_id') professorId = '',
+  ) {
     const current = this.session.requireAdmin(request);
-    return this.grpc.unary(
+    const result = await this.grpc.unary(
       'catalog',
       'RevokeCourseStaff',
       { course_id: courseId, professor_id: professorId },
       current.token,
     );
+    await this.invalidateAnalyticsCaches(current.token);
+    return result;
   }
 
   @Post('imports/catalog')
@@ -191,14 +273,18 @@ export class AdminController {
     return this.grpc.unary('catalog', method, {}, current.token);
   }
 
-  private upsert(request: Request, method: string, key: string, body: unknown) {
+  private async upsert(request: Request, method: string, key: string, body: unknown) {
     const current = this.session.requireAdmin(request);
-    return this.grpc.unary('catalog', method, { [key]: body }, current.token);
+    const result = await this.grpc.unary('catalog', method, { [key]: body }, current.token);
+    await this.invalidateAnalyticsCaches(current.token);
+    return result;
   }
 
-  private archive(request: Request, entity: string, id: string) {
+  private async archive(request: Request, entity: string, id: string) {
     const current = this.session.requireAdmin(request);
-    return this.grpc.unary('catalog', 'ArchiveAcademic', { entity, id }, current.token);
+    const result = await this.grpc.unary('catalog', 'ArchiveAcademic', { entity, id }, current.token);
+    await this.invalidateAnalyticsCaches(current.token);
+    return result;
   }
 
   private importFile(
@@ -213,6 +299,18 @@ export class AdminController {
     const service = kind === 'enrollments' ? 'identity' : 'catalog';
     const method =
       kind === 'catalog' ? 'ImportCatalogCsv' : kind === 'recordings' ? 'ImportRecordingsCsv' : 'ImportEnrollmentsCsv';
-    return this.grpc.unary(service, method, { content: file.buffer, filename: file.originalname }, token);
+    return this.grpc
+      .unary<unknown, ImportReply>(service, method, { content: file.buffer, filename: file.originalname }, token)
+      .then(async (result) => {
+        if (kind !== 'enrollments') await this.invalidateAnalyticsCaches(token);
+        return result;
+      });
+  }
+
+  private invalidateAnalyticsCaches(token: string): Promise<unknown[]> {
+    return Promise.all([
+      this.grpc.unary('analytics', 'InvalidateCatalogCache', {}, token),
+      this.grpc.unary('analytics', 'InvalidateAnalyticsCache', {}, token),
+    ]);
   }
 }
