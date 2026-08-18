@@ -22,6 +22,9 @@ CREATE TABLE "email_queue" (
   "recipient" varchar(255) NOT NULL,
   "params_json" jsonb,
   "status" varchar(20) NOT NULL,
+  "attempts" integer NOT NULL DEFAULT 0,
+  "available_at" timestamptz NOT NULL DEFAULT now(),
+  "last_error" text,
   "created_at" timestamptz NOT NULL DEFAULT now(),
   "sent_at" timestamptz
 );

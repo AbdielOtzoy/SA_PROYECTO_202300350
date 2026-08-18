@@ -16,6 +16,7 @@ import type {
   AuthorizationReply,
   PlaybackAuthorizationRequest,
   RecordingsReply,
+  PublishedRecordingMessage,
 } from './dto/catalog.dto';
 import { toRecordingMessage, type RecordingRow } from './mappers/recording.mapper';
 
@@ -330,7 +331,39 @@ export class CatalogRepository {
     await this.pool.query('CALL sp_import_catalog_csv($1::jsonb)', [JSON.stringify(rows)]);
   }
 
-  async importRecordings(rows: CsvRow[]): Promise<void> {
-    await this.pool.query('CALL sp_import_recordings_csv($1::jsonb)', [JSON.stringify(rows)]);
+  async importRecordings(rows: CsvRow[]): Promise<PublishedRecordingMessage[]> {
+    const client = await this.pool.connect();
+    const ids = rows.map((row) => String(row.recording_id || '').trim());
+    try {
+      await client.query('BEGIN');
+      const previous = await client.query<{ id: string; is_published: boolean }>(
+        'SELECT id,is_published FROM recordings WHERE id=ANY($1::uuid[]) FOR UPDATE',
+        [ids],
+      );
+      const previousState = new Map(previous.rows.map((row) => [row.id, row.is_published]));
+      await client.query('CALL sp_import_recordings_csv($1::jsonb)', [JSON.stringify(rows)]);
+      const current = await client.query<PublishedRecordingMessage>(
+        `SELECT r.id recording_id,r.title,r.course_id,c.code course_code,c.name course
+           FROM recordings r
+           JOIN courses c ON c.id=r.course_id
+          WHERE r.id=ANY($1::uuid[]) AND r.is_published AND r.is_active`,
+        [ids],
+      );
+      await client.query('COMMIT');
+      return current.rows
+        .filter((row) => previousState.get(row.recording_id) !== true)
+        .map(({ recording_id, title, course_id, course_code, course }) => ({
+          recording_id,
+          title,
+          course_id,
+          course_code,
+          course,
+        }));
+    } catch (error: unknown) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 }

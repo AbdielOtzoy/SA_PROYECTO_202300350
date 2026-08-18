@@ -94,22 +94,27 @@ Se completó RF-008 y CU-01.10 de extremo a extremo:
 
 La validación unitaria y funcional de P3 quedó completada. `npm run verify`, la configuración de Compose, el build de las imágenes y el arranque real con Docker finalizaron correctamente. Se verificaron login, consulta propia, filtros combinados por semestre/estado/credenciales, enriquecimiento desde Catálogo, acceso administrativo a otra cuenta, rechazo de estudiantes sobre otra cuenta y rechazo de docentes/auxiliares.
 
-### P4 — Completar notificaciones y recuperación de acceso
+### P4 — Completar notificaciones y recuperación de acceso ✅
 
-Actualmente el servicio de notificaciones solo expone `Send` y el registro dispara un correo de bienvenida.
+P4 quedó implementada de extremo a extremo para RF-003, RF-004, RF-005, RF-027–RF-029 y RNF-006:
 
-Falta implementar:
+- Recuperación mediante enlace único, token aleatorio almacenado como hash SHA-256, expiración de 30 minutos, invalidación posterior al uso y respuesta no enumerativa.
+- Correos de registro, recuperación y seguridad encolados en PostgreSQL y entregados por el worker a Mailpit/SMTP.
+- Preferencias editables para `new_recording` y `admin_notice`; `recovery` y `security` permanecen obligatorias.
+- Detección de transiciones `is_published=false` a `true`, resolución de inscritos por gRPC y fanout filtrado por preferencias.
+- Avisos administrativos por rol o curso, con autorización exclusiva para `admin` y pantalla [`frontend/app/admin/notificaciones/page.tsx`](../frontend/app/admin/notificaciones/page.tsx).
+- Worker con lotes, `FOR UPDATE SKIP LOCKED`, estados `pending/processing/sent/failed`, reintentos y garantía documentada de entrega normal en cinco minutos.
+- La pantalla de login enlaza a [`frontend/app/recuperar/page.tsx`](../frontend/app/recuperar/page.tsx), y Configuración permite administrar las preferencias.
 
-- Recuperación de contraseña desde la pantalla de login.
-- Actualización y validación de tokens de recuperación.
-- Correos de seguridad.
-- Preferencias de usuario para avisos opcionales.
-- Avisos de publicación de nuevas grabaciones para estudiantes inscritos.
-- Avisos administrativos dirigidos por rol o curso.
-- Worker o proceso de envío de la cola.
-- Garantía documentada de envío en un máximo de cinco minutos.
+Validación de cierre realizada:
 
-El enlace de recuperación en [`frontend/app/page.tsx`](../frontend/app/page.tsx) todavía apunta a `#`. La pantalla [`frontend/app/configuracion/page.tsx`](../frontend/app/configuracion/page.tsx) solo muestra información personal y no permite configurar preferencias.
+- `npm run verify` y `npm run test:contracts`: completados correctamente.
+- `docker compose --env-file .env -f docker-compose.local.yml config`: válido.
+- `docker compose --env-file .env -f docker-compose.local.yml up --build -d`: todas las imágenes construidas y servicios estables.
+- Mailpit: registro, recuperación y seguridad recibidos; el token se rechazó al reutilizarlo.
+- Preferencias: un aviso por rol encontró 6 destinatarios y encoló 5 al excluir la cuenta deshabilitada; un aviso por curso encoló 3.
+- Publicación: 7 grabaciones cambiaron a publicadas, se generaron avisos para inscritos y la cola terminó con todos los registros en `sent`.
+- Navegador: `/recuperar` mostró los estados de solicitud y restablecimiento; el login enlaza a `/recuperar`.
 
 ### P5 — Completar ficha detallada y modelo académico
 

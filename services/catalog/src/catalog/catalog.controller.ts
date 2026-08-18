@@ -196,7 +196,20 @@ export class CatalogController {
   @GrpcMethod('CatalogService', 'ImportRecordingsCsv')
   importRecordings(data: { content?: Buffer; filename?: string }, metadata: Metadata) {
     const actor = this.requireManager(metadata);
-    return this.catalog.importRecordings(Buffer.from(data?.content || ''), data?.filename || '', actor);
+    return this.catalog
+      .importRecordings(Buffer.from(data?.content || ''), data?.filename || '', actor)
+      .then((reply) => ({
+        accepted: reply.accepted,
+        rows: reply.rows,
+        procedure: reply.procedure,
+        publishedRecordings: reply.published_recordings.map((recording) => ({
+          recordingId: recording.recording_id,
+          title: recording.title,
+          courseId: recording.course_id,
+          courseCode: recording.course_code,
+          course: recording.course,
+        })),
+      }));
   }
 
   private requireAdmin(metadata: Metadata): Actor {

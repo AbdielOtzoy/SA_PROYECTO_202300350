@@ -62,6 +62,7 @@ El servicio de Identidad gestiona las cuentas de usuario, los roles, los permiso
 | Entidad | Descripción | `PK` | Atributos clave |
 |---|---|---|---|
 | `users` | Cuentas institucionales de la plataforma | `id` (`UUID`) | `email` (`UQ`), `password_hash`, `full_name`, `is_active`, `created_at`, `updated_at` |
+| `password_reset_tokens` | Mecanismos temporales de recuperación | `id` (`UUID`) | `user_id` (`FK`), `token_hash` (`UQ`), `expires_at`, `used_at`, `created_at` |
 | `roles` | Roles del sistema (Estudiante, Docente, Auxiliar, Admin) | `id` (`UUID`) | `name` (`UQ`), `description` |
 | `permissions` | Permisos atómicos del sistema | `id` (`UUID`) | `code` (`UQ`), `description` |
 | `role_permissions` | Asignación de permisos a roles (`N:N`) | `role_id` + `permission_id` | — |
@@ -87,6 +88,7 @@ users (1) ────── (N) credential_audit_log
 - `user_roles.assigned_by` referencia al administrador que asignó el rol.
 - Un estudiante puede estar inscrito en múltiples cursos (RF-008).
 - Cada cambio de credenciales o roles genera un registro de auditoría.
+- Los tokens de recuperación se almacenan como SHA-256, expiran en 30 minutos y se invalidan al consumirse.
 
 ### Lógica programable
 
@@ -185,7 +187,7 @@ El servicio de Notificaciones gestiona el envío de correos electrónicos instit
 |---|---|---|---|
 | `templates` | Plantillas de correo reutilizables | `id` (`UUID`) | `code` (`UQ`), `subject`, `body_html`, `created_at` |
 | `user_preferences` | Preferencias de notificación por usuario | `user_id` + `notification_type` | `is_enabled` (`BOOLEAN`) |
-| `email_queue` | Cola de correos pendientes de envío | `id` (`UUID`) | `user_id`, `template_id` (`FK`), `recipient`, `params_json` (`JSONB`), `status`, `created_at`, `sent_at` |
+| `email_queue` | Cola de correos pendientes de envío | `id` (`UUID`) | `user_id`, `template_id` (`FK`), `recipient`, `params_json` (`JSONB`), `status`, `attempts`, `available_at`, `last_error`, `created_at`, `sent_at` |
 | `email_log` | Historial de correos enviados | `id` (`UUID`) | `user_id`, `template_id` (`FK`), `recipient`, `subject`, `body`, `sent_at`, `status` |
 
 ### Relaciones
@@ -202,15 +204,16 @@ templates (1) ────── (N) email_log
 
 | Tipo | Nombre | Propósito |
 |---|---|---|
-| **SP** | `sp_enqueue_notification` | Procedimiento transaccional que: (1) verifica `user_preferences.is_enabled` para el tipo de notificación, (2) resuelve la plantilla por código, (3) inserta en `email_queue` con `status='pending'` y (4) registra en `email_log` con `status='queued'`. |
-| **VW** | `vw_queue_status` | Vista de monitoreo que une `email_queue` y `templates`, agrupando por `status` (`pending`, `sent`, `failed`). |
+| **Código** | `NotificationsRepository.enqueue` / `enqueueBatch` | Verifica preferencias opcionales, resuelve la plantilla y encola en `email_queue` con `status='pending'`. |
+| **Worker** | `NotificationsWorker` | Reclama lotes disponibles con `FOR UPDATE SKIP LOCKED`, entrega por SMTP/Mailpit, actualiza estados, registra `email_log` y reintenta hasta cuatro veces. |
+| **Índice** | `email_queue_pending_idx` | Acelera la búsqueda de correos `pending` o `processing` cuya fecha `available_at` ya venció. |
 
 ### Decisiones de diseño
 
 > - `user_preferences` usa una clave compuesta por `user_id` + `notification_type`. Los correos de seguridad y recuperación no son deshabilitables por el usuario.
 > - `email_queue.params_json` almacena los parámetros dinámicos en `JSONB`, lo que permite que cada plantilla reciba distintos campos sin modificar el esquema.
-> - `email_log` conserva una copia inmutable del contenido enviado (`subject`, `body`) para auditoría, incluso si la plantilla original se modifica posteriormente.
-> - El envío máximo de 5 minutos desde la generación (RNF-006) se implementa mediante un worker en TypeScript que consulta `email_queue` periódicamente.
+> - `email_log` conserva una copia del contenido entregado (`subject`, `body`) y de los fallos terminales para auditoría, incluso si la plantilla original se modifica posteriormente.
+> - El envío máximo de 5 minutos desde la generación (RNF-006) se implementa mediante un worker en TypeScript que procesa inmediatamente al iniciar y después cada 30 segundos.
 
 ---
 
@@ -474,8 +477,8 @@ Este es el inventario completo de la lógica programable por base de datos, seg�
 
 | Tipo | Objeto | Justificación |
 |---|---|---|
-| **SP** | `sp_enqueue_notification` | Flujo transaccional: verifica preferencias, resuelve plantilla, encola y registra. |
-| **VW** | `vw_queue_status` | Monitoreo del estado de la cola de envío. |
+| **Código** | `NotificationsRepository` | Verifica preferencias, resuelve plantillas y encola correos individuales o por lotes. |
+| **Worker** | `NotificationsWorker` | Entrega, reintenta y audita los correos de `email_queue`. |
 
 ---
 

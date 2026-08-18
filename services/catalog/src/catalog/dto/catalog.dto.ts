@@ -62,6 +62,14 @@ export interface RecordingsReply {
   total: number;
   totalPages: number;
 }
+
+export interface PublishedRecordingMessage {
+  recording_id: string;
+  title: string;
+  course_id: string;
+  course_code: string;
+  course: string;
+}
 export interface RecordingReply {
   recording: RecordingMessage;
 }

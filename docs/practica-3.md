@@ -259,6 +259,10 @@ SELECT COUNT(*) FROM recordings;
 SELECT COUNT(*) FROM user_enrollments;
 ```
 
+## Extensión P4 — Notificaciones
+
+La Fase 1 extiende esta implementación con recuperación de acceso, preferencias de correo, avisos de publicación y avisos administrativos. El Gateway mantiene la exposición REST y consulta Identidad/Catálogo por gRPC; Notificaciones administra sus plantillas, preferencias, cola e historial en PostgreSQL. El detalle técnico y la evidencia de esta extensión se encuentran en [`docs/implementacion-p4.md`](implementacion-p4.md).
+
 ## Conclusiones
 
 La implementación de la Práctica 3 conserva el aislamiento por microservicio, centraliza la exposición externa en el Gateway y utiliza los contratos gRPC existentes para agregar administración académica y el panel de cursos inscritos. Las cargas CSV son validaciones completas y transaccionales, mientras que el catálogo aplica paginación real desde PostgreSQL con un máximo de diez registros por página y filtros combinables.

@@ -6,7 +6,7 @@ YoUSAC usa un frontend **Next.js**, un Gateway **NestJS** HTTPS y cinco microser
 
 [![Vista Lógica](img/vista-logica.drawio.svg)](img/vista-logica.drawio)
 
-Una persona institucional puede registrarse mediante formulario o OAuth, iniciar sesión, explorar catálogo, recibir recomendaciones personalizadas, consultar temas en tendencia, reproducir una clase, reanudarla, consultar historial y votar. El administrador asigna roles, consulta vistas/ranking/tendencias y configura periodos de examen. La identidad valida los dominios configurados; las bases se relacionan entre servicios únicamente por identificadores lógicos.
+Una persona institucional puede registrarse mediante formulario o OAuth, iniciar sesión, recuperar el acceso por un enlace temporal, explorar catálogo, recibir recomendaciones personalizadas, consultar temas en tendencia, reproducir una clase, reanudarla, consultar historial y votar. También puede configurar avisos opcionales; los correos de recuperación y seguridad son obligatorios. El administrador asigna roles, consulta vistas/ranking/tendencias, configura periodos de examen y emite avisos por rol o curso. La identidad valida los dominios configurados; las bases se relacionan entre servicios únicamente por identificadores lógicos.
 
 ## Vista de procesos
 
@@ -18,6 +18,8 @@ La sesión consiste en JWT y cookie `HttpOnly`, `Secure`, `SameSite=Strict`; su 
 
 Al iniciar una reproducción, el Gateway registra el evento en Analítica. Analítica agrega vistas por rangos UTC, consulta Catálogo para enriquecer los resultados, Identidad para cursos inscritos y Reproducción para historial. Redis almacena la página de catálogo por usuario/filtros durante 900 segundos y los resultados analíticos durante 300 segundos; las mutaciones invalidan las entradas afectadas.
 
+El Gateway coordina la recuperación mediante Identidad y Notificaciones: Identidad genera y consume tokens hash de un solo uso, mientras Notificaciones encola el enlace. Los correos no se envían dentro de la solicitud REST; el worker de Notificaciones reclama lotes con `FOR UPDATE SKIP LOCKED`, aplica preferencias y entrega a Mailpit/SMTP con reintentos. Las publicaciones de Catálogo devuelven las grabaciones que cambiaron a publicadas; el Gateway consulta los inscritos por gRPC y envía lotes respetando la preferencia de nuevas grabaciones.
+
 ## Vista de componentes
 
 [![Vista de Componentes](img/vista-componentes.drawio.svg)](img/vista-componentes.drawio)
@@ -27,7 +29,7 @@ Al iniciar una reproducción, el Gateway registra el evento en Analítica. Anal�
 | UI | Next.js, único cliente web |
 | Exposición | Gateway NestJS HTTPS |
 | Comunicación interna | `.proto`, gRPC/HTTP2 y JWT interno |
-| Datos | una base por microservicio; MongoDB de Analítica para eventos/periodos y Redis para catálogo/resultados |
+| Datos | una base por microservicio; MongoDB de Analítica para eventos/periodos, Redis para catálogo/resultados y PostgreSQL de Notificaciones para preferencias, plantillas, cola e historial |
 | Lógica programable | procedimiento de roles, función de recomendación, vistas y triggers |
 
 El Gateway usa direcciones gRPC configurables y los servicios usan binds configurables, documentados en `.env.example`. Analítica consulta Catálogo, Identidad y Reproducción por gRPC; no accede directamente a sus bases. Reproducción consulta Catálogo por gRPC y entrega el vídeo desde el volumen local.
@@ -44,4 +46,4 @@ La topología GCP/GCS es una referencia futura opcional; no es requisito ni evid
 
 ## Escenarios (+1)
 
-Los escenarios de registro, OAuth, catálogo, reproducción, checkpoint, voto y RBAC conectan las cuatro vistas. El checkpoint se demuestra guardando cada cinco segundos, pausando, buscando, finalizando y recargando para restaurar la posición persistida. Los diagramas fuente editables y sus SVG están en [img/](img/).
+Los escenarios de registro, OAuth, recuperación, preferencias, publicación, avisos administrativos, catálogo, reproducción, checkpoint, voto y RBAC conectan las cuatro vistas. La recuperación se demuestra con un token de 30 minutos y un solo uso; la cola de correo se demuestra con estados `pending`, `processing`, `sent` y `failed`, además de reintentos. Los diagramas fuente editables y sus SVG están en [img/](img/).

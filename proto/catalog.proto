@@ -171,4 +171,13 @@ message ImportReply {
   bool accepted = 1;
   int32 rows = 2;
   string procedure = 3;
+  repeated PublishedRecording published_recordings = 4;
+}
+
+message PublishedRecording {
+  string recording_id = 1;
+  string title = 2;
+  string course_id = 3;
+  string course_code = 4;
+  string course = 5;
 }

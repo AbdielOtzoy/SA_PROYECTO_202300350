@@ -8,6 +8,7 @@ import { NOTIFICATION_MAILER, NOTIFICATION_POOL } from './common/database/databa
 import { NotificationsController } from './notifications/notifications.controller';
 import { NotificationsRepository } from './notifications/notifications.repository';
 import { NotificationsService } from './notifications/notifications.service';
+import { NotificationsWorker } from './notifications/notifications.worker';
 
 @Module({
   controllers: [NotificationsController],
@@ -16,6 +17,7 @@ import { NotificationsService } from './notifications/notifications.service';
     InternalAuthService,
     NotificationsRepository,
     NotificationsService,
+    NotificationsWorker,
     {
       provide: NOTIFICATION_POOL,
       inject: [AppConfig],

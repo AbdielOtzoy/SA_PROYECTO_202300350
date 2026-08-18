@@ -66,3 +66,7 @@
 | RF-027 | Cuando se complete el registro de una cuenta, el sistema deberá enviar una confirmación al correo institucional registrado. | Alta |
 | RF-028 | Cuando se publique una nueva clase, el sistema deberá notificar por correo a los usuarios inscritos en el curso que tengan habilitada esa preferencia. | Alta |
 | RF-029 | Cuando un administrador emita un aviso, el sistema deberá enviarlo por correo a los usuarios del rol o curso seleccionado que tengan habilitada esa preferencia. | Alta |
+
+## Trazabilidad P4
+
+RF-003, RF-004, RF-005 y RF-027–RF-029 se implementan mediante los contratos gRPC de Identidad y Notificaciones, las rutas del Gateway de recuperación, preferencias y avisos administrativos, y el worker que procesa `email_queue`. La publicación de una grabación se integra con Identidad para resolver inscritos y con Notificaciones para aplicar `new_recording`.

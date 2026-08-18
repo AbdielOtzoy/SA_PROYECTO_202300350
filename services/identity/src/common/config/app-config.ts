@@ -17,6 +17,10 @@ export class AppConfig {
   get jwtExpiresIn(): string {
     return process.env.JWT_EXPIRES_IN || '60m';
   }
+
+  get passwordResetTtlMinutes(): number {
+    return Math.max(1, Number(process.env.PASSWORD_RESET_TTL_MINUTES || 30));
+  }
   get grpcBind(): string {
     return process.env.IDENTITY_GRPC_BIND || '0.0.0.0:50051';
   }

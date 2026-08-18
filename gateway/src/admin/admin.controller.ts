@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  Optional,
   Post,
   Put,
   Query,
@@ -17,6 +18,8 @@ import type { Request } from 'express';
 import { AppConfig } from '../common/config/app-config';
 import { SessionService } from '../common/auth/session.service';
 import { GrpcCallService } from '../common/grpc/grpc.client';
+import { GatewayNotificationsService } from '../notifications/notifications.service';
+import type { PublishedRecording } from '../common/grpc/grpc.types';
 
 interface RoleBody {
   role?: string;
@@ -26,6 +29,7 @@ interface ImportReply {
   accepted: boolean;
   rows: number;
   procedure: string;
+  published_recordings?: PublishedRecording[];
 }
 interface UploadedCsv {
   buffer: Buffer;
@@ -39,6 +43,7 @@ export class AdminController {
     private readonly grpc: GrpcCallService,
     private readonly session: SessionService,
     private readonly config: AppConfig,
+    @Optional() private readonly notifications?: GatewayNotificationsService,
   ) {}
 
   @Get('analytics/most-viewed')
@@ -128,14 +133,36 @@ export class AdminController {
   }
 
   @Put('users/:id/roles')
-  role(@Req() request: Request, @Param('id') userId: string, @Body() body: RoleBody) {
+  async role(@Req() request: Request, @Param('id') userId: string, @Body() body: RoleBody) {
     const current = this.session.requireAdmin(request);
-    return this.grpc.unary(
+    const result = await this.grpc.unary<
+      { user_id: string; role: string; assign: boolean; actor_id: string },
+      { user: { id: string; email: string } }
+    >(
       'identity',
       'ChangeRole',
       { user_id: userId, role: body.role || '', assign: !!body.assign, actor_id: current.claims.sub },
       current.token,
     );
+    if (result.user?.id && result.user.email) {
+      await this.grpc
+        .unary(
+          'notifications',
+          'Send',
+          {
+            user_id: result.user.id,
+            recipient: result.user.email,
+            type: 'security',
+            template_code: 'security',
+            params_json: JSON.stringify({
+              body: `Se ${body.assign ? 'asignó' : 'revocó'} el rol ${body.role || ''} en tu cuenta.`,
+            }),
+          },
+          current.token,
+        )
+        .catch(() => undefined);
+    }
+    return result;
   }
 
   @Get('schools')
@@ -302,6 +329,13 @@ export class AdminController {
     return this.grpc
       .unary<unknown, ImportReply>(service, method, { content: file.buffer, filename: file.originalname }, token)
       .then(async (result) => {
+        if (kind === 'recordings' && result.published_recordings?.length) {
+          try {
+            await this.notifications?.notifyPublished(result.published_recordings);
+          } catch {
+            // La importación ya fue confirmada; el worker conserva la entrega de los avisos encolados.
+          }
+        }
         if (kind !== 'enrollments') await this.invalidateAnalyticsCaches(token);
         return result;
       });

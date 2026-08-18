@@ -16,6 +16,7 @@ import type {
   SemesterMessage,
   VoteRequest,
   PlaybackAuthorizationRequest,
+  PublishedRecordingMessage,
 } from './dto/catalog.dto';
 import { booleanValue, csvRows, integer, required } from './csv';
 import { CatalogRepository } from './catalog.repository';
@@ -194,7 +195,12 @@ export class CatalogService {
     content: Buffer,
     filename: string,
     actor: Actor,
-  ): Promise<{ accepted: boolean; rows: number; procedure: string }> {
+  ): Promise<{
+    accepted: boolean;
+    rows: number;
+    procedure: string;
+    published_recordings: PublishedRecordingMessage[];
+  }> {
     this.validateFilename(filename);
     const raw = csvRows(content, [
       'recording_id',
@@ -237,12 +243,18 @@ export class CatalogService {
       };
     });
     await this.repository.assertActorCanManageRecordingRows(rows, actor);
+    let publishedRecordings: PublishedRecordingMessage[];
     try {
-      await this.repository.importRecordings(rows);
+      publishedRecordings = await this.repository.importRecordings(rows);
     } catch (cause: unknown) {
       throw this.importProcedureError(cause);
     }
-    return { accepted: true, rows: rows.length, procedure: 'sp_import_recordings_csv' };
+    return {
+      accepted: true,
+      rows: rows.length,
+      procedure: 'sp_import_recordings_csv',
+      published_recordings: publishedRecordings,
+    };
   }
 
   private requiredText(value: unknown, field: string): string {

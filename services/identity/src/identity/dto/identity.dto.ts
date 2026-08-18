@@ -17,6 +17,28 @@ export interface OAuthLoginRequest {
   verified?: boolean;
 }
 
+export interface PasswordResetRequest {
+  email?: string;
+}
+
+export interface PasswordResetReply {
+  accepted: boolean;
+  user_id?: string;
+  recipient?: string;
+  reset_token?: string;
+}
+
+export interface ResetPasswordRequest {
+  token?: string;
+  new_password?: string;
+  newPassword?: string;
+}
+
+export interface PasswordResetResult {
+  accepted: boolean;
+  user: UserMessage;
+}
+
 export interface SessionRequest {
   user_id?: string;
   userId?: string;
@@ -63,6 +85,23 @@ export interface EnrollmentMessage {
 
 export interface EnrollmentsReply {
   enrollments: EnrollmentMessage[];
+}
+
+export interface NotificationRecipientsRequest {
+  role?: string;
+  course_id?: string;
+  courseId?: string;
+  status?: string;
+}
+
+export interface NotificationRecipientMessage {
+  userId: string;
+  recipient: string;
+  fullName: string;
+}
+
+export interface NotificationRecipientsReply {
+  recipients: NotificationRecipientMessage[];
 }
 export interface RoleReply {
   user: UserMessage;

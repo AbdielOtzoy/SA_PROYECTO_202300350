@@ -134,6 +134,50 @@ export interface VideoChunk {
 
 export interface NotificationReply {
   accepted: boolean;
+  queue_id?: string;
+  queued?: number;
+}
+
+export interface NotificationBatchReply {
+  accepted: boolean;
+  queued: number;
+}
+
+export interface PasswordResetReply {
+  accepted: boolean;
+  user_id?: string;
+  recipient?: string;
+  reset_token?: string;
+}
+
+export interface PasswordResetResult {
+  accepted: boolean;
+  user: UserMessage;
+}
+
+export interface NotificationRecipient {
+  user_id: string;
+  recipient: string;
+  full_name?: string;
+}
+
+export interface NotificationRecipientsReply {
+  recipients: NotificationRecipient[];
+}
+
+export interface NotificationPreferences {
+  new_recording: boolean;
+  admin_notice: boolean;
+  recovery: boolean;
+  security: boolean;
+}
+
+export interface PublishedRecording {
+  recording_id: string;
+  title: string;
+  course_id: string;
+  course_code: string;
+  course: string;
 }
 
 export interface EnrollmentMessage {

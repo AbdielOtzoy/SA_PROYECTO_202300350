@@ -21,10 +21,17 @@ CREATE TABLE email_queue (
   template_id uuid REFERENCES templates(id),
   recipient varchar(255) NOT NULL,
   params_json jsonb,
-  status varchar(20) NOT NULL,
+  status varchar(20) NOT NULL CHECK (status IN ('pending', 'processing', 'sent', 'failed')),
+  attempts integer NOT NULL DEFAULT 0,
+  available_at timestamptz NOT NULL DEFAULT now(),
+  last_error text,
   created_at timestamptz NOT NULL DEFAULT now(),
   sent_at timestamptz
 );
+
+CREATE INDEX email_queue_pending_idx
+  ON email_queue (available_at, created_at)
+  WHERE status IN ('pending', 'processing');
 
 CREATE TABLE email_log (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -36,36 +43,3 @@ CREATE TABLE email_log (
   sent_at timestamptz,
   status varchar(20) NOT NULL
 );
-
-CREATE OR REPLACE FUNCTION audit_email_queue()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  INSERT INTO email_log (
-    user_id,
-    template_id,
-    recipient,
-    subject,
-    body,
-    sent_at,
-    status
-  )
-  VALUES (
-    NEW.user_id,
-    NEW.template_id,
-    NEW.recipient,
-    'Notificación YoUSAC',
-    COALESCE(NEW.params_json::text, ''),
-    now(),
-    NEW.status
-  );
-
-  RETURN NEW;
-END
-$$;
-
-CREATE TRIGGER email_queue_audit
-AFTER INSERT ON email_queue
-FOR EACH ROW
-EXECUTE FUNCTION audit_email_queue();

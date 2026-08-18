@@ -9,7 +9,7 @@ Este modelo cubre únicamente los cuatro módulos indicados para la Práctica 1:
 3. Reproductor, checkpoint y valoración.
 4. Panel de asignaciones y permisos.
 
-Quedan fuera de esta entrega la analítica avanzada, recomendaciones personalizadas, importaciones CSV, carga/publicación de contenido y avisos administrativos. Se documentarán cuando formen parte del alcance de una práctica posterior.
+La analítica avanzada, recomendaciones personalizadas, importaciones CSV, carga/publicación de contenido y avisos administrativos se implementaron posteriormente como extensiones de la Fase 1. Este documento conserva la descomposición original y se complementa con la trazabilidad de P4.
 
 ## Convenciones aplicadas
 
@@ -159,6 +159,13 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 **Relaciones locales**: `CU-01.3 — Recuperar acceso` incluye `CU-01.3a — Generar mecanismo temporal`, `CU-01.3b — Enviar mecanismo de recuperación` y `CU-01.3c — Actualizar contraseña`.
 
 [![Diagrama local de recuperación de acceso](referencias/casos-de-uso-locales/09-cu-01-3-recuperar-acceso.drawio.svg)](referencias/casos-de-uso-locales/09-cu-01-3-recuperar-acceso.drawio)
+
+### Implementación P4 relacionada
+
+- El mecanismo temporal es un enlace único con token aleatorio almacenado como hash y expiración de 30 minutos.
+- `RF-004` se implementa mediante preferencias `new_recording` y `admin_notice`; recuperación y seguridad permanecen obligatorias.
+- `RF-005` cubre el restablecimiento de contraseña y cambios administrativos de roles.
+- `RF-027` a `RF-029` se entregan por la cola PostgreSQL y el worker de correo del microservicio de Notificaciones.
 
 ## CU-01.4 — Explorar y filtrar catálogo
 

@@ -19,6 +19,7 @@ const adminLinks: NavLink[] = [
   { href: '/admin/usuarios-roles', label: 'Usuarios y roles', icon: 'users' },
   { href: '/admin/contenido', label: 'Configuración académica', icon: 'settings' },
   { href: '/admin/importaciones', label: 'Importaciones CSV', icon: 'upload' },
+  { href: '/admin/notificaciones', label: 'Avisos administrativos', icon: 'bell' },
 ];
 const adminSystemLinks: NavLink[] = [
   { href: '/admin/exportaciones', label: 'Exportaciones', icon: 'database' },

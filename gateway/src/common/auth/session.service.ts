@@ -55,6 +55,19 @@ export class SessionService {
     return current;
   }
 
+  issueInternalToken(permissions: string[]): string {
+    return jwt.sign(
+      {
+        sub: 'gateway',
+        email: 'gateway@yousac.internal',
+        roles: ['gateway'],
+        permissions,
+      },
+      this.config.jwtSecret,
+      { expiresIn: '60s' },
+    );
+  }
+
   set(response: Response, token: string): void {
     response.cookie(SESSION_COOKIE, token, {
       httpOnly: true,

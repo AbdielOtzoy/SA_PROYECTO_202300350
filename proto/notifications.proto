@@ -4,6 +4,9 @@ package yousac.notifications.v1;
 
 service NotificationService {
   rpc Send(SendRequest) returns (SendReply);
+  rpc SendBatch(SendBatchRequest) returns (SendBatchReply);
+  rpc GetPreferences(PreferencesRequest) returns (PreferencesReply);
+  rpc UpdatePreferences(UpdatePreferencesRequest) returns (PreferencesReply);
 }
 
 message SendRequest {
@@ -12,8 +15,48 @@ message SendRequest {
   string type = 3;
   string subject = 4;
   string body = 5;
+  string template_code = 6;
+  string params_json = 7;
 }
 
 message SendReply {
   bool accepted = 1;
+  string queue_id = 2;
+  int32 queued = 3;
+}
+
+message NotificationRecipient {
+  string user_id = 1;
+  string recipient = 2;
+}
+
+message SendBatchRequest {
+  string type = 1;
+  string template_code = 2;
+  string subject = 3;
+  string body = 4;
+  string params_json = 5;
+  repeated NotificationRecipient recipients = 6;
+}
+
+message SendBatchReply {
+  bool accepted = 1;
+  int32 queued = 2;
+}
+
+message PreferencesRequest {
+  string user_id = 1;
+}
+
+message UpdatePreferencesRequest {
+  string user_id = 1;
+  bool new_recording = 2;
+  bool admin_notice = 3;
+}
+
+message PreferencesReply {
+  bool new_recording = 1;
+  bool admin_notice = 2;
+  bool recovery = 3;
+  bool security = 4;
 }

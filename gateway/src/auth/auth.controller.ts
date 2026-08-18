@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService, OAUTH_STATE_COOKIE } from './auth.service';
 import { SessionService } from '../common/auth/session.service';
 import { sameOAuthState } from './oauth';
-import type { LoginRequest, OAuthQuery, RegisterRequest } from './dto/auth.dto';
+import type { LoginRequest, OAuthQuery, RecoveryRequest, RecoveryResetRequest, RegisterRequest } from './dto/auth.dto';
 
 @Controller('api')
 export class AuthController {
@@ -24,6 +24,17 @@ export class AuthController {
     const reply = await this.auth.login(body);
     this.session.set(response, reply.token);
     return { user: reply.user };
+  }
+
+  @Post('auth/recovery/request')
+  @HttpCode(HttpStatus.ACCEPTED)
+  requestRecovery(@Body() body: RecoveryRequest) {
+    return this.auth.requestRecovery(body);
+  }
+
+  @Post('auth/recovery/reset')
+  resetRecovery(@Body() body: RecoveryResetRequest) {
+    return this.auth.resetRecovery(body);
   }
 
   @Get('auth/google')
