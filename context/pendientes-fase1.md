@@ -35,6 +35,7 @@ P2 —Analítica— quedó completada en esta iteración. Sin embargo, la Fase 1
 - `npm run verify` pasa formato, lint, typecheck, pruebas unitarias y pruebas de contratos.
 - `docker-compose.local.yml` tiene una configuración sintácticamente válida.
 - P2 —microservicio de Analítica— completado y verificado con pruebas Python, Gateway y Docker.
+- P3 —panel de cursos e inscripciones— completado y verificado con pruebas de Gateway, Identidad, frontend y Docker.
 
 ### Verificación de P2 completada
 
@@ -79,18 +80,19 @@ Se completó el alcance P2 definido en [`proyecto1.md`](proyecto1.md):
 
 La evidencia técnica se encuentra en [`docs/implementacion-v0.2.0.md`](../docs/implementacion-v0.2.0.md) y [`docs/arquitectura/modelo-4-1.md`](../docs/arquitectura/modelo-4-1.md). El build y arranque real de Docker fueron ejecutados correctamente el 16 de agosto de 2026; las cachés de catálogo y analítica observaron TTL dentro de los límites de 900 y 300 segundos, respectivamente.
 
-### P3 — Implementar el panel de cursos e inscripciones
+### P3 — Panel de cursos e inscripciones: completado ✅
 
-La pantalla [`frontend/app/cursos/page.tsx`](../frontend/app/cursos/page.tsx) es todavía un estado vacío y muestra que la función estará disponible posteriormente.
+Se completó RF-008 y CU-01.10 de extremo a extremo:
 
-Aunque existe el RPC `ListEnrollments` en [`proto/identity.proto`](../proto/identity.proto), falta:
+- `ListEnrollments` aplica filtros por semestre, estado y credenciales académicas.
+- `GET /api/enrollments` valida sesión y restringe el acceso a estudiantes y administradores.
+- Los estudiantes solo consultan sus propias inscripciones; el administrador puede consultar otra cuenta mediante `user_id`.
+- El Gateway consulta Catálogo por gRPC para enriquecer cursos y semestres con código, nombre, créditos y período académico.
+- [`frontend/app/cursos/page.tsx`](../frontend/app/cursos/page.tsx) muestra tarjetas responsivas, filtros, estados de carga, errores, reintento y lista vacía.
+- La navegación oculta “Mis cursos” para docentes y auxiliares.
+- Las pruebas cubren filtros, permisos, propagación del JWT, enriquecimiento y referencias académicas inexistentes.
 
-- Ruta REST en el Gateway para consultar inscripciones.
-- Integración del Gateway con `ListEnrollments`.
-- Panel del estudiante.
-- Filtros por semestre, estado y credenciales académicas.
-- Visualización de cursos asignados.
-- Pruebas de permisos para consultar únicamente las inscripciones propias, salvo el administrador.
+La validación unitaria y funcional de P3 quedó completada. `npm run verify`, la configuración de Compose, el build de las imágenes y el arranque real con Docker finalizaron correctamente. Se verificaron login, consulta propia, filtros combinados por semestre/estado/credenciales, enriquecimiento desde Catálogo, acceso administrativo a otra cuenta, rechazo de estudiantes sobre otra cuenta y rechazo de docentes/auxiliares.
 
 ### P4 — Completar notificaciones y recuperación de acceso
 
@@ -196,7 +198,7 @@ Falta:
 ## 7. Orden recomendado para cerrar la entrega
 
 1. Implementar y probar GCP, GCS y la topología cloud completa.
-2. Completar inscripciones y recuperación de acceso.
+2. Completar recuperación de acceso y mantener evidencia de las inscripciones ya implementadas.
 3. Completar notificaciones, preferencias y avisos automáticos.
 4. Completar la ficha detallada y decidir el modelo de temas/materiales.
 5. Actualizar los scripts y la documentación del modelo de datos.

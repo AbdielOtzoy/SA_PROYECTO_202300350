@@ -47,6 +47,14 @@ export class SessionService {
     return current;
   }
 
+  requireStudentOrAdmin(request: Request): SessionContext {
+    const current = this.require(request);
+    if (!current.claims.roles?.some((role) => ['student', 'admin'].includes(role))) {
+      throw new ForbiddenException('Se requiere rol estudiante o administrador');
+    }
+    return current;
+  }
+
   set(response: Response, token: string): void {
     response.cookie(SESSION_COOKIE, token, {
       httpOnly: true,

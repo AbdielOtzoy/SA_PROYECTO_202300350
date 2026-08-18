@@ -5,9 +5,10 @@ import { PlaybackModule } from './playback/playback.module';
 import { AdminController } from './admin/admin.controller';
 import { CommonModule } from './common/common.module';
 import { AnalyticsController } from './analytics/analytics.controller';
+import { EnrollmentsModule } from './enrollments/enrollments.module';
 
 @Module({
-  imports: [CommonModule, AuthModule, CatalogModule, PlaybackModule],
+  imports: [CommonModule, AuthModule, CatalogModule, PlaybackModule, EnrollmentsModule],
   controllers: [AdminController, AnalyticsController],
 })
 export class AppModule {}

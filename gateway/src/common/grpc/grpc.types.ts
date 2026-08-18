@@ -136,6 +136,60 @@ export interface NotificationReply {
   accepted: boolean;
 }
 
+export interface EnrollmentMessage {
+  course_id?: string;
+  courseId?: string;
+  semester_id?: string;
+  semesterId?: string;
+  status?: string;
+  credentials?: string;
+}
+
+export interface EnrollmentsReply {
+  enrollments: EnrollmentMessage[];
+}
+
+export interface CourseMessage {
+  id: string;
+  code: string;
+  name: string;
+  school_id?: string;
+  schoolId?: string;
+  credits?: number;
+  is_active?: boolean;
+  isActive?: boolean;
+}
+
+export interface CoursesReply {
+  courses: CourseMessage[];
+}
+
+export interface SemesterMessage {
+  id: string;
+  year: number;
+  term: number;
+  is_active?: boolean;
+  isActive?: boolean;
+}
+
+export interface SemestersReply {
+  semesters: SemesterMessage[];
+}
+
+export interface EnrollmentView {
+  user_id: string;
+  course_id: string;
+  course_code: string;
+  course_name: string;
+  credits: number;
+  semester_id: string;
+  semester: string;
+  semester_year: number;
+  semester_term: number;
+  status: string;
+  credentials: string;
+}
+
 export interface AuthProfile {
   email: string;
   name: string;

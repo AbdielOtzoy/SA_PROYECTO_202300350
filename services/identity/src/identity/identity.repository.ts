@@ -103,10 +103,15 @@ export class IdentityRepository {
     return this.pool.query('UPDATE users SET full_name=$2, updated_at=now() WHERE id=$1', [id, fullName]);
   }
 
-  async listEnrollments(userId: string, status: string, credentials: string): Promise<EnrollmentMessage[]> {
+  async listEnrollments(
+    userId: string,
+    semester: string,
+    status: string,
+    credentials: string,
+  ): Promise<EnrollmentMessage[]> {
     const result = await this.pool.query<EnrollmentRow>(
-      "SELECT course_id,semester_id,status,credentials FROM user_enrollments WHERE user_id=$1 AND ($2='' OR status=$2) AND ($3='' OR credentials=$3)",
-      [userId, status, credentials],
+      "SELECT course_id,semester_id,status,credentials FROM user_enrollments WHERE user_id=$1 AND ($2='' OR semester_id=$2::uuid) AND ($3='' OR status=$3) AND ($4='' OR credentials=$4)",
+      [userId, semester, status, credentials],
     );
     return result.rows.map((row) => ({
       courseId: row.course_id,

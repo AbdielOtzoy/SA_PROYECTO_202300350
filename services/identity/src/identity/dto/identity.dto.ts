@@ -23,6 +23,7 @@ export interface SessionRequest {
 }
 
 export interface EnrollmentsRequest extends SessionRequest {
+  semester?: string;
   status?: string;
   credentials?: string;
 }

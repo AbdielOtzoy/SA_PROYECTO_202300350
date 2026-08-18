@@ -11,9 +11,9 @@ type NavLink = { href: string; label: string; icon: IconName };
 const studyLinks: NavLink[] = [
   { href: '/catalogo', label: 'Explorar videos', icon: 'video' },
   { href: '/historial', label: 'Continuar viendo', icon: 'history' },
-  { href: '/cursos', label: 'Mis cursos', icon: 'book' },
   { href: '/configuracion', label: 'Configuración', icon: 'settings' },
 ];
+const coursesLink: NavLink = { href: '/cursos', label: 'Mis cursos', icon: 'book' };
 const adminLinks: NavLink[] = [
   { href: '/admin', label: 'Resumen', icon: 'grid' },
   { href: '/admin/usuarios-roles', label: 'Usuarios y roles', icon: 'users' },
@@ -60,6 +60,7 @@ export function AppShell({ children, admin = false }: { children: React.ReactNod
   }, []);
 
   const isAdminProfile = profile?.roles.includes('admin') === true;
+  const isStudent = profile?.roles.includes('student') === true;
   const isTeacher = profile?.roles.includes('teacher') === true;
   const isAssistant = profile?.roles.includes('assistant') === true;
   const staffHome = isTeacher ? '/docente' : isAssistant ? '/auxiliar' : '';
@@ -76,8 +77,8 @@ export function AppShell({ children, admin = false }: { children: React.ReactNod
     if (staffHome && staffLabel) roleLinks.push({ href: staffHome, label: staffLabel, icon: 'book' });
     if (isAdminProfile) roleLinks.push({ href: '/admin', label: 'Panel administrativo', icon: 'grid' });
     if (isTeacher || isAssistant) roleLinks.push(staffImportLink);
-    return [{ links: [...studyLinks, ...roleLinks] }];
-  }, [admin, isAdminProfile, isAssistant, isTeacher, staffHome, staffLabel]);
+    return [{ links: [...studyLinks, ...(isStudent ? [coursesLink] : []), ...roleLinks] }];
+  }, [admin, isAdminProfile, isAssistant, isStudent, isTeacher, staffHome, staffLabel]);
 
   const isActive = (href: string) =>
     href === '/admin' ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);

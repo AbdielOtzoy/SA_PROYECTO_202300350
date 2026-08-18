@@ -14,6 +14,8 @@ export type IconName =
   | 'bell'
   | 'search'
   | 'filter'
+  | 'loader'
+  | 'alert'
   | 'play'
   | 'check'
   | 'thumbUp'
@@ -94,6 +96,13 @@ const paths: Record<IconName, ReactNode> = {
       <circle cx="9" cy="6" r="2" />
       <circle cx="15" cy="12" r="2" />
       <circle cx="8" cy="18" r="2" />
+    </g>
+  ),
+  loader: <circle cx="12" cy="12" r="8" strokeDasharray="24 12" />,
+  alert: (
+    <g>
+      <path d="m12 3 9 17H3z" />
+      <path d="M12 9v4M12 17h.01" />
     </g>
   ),
   play: <path d="m9 6 10 6-10 6z" />,

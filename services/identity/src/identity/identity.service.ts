@@ -114,9 +114,19 @@ export class IdentityService {
 
   async enrollments(input: EnrollmentsRequest, userId: string, isAdmin: boolean): Promise<EnrollmentsReply> {
     const requested = input.user_id || input.userId || '';
+    const semester = String(input.semester || '').trim();
+    if (!requested) throw grpcError(GrpcStatus.INVALID_ARGUMENT, 'La cuenta de inscripción es obligatoria');
     if (userId !== requested && !isAdmin) throw grpcError(GrpcStatus.PERMISSION_DENIED, 'Inscripción ajena');
+    if (semester && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(semester)) {
+      throw grpcError(GrpcStatus.INVALID_ARGUMENT, 'El semestre debe ser un UUID válido');
+    }
     return {
-      enrollments: await this.repository.listEnrollments(requested, input.status || '', input.credentials || ''),
+      enrollments: await this.repository.listEnrollments(
+        requested,
+        semester,
+        String(input.status || '').trim(),
+        String(input.credentials || '').trim(),
+      ),
     };
   }
 
