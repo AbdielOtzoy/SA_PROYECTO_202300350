@@ -25,6 +25,10 @@
 | RF-011 | Cuando un docente o auxiliar gestione uno de sus cursos, el sistema deberá permitirle cargar y publicar sus grabaciones. | Alta |
 | RF-012 | Cuando un administrador gestione el contenido, el sistema deberá darle acceso a las grabaciones de todos los cursos. | Alta |
 
+### Implementación P5 — ficha y modelo académico
+
+RF-009 y RF-010 se completan con etiquetas normalizadas (`topics` y `recording_topics`), filtro por tema, ficha con unidad y fecha de impartición, listas separadas de docentes y auxiliares, y adjuntos de tipo `syllabus` o `material`. Los adjuntos se manejan como metadatos y URL/ruta; la carga binaria y GCS permanecen fuera de P5.
+
 # Reproducción
 
 | ID | Requerimiento | Prioridad |

@@ -78,6 +78,7 @@ class AnalyticsService:
             'course': str(request.get('course', '') or ''),
             'semester': str(request.get('semester', '') or ''),
             'professor': str(request.get('professor', '') or ''),
+            'topic': str(request.get('topic', '') or ''),
             'page': max(1, int(request.get('page', 1) or 1)),
             'page_size': min(10, max(1, int(request.get('page_size', 10) or 10))),
             'user_id': str(request.get('user_id', '') or ''),
@@ -162,10 +163,10 @@ class AnalyticsService:
         grouped: dict[str, tuple[int, list[str]]] = {}
         for count in counts:
             recording = catalog.get(count.recording_id)
-            raw_topic = recording.topic if recording else ''
-            topic = self._topic_key(raw_topic)
-            current_views, recording_ids = grouped.setdefault(topic, (0, []))
-            grouped[topic] = (current_views + count.views, recording_ids + [count.recording_id])
+            topics = self._recording_topics(recording) if recording else ('sin tema',)
+            for topic in topics:
+                current_views, recording_ids = grouped.setdefault(topic, (0, []))
+                grouped[topic] = (current_views + count.views, recording_ids + [count.recording_id])
         result = tuple(
             TrendingTopic(topic, views, tuple(sorted(recording_ids)))
             for topic, (views, recording_ids) in sorted(grouped.items(), key=lambda item: (-item[1][0], item[0]))[
@@ -216,9 +217,10 @@ class AnalyticsService:
         history_ids = {item.recording_id for item in history}
         recordings = self._sources.recordings(user_id, token)
         interest_topics = {
-            self._topic_key(recording.topic)
+            topic
             for recording in recordings
             if recording.recording_id in history_ids or (recording.has_user_vote and recording.user_vote)
+            for topic in self._recording_topics(recording)
         }
         candidates: list[tuple[float, RecordingSignal]] = []
         for recording in recordings:
@@ -227,7 +229,7 @@ class AnalyticsService:
             score = 0.0
             if recording.course_id in enrolled:
                 score += 50.0
-            if self._topic_key(recording.topic) in interest_topics and self._topic_key(recording.topic) != 'sin tema':
+            if any(topic in interest_topics and topic != 'sin tema' for topic in self._recording_topics(recording)):
                 score += 30.0
             score += max(0.0, min(100.0, recording.recommendation)) * 0.2
             if recording.has_user_vote and not recording.user_vote:
@@ -342,6 +344,12 @@ class AnalyticsService:
         compact = ' '.join(value.split()).casefold()
         normalized = unicodedata.normalize('NFKD', compact)
         return ''.join(character for character in normalized if not unicodedata.combining(character)) or 'sin tema'
+
+    @classmethod
+    def _recording_topics(cls, recording: RecordingSignal) -> tuple[str, ...]:
+        values = recording.topics or ((recording.topic,) if recording.topic else ())
+        normalized = tuple(dict.fromkeys(cls._topic_key(value) for value in values if value.strip()))
+        return normalized or ('sin tema',)
 
     @staticmethod
     def _with_views(recording: RecordingSignal, views: int) -> RecordingSignal:

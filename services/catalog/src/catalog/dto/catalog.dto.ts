@@ -3,6 +3,7 @@ export interface ListRequest {
   school?: string;
   course?: string;
   semester?: string;
+  topic?: string;
   page?: number;
   page_size?: number;
   pageSize?: number;
@@ -39,6 +40,7 @@ export interface RecordingMessage {
   semester: string;
   unit: string;
   topic: string;
+  topics: string[];
   videoPath: string;
   recommendation: number;
   professor: string;
@@ -49,6 +51,28 @@ export interface RecordingMessage {
   hasUserVote?: boolean;
   userVote?: boolean;
   views?: number;
+  professors: RecordingParticipantMessage[];
+  assistants: RecordingParticipantMessage[];
+  attachments: RecordingAttachmentMessage[];
+}
+
+export interface TopicMessage {
+  id: string;
+  name: string;
+}
+
+export interface RecordingParticipantMessage {
+  id: string;
+  fullName: string;
+  email: string;
+}
+
+export interface RecordingAttachmentMessage {
+  id: string;
+  filename: string;
+  filePath: string;
+  fileType: string;
+  attachmentType: string;
 }
 
 export interface AuthorizationReply {
@@ -61,6 +85,10 @@ export interface RecordingsReply {
   pageSize: number;
   total: number;
   totalPages: number;
+}
+
+export interface TopicsReply {
+  topics: TopicMessage[];
 }
 
 export interface PublishedRecordingMessage {
@@ -119,7 +147,7 @@ export interface CourseStaffMessage {
 }
 
 export interface CsvRow {
-  [key: string]: string | number | boolean | null;
+  [key: string]: unknown;
 }
 
 export interface Actor {

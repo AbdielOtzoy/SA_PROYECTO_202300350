@@ -53,6 +53,7 @@ class RecordingSignal:
     semester: str = ''
     unit: str = ''
     topic: str = ''
+    topics: tuple[str, ...] = ()
     video_path: str = ''
     recommendation: float = 0.0
     positives: int = 0

@@ -64,6 +64,30 @@ CREATE TABLE recording_professors (
   PRIMARY KEY (recording_id, professor_id)
 );
 
+CREATE TABLE topics (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name varchar(100) NOT NULL
+);
+
+CREATE UNIQUE INDEX topics_name_lower_unique ON topics (lower(name));
+
+CREATE TABLE recording_topics (
+  recording_id uuid NOT NULL REFERENCES recordings(id) ON DELETE CASCADE,
+  topic_id uuid NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
+  PRIMARY KEY (recording_id, topic_id)
+);
+
+CREATE TABLE attachments (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id uuid NOT NULL REFERENCES recordings(id) ON DELETE CASCADE,
+  filename varchar(255) NOT NULL,
+  file_path text NOT NULL,
+  file_type varchar(100) NOT NULL DEFAULT 'application/octet-stream',
+  attachment_type varchar(20) NOT NULL DEFAULT 'material'
+    CHECK (attachment_type IN ('syllabus', 'material')),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
 CREATE TABLE ratings (
   user_id uuid NOT NULL,
   recording_id uuid NOT NULL REFERENCES recordings(id),
@@ -102,6 +126,11 @@ SELECT
   r.topic,
   r.video_path,
   COALESCE(
+    array_agg(DISTINCT t.name ORDER BY t.name)
+      FILTER (WHERE t.name IS NOT NULL),
+    ARRAY[]::varchar[]
+  ) topics,
+  COALESCE(
     string_agg(DISTINCT p.full_name, ', ' ORDER BY p.full_name)
       FILTER (WHERE p.full_name IS NOT NULL),
     ''
@@ -113,6 +142,8 @@ JOIN schools s ON s.id = c.school_id
 JOIN semesters se ON se.id = r.semester_id
 LEFT JOIN recording_professors rp ON rp.recording_id = r.id
 LEFT JOIN professors p ON p.id = rp.professor_id
+LEFT JOIN recording_topics rt ON rt.recording_id = r.id
+LEFT JOIN topics t ON t.id = rt.topic_id
 WHERE r.is_published
   AND r.is_active
   AND c.is_active

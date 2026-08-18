@@ -34,6 +34,8 @@ El Gateway coordina la recuperación mediante Identidad y Notificaciones: Identi
 
 El Gateway usa direcciones gRPC configurables y los servicios usan binds configurables, documentados en `.env.example`. Analítica consulta Catálogo, Identidad y Reproducción por gRPC; no accede directamente a sus bases. Reproducción consulta Catálogo por gRPC y entrega el vídeo desde el volumen local.
 
+La ficha detallada se resuelve completamente dentro de Catálogo: `recording_detail` entrega los metadatos base y el repositorio obtiene por las relaciones propias los participantes, temas y materiales. El contrato `catalog.proto` expone `ListTopics`, el filtro `topic` y las listas separadas de docentes, auxiliares y adjuntos. El Gateway adapta la respuesta a REST sin consultar directamente `catalog_db`; Analítica propaga el filtro y conserva las etiquetas en la caché del catálogo.
+
 ## Vista física
 
 [![Vista Física — Entorno Local](img/vista-despliegue-local.drawio.svg)](img/vista-despliegue-local.drawio)

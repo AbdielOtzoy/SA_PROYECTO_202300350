@@ -113,7 +113,7 @@ users (1) ────── (N) credential_audit_log
 
 ## 3. DER — Catálogo (PostgreSQL)
 
-El servicio de Catálogo gestiona la estructura académica completa: escuelas, cursos, semestres, catedráticos, grabaciones y valoraciones. Es la base de datos con mayor cantidad de entidades y relaciones, y concentra la mayor parte de la lógica programable.
+El servicio de Catálogo gestiona la estructura académica completa: escuelas, cursos, semestres, catedráticos, grabaciones, temas, materiales y valoraciones. La ficha detallada se construye desde este servicio y sus datos se exponen al Gateway mediante gRPC.
 
 ![DER Catálogo](img/02_der_catalogo.png)
 
@@ -128,10 +128,10 @@ El servicio de Catálogo gestiona la estructura académica completa: escuelas, c
 | `semesters` | Períodos académicos | `id` (`UUID`) | `year`, `term` (1=primer semestre, 2=segundo semestre) |
 | `professors` | Catedráticos y auxiliares | `id` (`UUID`) | `full_name`, `email` (`UQ`) |
 | `recordings` | Grabaciones de clases publicadas | `id` (`UUID`) | `title`, `course_id` (`FK`), `semester_id` (`FK`), `lecture_date`, `unit`, `topic`, `video_path`, `is_published`, `created_at` |
-| `recording_professors` | Asignación de catedráticos a grabaciones | `recording_id` + `professor_id` | `role_type` (`'professor'` \| `'assistant'`) |
+| `recording_professors` | Asignación de participantes a grabaciones | `recording_id` + `professor_id` | `role_type` (`'professor'` \| `'assistant'`) |
 | `topics` | Temas y etiquetas académicas | `id` (`UUID`) | `name` (`UQ`) |
 | `recording_topics` | Asignación de temas a grabaciones | `recording_id` + `topic_id` | — |
-| `attachments` | Materiales adjuntos a grabaciones | `id` (`UUID`) | `recording_id` (`FK`), `filename`, `file_path`, `file_type` |
+| `attachments` | Sílabo y materiales adjuntos | `id` (`UUID`) | `recording_id` (`FK`), `filename`, `file_path`, `file_type`, `attachment_type` |
 | `ratings` | Valoraciones de usuarios sobre grabaciones | `user_id` + `recording_id` | `vote` (`BOOLEAN`: `true`=positivo), `updated_at` |
 
 ### Relaciones
@@ -158,18 +158,19 @@ recordings (1) ────── (N) ratings
 
 | Tipo | Nombre | Propósito |
 |---|---|---|
-| **VW** | `vw_catalog` | Vista principal del catálogo. Realiza `JOIN` de `recordings`, `courses`, `schools` y `semesters`. Permite filtrar por escuela, curso, semestre, catedrático (vía `recording_professors`) y tema (vía `recording_topics`). |
-| **VW** | `vw_recording_detail` | Ficha técnica completa de una grabación: curso, semestre, fecha de impartición, unidad, tema, docentes, auxiliares, materiales adjuntos y sílabo. |
-| **FN** | `fn_recommendation_pct(recording_id UUID)` | Calcula el porcentaje de recomendación: votos positivos ÷ total de votos. Retorna `DECIMAL`. |
-| **FN** | `fn_top_rated(limit INT)` | Retorna una tabla con el ranking de grabaciones por porcentaje de recomendación. |
+| **VW** | `published_catalog` | Vista principal del catálogo publicado. Realiza `JOIN` de `recordings`, `courses`, `schools`, `semesters` y agrega las etiquetas. |
+| **VW** | `recording_detail` | Vista base de la ficha técnica: curso, semestre, fecha de impartición, unidad y temas. El repositorio complementa docentes, auxiliares y adjuntos en consultas del mismo servicio. |
+| **FN** | `recommendation_percentage(recording_id UUID)` | Calcula el porcentaje de recomendación: votos positivos ÷ total de votos. Retorna `DECIMAL`. |
 | **SP** | `sp_import_catalog_csv` | Carga masiva transaccional de datos de catálogo desde CSV (`schools`, `courses`, `semesters`). |
-| **SP** | `sp_import_recordings_csv` | Carga masiva transaccional de grabaciones desde CSV. |
+| **SP** | `sp_import_recordings_csv` | Carga masiva transaccional de grabaciones, participantes, temas y metadatos de adjuntos desde CSV. |
 
 ### Decisiones de diseño
 
 > - Las vistas permiten a TypeScript realizar consultas complejas sin lógica de `JOIN` en el código, cumpliendo RNF-023.
-> - La función `fn_recommendation_pct` ejecuta el cálculo en la base de datos y devuelve el porcentaje actualizado en una sola operación (RNF-024).
+> - La función `recommendation_percentage` ejecuta el cálculo en la base de datos y devuelve el porcentaje actualizado en una sola operación (RNF-024).
 > - Los catedráticos y auxiliares se modelan en la misma tabla `professors`; el tipo de participación en una grabación se distingue mediante `role_type` en la tabla de rompimiento `recording_professors`.
+> - Los temas se normalizan en `topics` y se relacionan con `recording_topics`; el campo legado `recordings.topic` se conserva para compatibilidad con importaciones anteriores.
+> - P5 almacena únicamente metadatos y URL/ruta de materiales. La carga binaria y GCS pertenecen al pendiente P1.
 
 ---
 

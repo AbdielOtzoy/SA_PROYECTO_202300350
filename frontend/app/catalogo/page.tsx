@@ -15,6 +15,7 @@ type Recording = {
   school: string;
   semester: string;
   topic: string;
+  topics?: string[];
   professor?: string;
   recommendation: number;
 };
@@ -33,6 +34,7 @@ type OptionResponse = {
   courses: { courses: { id: string; name: string; code: string }[] };
   semesters: { semesters: { id: string; year: number; term: number }[] };
   professors: { professors: { id: string; full_name: string; email: string }[] };
+  topics: { topics: { id: string; name: string }[] };
 };
 type HistoryResponse = { items: HistoryItem[] };
 type RecommendationResponse = { items: Recommendation[] };
@@ -51,6 +53,7 @@ export default function Catalog() {
   const [course, setCourse] = useState('');
   const [semester, setSemester] = useState('');
   const [professor, setProfessor] = useState('');
+  const [topic, setTopic] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [total, setTotal] = useState(0);
@@ -59,9 +62,9 @@ export default function Catalog() {
 
   async function load(
     nextPage = 1,
-    overrides: Partial<Record<'q' | 'school' | 'course' | 'semester' | 'professor', string>> = {},
+    overrides: Partial<Record<'q' | 'school' | 'course' | 'semester' | 'professor' | 'topic', string>> = {},
   ) {
-    const filters = { q, school, course, semester, professor, ...overrides };
+    const filters = { q, school, course, semester, professor, topic, ...overrides };
     try {
       setError('');
       const params = new URLSearchParams({ page: String(nextPage), page_size: '10' });
@@ -190,6 +193,21 @@ export default function Catalog() {
               </option>
             ))}
           </select>
+          <select
+            className="field"
+            value={topic}
+            onChange={(event) => {
+              setTopic(event.target.value);
+              void load(1, { topic: event.target.value });
+            }}
+          >
+            <option value="">Todos los temas</option>
+            {options?.topics.topics.map((value) => (
+              <option key={value.id} value={value.name}>
+                {value.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       {error && <p className="notice">{error}</p>}
@@ -246,7 +264,9 @@ export default function Catalog() {
               <h3>{recording.title}</h3>
               <span className="course-link">{recording.course}</span>
               <div className="recording-meta">
-                <span>{recording.professor || recording.topic || 'Clase grabada'}</span>
+                <span>
+                  {recording.topics?.join(' · ') || recording.professor || recording.topic || 'Clase grabada'}
+                </span>
                 <span>{durations[recording.id] ? format(durations[recording.id]) : '—'}</span>
               </div>
             </Link>

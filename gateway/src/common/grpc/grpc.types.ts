@@ -43,6 +43,7 @@ export interface RecordingMessage {
   semester: string;
   unit: string;
   topic: string;
+  topics?: string[];
   video_path?: string;
   videoPath?: string;
   recommendation: number;
@@ -59,6 +60,23 @@ export interface RecordingMessage {
   user_vote?: boolean;
   userVote?: boolean;
   views?: number;
+  professors?: RecordingParticipant[];
+  assistants?: RecordingParticipant[];
+  attachments?: RecordingAttachment[];
+}
+
+export interface RecordingParticipant {
+  id: string;
+  full_name: string;
+  email: string;
+}
+
+export interface RecordingAttachment {
+  id: string;
+  filename: string;
+  file_path: string;
+  file_type: string;
+  attachment_type: string;
 }
 
 export interface AnalyticsRecordingMessage {
@@ -79,6 +97,7 @@ export interface AnalyticsRecordingMessage {
   user_vote: boolean;
   professor: string;
   views: number;
+  topics?: string[];
 }
 
 export interface AnalyticsCatalogPageReply {
@@ -101,6 +120,10 @@ export interface ListRecordingsReply {
 
 export interface RecordingReply {
   recording: RecordingMessage;
+}
+
+export interface CatalogTopicsReply {
+  topics: { id: string; name: string }[];
 }
 
 export interface RatingReply {

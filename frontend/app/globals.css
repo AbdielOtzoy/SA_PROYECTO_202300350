@@ -908,6 +908,42 @@ select {
   font: 700 18px var(--display);
   margin: 0;
 }
+.participant-group {
+  margin-top: 28px;
+}
+.participant-group .section-label {
+  display: block;
+  margin-bottom: 12px;
+}
+.participant-list,
+.attachment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.participant-list li,
+.attachment-list li {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f8fbff;
+}
+.participant-list span,
+.attachment-list span {
+  color: var(--muted);
+  font-size: 13px;
+}
+.attachment-list a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.attachment-list a:hover strong {
+  color: var(--blue);
+}
 .recommendation {
   margin-top: 165px;
 }

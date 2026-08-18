@@ -14,6 +14,7 @@ import type {
   RecordingsReply,
   SchoolMessage,
   SemesterMessage,
+  TopicMessage,
   VoteRequest,
   PlaybackAuthorizationRequest,
   PublishedRecordingMessage,
@@ -62,6 +63,9 @@ export class CatalogService {
   }
   professors(): Promise<ProfessorMessage[]> {
     return this.repository.professors();
+  }
+  topics(): Promise<TopicMessage[]> {
+    return this.repository.topics();
   }
   staff(courseId: string, actor: Actor): Promise<CourseStaffMessage[]> {
     return this.repository.staff(courseId, actor);
@@ -227,6 +231,8 @@ export class CatalogService {
       }
       const professorEmails = this.emailList(row.professor_emails, 'professor_emails', line);
       const assistantEmails = this.emailList(row.assistant_emails, 'assistant_emails', line);
+      const topics = this.topicList(row.topics, line);
+      const attachments = this.attachments(row.attachments_json, line);
       return {
         recording_id: id,
         title: required(row.title, 'title', line),
@@ -236,10 +242,12 @@ export class CatalogService {
         lecture_date: lectureDate,
         unit: String(row.unit || '').trim(),
         topic: String(row.topic || '').trim(),
+        topics: topics.join(';'),
         video_path: required(row.video_path, 'video_path', line),
         is_published: booleanValue(row.is_published, 'is_published', line),
         professor_emails: professorEmails,
         assistant_emails: assistantEmails,
+        attachments_json: attachments,
       };
     });
     await this.repository.assertActorCanManageRecordingRows(rows, actor);
@@ -292,6 +300,66 @@ export class CatalogService {
         throw grpcError(GrpcStatus.INVALID_ARGUMENT, `La fila ${row} tiene ${field} inválido`);
     }
     return emails.join(';');
+  }
+
+  private topicList(value: unknown, row: number): string[] {
+    const values = String(value || '')
+      .split(';')
+      .map((item) => item.trim())
+      .filter(Boolean);
+    const unique = new Map<string, string>();
+    for (const topic of values) {
+      if (topic.length > 100)
+        throw grpcError(GrpcStatus.INVALID_ARGUMENT, `La fila ${row} tiene topic demasiado largo`);
+      const key = topic.toLocaleLowerCase('es');
+      if (!unique.has(key)) unique.set(key, topic);
+    }
+    return [...unique.values()];
+  }
+
+  private attachments(
+    value: unknown,
+    row: number,
+  ): Array<{
+    filename: string;
+    file_path: string;
+    file_type: string;
+    attachment_type: string;
+  }> {
+    const raw = String(value || '').trim();
+    if (!raw) return [];
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      throw grpcError(GrpcStatus.INVALID_ARGUMENT, `La fila ${row} tiene attachments_json inválido`);
+    }
+    if (!Array.isArray(parsed)) {
+      throw grpcError(GrpcStatus.INVALID_ARGUMENT, `La fila ${row} tiene attachments_json inválido`);
+    }
+
+    return parsed.map((item, index) => {
+      if (!item || typeof item !== 'object') {
+        throw grpcError(GrpcStatus.INVALID_ARGUMENT, `El adjunto ${index + 1} de la fila ${row} es inválido`);
+      }
+      const attachment = item as Record<string, unknown>;
+      const filename = String(attachment.filename || '').trim();
+      const filePath = String(attachment.file_path || attachment.filePath || '').trim();
+      const fileType = String(attachment.file_type || attachment.fileType || 'application/octet-stream').trim();
+      const attachmentType = String(attachment.attachment_type || attachment.attachmentType || 'material')
+        .trim()
+        .toLowerCase();
+      if (!filename || filename.length > 255 || !filePath || !/^(https?:\/\/|\/)[^\s]+$/i.test(filePath)) {
+        throw grpcError(GrpcStatus.INVALID_ARGUMENT, `El adjunto ${index + 1} de la fila ${row} tiene ruta inválida`);
+      }
+      if (!/^[\w!#$&^.+-]+\/[\w!#$&^.+-]+$/.test(fileType) || fileType.length > 100) {
+        throw grpcError(GrpcStatus.INVALID_ARGUMENT, `El adjunto ${index + 1} de la fila ${row} tiene tipo inválido`);
+      }
+      if (!['syllabus', 'material'].includes(attachmentType)) {
+        throw grpcError(GrpcStatus.INVALID_ARGUMENT, `El adjunto ${index + 1} de la fila ${row} tiene clase inválida`);
+      }
+      return { filename, file_path: filePath, file_type: fileType, attachment_type: attachmentType };
+    });
   }
 
   private validateFilename(filename: string): void {

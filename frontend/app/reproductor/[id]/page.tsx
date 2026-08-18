@@ -6,7 +6,27 @@ import { AppShell } from '../../../components/AppShell';
 import { api, errorMessage, request } from '../../../components/api';
 import { Icon } from '../../../components/Icon';
 
-type Detail = { title: string; course: string; semester: string; unit?: string; topic: string; recommendation: number };
+type Participant = { id: string; full_name: string; email: string };
+type Attachment = {
+  id: string;
+  filename: string;
+  file_path: string;
+  file_type: string;
+  attachment_type: string;
+};
+type Detail = {
+  title: string;
+  course: string;
+  semester: string;
+  unit?: string;
+  topic: string;
+  topics?: string[];
+  lecture_date?: string;
+  professors?: Participant[];
+  assistants?: Participant[];
+  attachments?: Attachment[];
+  recommendation: number;
+};
 type PlaybackResponse = { checkpoint_seconds: number };
 type RecordingResponse = { recording: Detail };
 type RatingResponse = { recommendation: number };
@@ -336,7 +356,65 @@ export default function Player() {
                   <dt>SEMESTRE</dt>
                   <dd>{detail?.semester || '—'}</dd>
                 </div>
+                <div>
+                  <dt>FECHA DE IMPARTICIÓN</dt>
+                  <dd>{detail?.lecture_date || '—'}</dd>
+                </div>
+                <div>
+                  <dt>TEMAS</dt>
+                  <dd>{detail?.topics?.join(' · ') || detail?.topic || '—'}</dd>
+                </div>
               </dl>
+            </section>
+            <section className="recording-detail">
+              <h2>Participantes</h2>
+              <div className="participant-group">
+                <span className="section-label">DOCENTES</span>
+                {detail?.professors?.length ? (
+                  <ul className="participant-list">
+                    {detail.professors.map((person) => (
+                      <li key={person.id}>
+                        <strong>{person.full_name}</strong>
+                        <span>{person.email}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="muted">No hay docentes registrados.</p>
+                )}
+              </div>
+              <div className="participant-group">
+                <span className="section-label">AUXILIARES</span>
+                {detail?.assistants?.length ? (
+                  <ul className="participant-list">
+                    {detail.assistants.map((person) => (
+                      <li key={person.id}>
+                        <strong>{person.full_name}</strong>
+                        <span>{person.email}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="muted">No hay auxiliares registrados.</p>
+                )}
+              </div>
+            </section>
+            <section className="recording-detail">
+              <h2>Sílabo y materiales</h2>
+              {detail?.attachments?.length ? (
+                <ul className="attachment-list">
+                  {detail.attachments.map((attachment) => (
+                    <li key={attachment.id}>
+                      <a href={attachment.file_path} target="_blank" rel="noreferrer">
+                        <strong>{attachment.filename}</strong>
+                        <span>{attachment.attachment_type === 'syllabus' ? 'Sílabo' : 'Material de apoyo'}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="muted">Esta grabación no tiene materiales adjuntos.</p>
+              )}
             </section>
             <section className="recommendation">
               <span className="section-label">RECOMENDACIÓN</span>

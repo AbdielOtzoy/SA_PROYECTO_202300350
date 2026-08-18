@@ -3,7 +3,8 @@
 CREATE TABLE "schools" (
   "id" uuid PRIMARY KEY,
   "name" varchar(100) NOT NULL,
-  "code" varchar(10) UNIQUE NOT NULL
+  "code" varchar(10) UNIQUE NOT NULL,
+  "is_active" boolean NOT NULL DEFAULT true
 );
 
 CREATE TABLE "courses" (
@@ -11,19 +12,22 @@ CREATE TABLE "courses" (
   "code" varchar(10) UNIQUE NOT NULL,
   "name" varchar(150) NOT NULL,
   "school_id" uuid NOT NULL,
-  "credits" int
+  "credits" int,
+  "is_active" boolean NOT NULL DEFAULT true
 );
 
 CREATE TABLE "semesters" (
   "id" uuid PRIMARY KEY,
   "year" int NOT NULL,
-  "term" int NOT NULL
+  "term" int NOT NULL,
+  "is_active" boolean NOT NULL DEFAULT true
 );
 
 CREATE TABLE "professors" (
   "id" uuid PRIMARY KEY,
   "full_name" varchar(150) NOT NULL,
-  "email" varchar(255) UNIQUE NOT NULL
+  "email" varchar(255) UNIQUE NOT NULL,
+  "is_active" boolean NOT NULL DEFAULT true
 );
 
 CREATE TABLE "recordings" (
@@ -36,7 +40,8 @@ CREATE TABLE "recordings" (
   "topic" varchar(200),
   "video_path" text,
   "is_published" boolean NOT NULL DEFAULT false,
-  "created_at" timestamptz NOT NULL DEFAULT now()
+  "created_at" timestamptz NOT NULL DEFAULT now(),
+  "is_active" boolean NOT NULL DEFAULT true
 );
 
 CREATE TABLE "recording_professors" (
@@ -48,8 +53,10 @@ CREATE TABLE "recording_professors" (
 
 CREATE TABLE "topics" (
   "id" uuid PRIMARY KEY,
-  "name" varchar(100) UNIQUE NOT NULL
+  "name" varchar(100) NOT NULL
 );
+
+CREATE UNIQUE INDEX "topics_name_lower_unique" ON "topics" (lower("name"));
 
 CREATE TABLE "recording_topics" (
   "recording_id" uuid NOT NULL,
@@ -62,7 +69,9 @@ CREATE TABLE "attachments" (
   "recording_id" uuid NOT NULL,
   "filename" varchar(255) NOT NULL,
   "file_path" text NOT NULL,
-  "file_type" varchar(50)
+  "file_type" varchar(100) NOT NULL DEFAULT 'application/octet-stream',
+  "attachment_type" varchar(20) NOT NULL DEFAULT 'material',
+  "created_at" timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE "ratings" (
@@ -92,9 +101,12 @@ ALTER TABLE "recordings" ADD CONSTRAINT "recordings_semester_fk" FOREIGN KEY ("s
 ALTER TABLE "recording_professors" ADD CONSTRAINT "recording_professors_recording_fk" FOREIGN KEY ("recording_id") REFERENCES "recordings" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "recording_professors" ADD CONSTRAINT "recording_professors_professor_fk" FOREIGN KEY ("professor_id") REFERENCES "professors" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "recording_topics" ADD CONSTRAINT "recording_topics_recording_fk" FOREIGN KEY ("recording_id") REFERENCES "recordings" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE "recording_topics" ADD CONSTRAINT "recording_topics_topic_fk" FOREIGN KEY ("topic_id") REFERENCES "topics" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "recording_topics" ADD CONSTRAINT "recording_topics_recording_fk" FOREIGN KEY ("recording_id") REFERENCES "recordings" ("id") ON DELETE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE "recording_topics" ADD CONSTRAINT "recording_topics_topic_fk" FOREIGN KEY ("topic_id") REFERENCES "topics" ("id") ON DELETE CASCADE DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "attachments" ADD CONSTRAINT "attachments_recording_fk" FOREIGN KEY ("recording_id") REFERENCES "recordings" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
+ALTER TABLE "attachments" ADD CONSTRAINT "attachments_type_check"
+  CHECK ("attachment_type" IN ('syllabus', 'material'));
 
 ALTER TABLE "ratings" ADD CONSTRAINT "ratings_recording_fk" FOREIGN KEY ("recording_id") REFERENCES "recordings" ("id") DEFERRABLE INITIALLY IMMEDIATE;

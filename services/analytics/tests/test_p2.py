@@ -139,6 +139,42 @@ class AnalyticsP2Tests(unittest.TestCase):
         self.assertEqual(result[0].views, 8)
         self.assertEqual(result[0].recording_ids, ('r-1', 'r-2'))
 
+    def test_trends_and_recommendations_consume_multiple_topics(self) -> None:
+        sources = FakeSources()
+        sources.items = (
+            RecordingSignal(
+                'r-1',
+                'Vista',
+                'course-1',
+                'Álgebra',
+                topic='Álgebra',
+                topics=('Álgebra', 'Matrices'),
+                recommendation=90,
+                total_votes=10,
+            ),
+            RecordingSignal(
+                'r-2',
+                'Derivadas',
+                'course-1',
+                'Álgebra',
+                topic='Cálculo',
+                topics=('Cálculo', 'Matrices'),
+                recommendation=80,
+                total_votes=4,
+            ),
+        )
+        service = AnalyticsService(self.repository, self.cache, FakeCodec(), sources)
+
+        trends = service.trending_topics(
+            start_at='2026-08-01T00:00:00Z',
+            end_at='2026-08-08T00:00:00Z',
+            token='token',
+        )
+
+        by_topic = {item.topic: item.views for item in trends}
+        self.assertEqual(by_topic['matrices'], 8)
+        self.assertEqual([item.recording_id for item in service.recommendations('user-1', token='token')], ['r-2'])
+
     def test_top_rated_excludes_recordings_without_votes(self) -> None:
         result = self.service.top_rated(token='token')
 

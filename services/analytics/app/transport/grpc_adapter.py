@@ -48,6 +48,7 @@ class AnalyticsGrpcAdapter(analytics_pb2_grpc.AnalyticsServiceServicer):
                 'page': request.page,
                 'page_size': request.page_size,
                 'professor': request.professor,
+                'topic': request.topic,
                 'user_id': requested_user,
             },
             self._token(claims),
@@ -238,6 +239,7 @@ def _to_recording(item: RecordingSignal | MostViewedItem) -> analytics_pb2.Analy
         user_vote=item.user_vote,
         professor=item.professor,
         views=item.views,
+        topics=list(item.topics),
     )
 
 
@@ -252,6 +254,7 @@ def _recording_from_proto(item: object) -> RecordingSignal:
         semester=str(getattr(item, 'semester', '')),
         unit=str(getattr(item, 'unit', '')),
         topic=str(getattr(item, 'topic', '')),
+        topics=tuple(str(value) for value in getattr(item, 'topics', [])),
         video_path=str(getattr(item, 'video_path', '')),
         recommendation=float(getattr(item, 'recommendation', 0) or 0),
         positives=int(getattr(item, 'positives', 0) or 0),

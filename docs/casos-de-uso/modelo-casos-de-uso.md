@@ -219,6 +219,10 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 **Relaciones locales**: `CU-01.5 — Consultar ficha de grabación` extiende `CU-01.4 — Explorar y filtrar catálogo` cuando el usuario selecciona una grabación; incluye `CU-01.5a — Mostrar ficha técnica`.
 
+### Implementación P5 relacionada
+
+La ficha se obtiene mediante `GET /api/catalog/:id`, con JWT validado por el Gateway y consulta gRPC a Catálogo. La respuesta incluye `lecture_date`, `unit`, etiquetas normalizadas, docentes, auxiliares y adjuntos. Cuando una grabación no tiene materiales, la interfaz muestra la ficha sin enlaces adicionales; el CSV acepta `topics` separado por `;` y `attachments_json` opcional.
+
 [![Diagrama local de ficha de grabación](referencias/casos-de-uso-locales/11-cu-01-5-ficha-grabacion.drawio.svg)](referencias/casos-de-uso-locales/11-cu-01-5-ficha-grabacion.drawio)
 
 ## CU-01.6 — Reproducir grabación

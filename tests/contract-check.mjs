@@ -23,6 +23,7 @@ for (const fixture of [
   'tests/fixtures/csv/recordings.csv',
   'tests/fixtures/csv/recordings-extra.csv',
   'tests/fixtures/csv/recordings-samples.csv',
+  'tests/fixtures/csv/recordings-p5.csv',
 ]) {
   const [header, ...rows] = readFileSync(fixture, 'utf8').trim().split(/\r?\n/);
   const videoColumn = header.split(',').indexOf('video_path');

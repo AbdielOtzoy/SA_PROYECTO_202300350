@@ -116,17 +116,28 @@ Validación de cierre realizada:
 - Publicación: 7 grabaciones cambiaron a publicadas, se generaron avisos para inscritos y la cola terminó con todos los registros en `sent`.
 - Navegador: `/recuperar` mostró los estados de solicitud y restablecimiento; el login enlaza a `/recuperar`.
 
-### P5 — Completar ficha detallada y modelo académico
+### P5 — Ficha detallada y modelo académico ✅
 
-La Fase 1 exige ficha técnica con unidad, fecha, sílabo/material adjunto y docentes/auxiliares participantes.
+P5 quedó implementada de extremo a extremo dentro del microservicio de Catálogo, sin carga binaria ni integración con GCS.
 
-Actualmente:
+Implementado:
 
-- La vista `recording_detail` es prácticamente la misma que `published_catalog`.
-- El contrato de catálogo no expone `lecture_date`, materiales adjuntos, sílabo ni listas separadas de docentes y auxiliares.
-- La búsqueda usa `topic` como texto, pero no existe un modelo implementado de etiquetas o temas múltiples.
+- Migración idempotente `databases/catalog/06-p5.sql` con `topics`, `recording_topics` y `attachments`, índices, vistas y procedimiento de importación actualizado.
+- Compatibilidad con el CSV anterior y columnas opcionales `topics` (separada por `;`) y `attachments_json`, con normalización, validación y reemplazo transaccional de relaciones.
+- Contrato gRPC con `ListTopics`, filtro `topic`, temas, docentes, auxiliares y adjuntos; Analítica conserva la propagación del filtro y los temas.
+- Ficha REST estable en `GET /api/catalog/:id`, filtro `GET /api/catalog?topic=...` y etiquetas en `GET /api/catalog/options`.
+- Interfaz de `/catalogo` con filtro por tema y de `/reproductor/[id]` con curso, semestre, unidad, fecha ISO, temas, participantes separados y materiales/sílabo, incluyendo estados vacíos.
+- Documentación actualizada en arquitectura, requerimientos, casos de uso, modelo de datos y [`docs/implementacion-p5.md`](../docs/implementacion-p5.md).
 
-Se debe decidir si estas entidades se implementarán o si se ajustará la documentación para describir únicamente el alcance real.
+Validación de cierre realizada:
+
+- `npm run verify`: completado correctamente; incluye formato, lint, typecheck, pruebas Node, Go, Python y contratos.
+- `docker compose --env-file .env -f docker-compose.local.yml config`: válido.
+- `docker compose --env-file .env -f docker-compose.local.yml up --build -d`: imágenes construidas y servicios estables.
+- Flujo funcional autenticado: importación de CSV P5, consulta de temas en opciones, filtrado por `Microservicios` y ficha con tres temas, docente, auxiliar, sílabo/material y `lecture_date` en formato `2026-08-18`.
+- Navegador: se verificaron las rutas y controles de filtro de temas, ficha, participantes separados y sección de materiales; la respuesta funcional de datos se confirmó contra el Gateway autenticado.
+
+Fuera de alcance de P5: carga binaria, Google Cloud Storage, GCP, CRUD administrativo de temas/materiales y los pendientes P1/P6–P10.
 
 ## 4. Pendientes de infraestructura y calidad
 
@@ -165,7 +176,7 @@ Se debe implementar una estrategia de expiración por inactividad o documentar e
 
 Ejemplos que deben corregirse o implementarse:
 
-- `topics`, `recording_topics` y `attachments` aparecen documentados, pero no están en `databases/catalog/01-schema.sql`.
+- `topics`, `recording_topics` y `attachments` ya fueron implementados en el modelo y migración de Catálogo durante P5; el resto de inconsistencias de este apartado permanece pendiente.
 - Se documentan `sp_assign_role` y `sp_revoke_role`, pero el código utiliza `set_user_role`.
 - Se documenta `trg_audit_credentials`, pero el trigger real audita `user_roles`.
 - Se documentan `vw_user_profile` y `vw_catalog`, pero los nombres reales son diferentes.

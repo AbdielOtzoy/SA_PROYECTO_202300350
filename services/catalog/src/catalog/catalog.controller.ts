@@ -50,6 +50,51 @@ const staffProto = (value: Record<string, unknown>) => ({
   professorEmail: value.professorEmail,
 });
 
+const participantProto = (value: Record<string, unknown>) => ({
+  id: value.id,
+  fullName: value.fullName,
+  email: value.email,
+});
+
+const attachmentProto = (value: Record<string, unknown>) => ({
+  id: value.id,
+  filename: value.filename,
+  filePath: value.filePath,
+  fileType: value.fileType,
+  attachmentType: value.attachmentType,
+});
+
+const recordingProto = (value: Record<string, unknown>) => ({
+  id: value.id,
+  title: value.title,
+  course: value.course,
+  courseCode: value.courseCode,
+  school: value.school,
+  semester: value.semester,
+  unit: value.unit,
+  topic: value.topic,
+  topics: Array.isArray(value.topics) ? value.topics : [],
+  videoPath: value.videoPath,
+  recommendation: value.recommendation,
+  professor: value.professor,
+  courseId: value.courseId,
+  lectureDate: value.lectureDate,
+  positives: value.positives,
+  totalVotes: value.totalVotes,
+  hasUserVote: value.hasUserVote,
+  userVote: value.userVote,
+  views: value.views,
+  professors: Array.isArray(value.professors)
+    ? value.professors.map((item) => participantProto(item as Record<string, unknown>))
+    : [],
+  assistants: Array.isArray(value.assistants)
+    ? value.assistants.map((item) => participantProto(item as Record<string, unknown>))
+    : [],
+  attachments: Array.isArray(value.attachments)
+    ? value.attachments.map((item) => attachmentProto(item as Record<string, unknown>))
+    : [],
+});
+
 @Controller()
 export class CatalogController {
   constructor(
@@ -70,7 +115,9 @@ export class CatalogController {
   @GrpcMethod('CatalogService', 'GetRecording')
   detail(data: RecordingRequest, metadata: Metadata) {
     this.auth.verify(metadata);
-    return this.catalog.detail(data);
+    return this.catalog.detail(data).then((reply) => ({
+      recording: recordingProto(reply.recording as unknown as Record<string, unknown>),
+    }));
   }
 
   @GrpcMethod('CatalogService', 'CanPlay')
@@ -114,6 +161,14 @@ export class CatalogController {
     this.auth.verify(metadata);
     return this.catalog.professors().then((professors) => ({
       professors: professors.map((value) => professorProto(value as unknown as Record<string, unknown>)),
+    }));
+  }
+
+  @GrpcMethod('CatalogService', 'ListTopics')
+  topics(_: unknown, metadata: Metadata) {
+    this.auth.verify(metadata);
+    return this.catalog.topics().then((topics) => ({
+      topics: topics.map((value) => ({ id: value.id, name: value.name })),
     }));
   }
 
