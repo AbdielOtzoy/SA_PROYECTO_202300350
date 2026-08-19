@@ -10,6 +10,7 @@ type NavLink = { href: string; label: string; icon: IconName };
 
 const studyLinks: NavLink[] = [
   { href: '/catalogo', label: 'Explorar videos', icon: 'video' },
+  { href: '/recomendaciones', label: 'Recomendado para ti', icon: 'recommend' },
   { href: '/historial', label: 'Continuar viendo', icon: 'history' },
   { href: '/configuracion', label: 'Configuración', icon: 'settings' },
 ];

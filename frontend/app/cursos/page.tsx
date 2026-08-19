@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { AppShell } from '../../components/AppShell';
 import { Icon } from '../../components/Icon';
 import { request } from '../../components/api';

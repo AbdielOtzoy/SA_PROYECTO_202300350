@@ -18,6 +18,16 @@ type Trend = { topic: string; views: number; recording_ids: string[] };
 type ExamPeriod = { id: string; name: string; start_at: string; end_at: string; active: boolean };
 type ToastState = { message: string; variant: ToastVariant };
 
+const periodDateFormatter = new Intl.DateTimeFormat('es-GT', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+});
+
+function formatPeriodDate(value: string) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : periodDateFormatter.format(date);
+}
+
 export default function AuditPage() {
   const [profile, setProfile] = useState<SessionUser | null>(null);
   const [items, setItems] = useState<AnalyticsRecording[]>([]);
@@ -26,6 +36,7 @@ export default function AuditPage() {
   const [periods, setPeriods] = useState<ExamPeriod[]>([]);
   const [periodForm, setPeriodForm] = useState({ name: '', start_at: '', end_at: '' });
   const [toast, setToast] = useState<ToastState | null>(null);
+  const maxTrendViews = Math.max(1, ...trends.map((item) => item.views));
 
   useEffect(() => {
     request<SessionResponse>('/session')
@@ -115,14 +126,30 @@ export default function AuditPage() {
       </section>
       <section className="admin-content-grid">
         <div className="panel">
-          <h2>Temas en tendencia</h2>
+          <div className="audit-section-heading">
+            <div>
+              <p className="section-label">SEÑALES DEL PERIODO ACTIVO</p>
+              <h2>Temas en tendencia</h2>
+            </div>
+            <span className="audit-section-count">{trends.length} temas</span>
+          </div>
           {trends.length ? (
-            <div className="audit-list">
-              {trends.map((item) => (
-                <div className="audit-row" key={item.topic}>
-                  <span>{item.topic}</span>
-                  <b>{item.views} reproducciones</b>
-                </div>
+            <div className="analytics-trend-grid">
+              {trends.map((item, index) => (
+                <article className="analytics-trend-card" key={item.topic}>
+                  <span className="analytics-rank">{String(index + 1).padStart(2, '0')}</span>
+                  <div className="analytics-trend-main">
+                    <span className="section-label">Tema</span>
+                    <strong>{item.topic}</strong>
+                    <span className="analytics-trend-meter">
+                      <span style={{ width: `${Math.round((item.views / maxTrendViews) * 100)}%` }} />
+                    </span>
+                  </div>
+                  <div className="analytics-trend-count">
+                    <strong>{item.views}</strong>
+                    <span>{item.views === 1 ? 'reproducción' : 'reproducciones'}</span>
+                  </div>
+                </article>
               ))}
             </div>
           ) : (
@@ -148,47 +175,69 @@ export default function AuditPage() {
           )}
         </div>
       </section>
-      <section className="panel">
-        <h2>Periodos de examen</h2>
-        <form className="filter-row" onSubmit={savePeriod}>
-          <input
-            className="field"
-            required
-            placeholder="Nombre"
-            value={periodForm.name}
-            onChange={(event) => setPeriodForm({ ...periodForm, name: event.target.value })}
-          />
-          <input
-            className="field"
-            required
-            type="datetime-local"
-            value={periodForm.start_at}
-            onChange={(event) => setPeriodForm({ ...periodForm, start_at: event.target.value })}
-          />
-          <input
-            className="field"
-            required
-            type="datetime-local"
-            value={periodForm.end_at}
-            onChange={(event) => setPeriodForm({ ...periodForm, end_at: event.target.value })}
-          />
+      <section className="panel audit-period-panel">
+        <div className="audit-section-heading">
+          <div>
+            <p className="section-label">CALENDARIO ACADÉMICO</p>
+            <h2>Periodos de examen</h2>
+          </div>
+          <span className="audit-section-count">{periods.length} registrados</span>
+        </div>
+        <form className="period-form" onSubmit={savePeriod}>
+          <label className="period-field">
+            <span>Nombre del periodo</span>
+            <input
+              className="field"
+              required
+              placeholder="Ej. Exámenes agosto"
+              value={periodForm.name}
+              onChange={(event) => setPeriodForm({ ...periodForm, name: event.target.value })}
+            />
+          </label>
+          <label className="period-field">
+            <span>Inicio</span>
+            <input
+              className="field"
+              required
+              type="datetime-local"
+              value={periodForm.start_at}
+              onChange={(event) => setPeriodForm({ ...periodForm, start_at: event.target.value })}
+            />
+          </label>
+          <label className="period-field">
+            <span>Fin</span>
+            <input
+              className="field"
+              required
+              type="datetime-local"
+              value={periodForm.end_at}
+              onChange={(event) => setPeriodForm({ ...periodForm, end_at: event.target.value })}
+            />
+          </label>
           <button className="button" type="submit">
             Guardar periodo
           </button>
         </form>
-        <div className="audit-list">
+        <div className="audit-period-list">
           {periods.map((period) => (
-            <div className="audit-row" key={period.id}>
-              <span>
-                {period.name} · {period.active ? 'activo' : 'programado'}
-              </span>
-              <small>
-                {period.start_at} → {period.end_at}
-              </small>
+            <article className="audit-period-row" key={period.id}>
+              <div className="audit-period-main">
+                <div className="audit-period-title">
+                  <strong>{period.name}</strong>
+                  <span className={`badge ${period.active ? 'green' : 'gray'}`}>
+                    {period.active ? 'Activo' : 'Programado'}
+                  </span>
+                </div>
+                <div className="audit-period-dates">
+                  <span>{formatPeriodDate(period.start_at)}</span>
+                  <span aria-hidden="true">→</span>
+                  <span>{formatPeriodDate(period.end_at)}</span>
+                </div>
+              </div>
               <button className="button alt" onClick={() => void removePeriod(period.id)}>
                 Eliminar
               </button>
-            </div>
+            </article>
           ))}
         </div>
       </section>

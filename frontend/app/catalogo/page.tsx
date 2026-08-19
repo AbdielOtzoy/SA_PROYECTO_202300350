@@ -19,7 +19,6 @@ type Recording = {
   professor?: string;
   recommendation: number;
 };
-type Recommendation = Recording & { id?: string; recording_id?: string; views?: number };
 type Trend = { topic: string; views: number; recording_ids: string[] };
 type HistoryItem = { recording_id: string; last_position_seconds: number };
 type CatalogResponse = {
@@ -37,7 +36,6 @@ type OptionResponse = {
   topics: { topics: { id: string; name: string }[] };
 };
 type HistoryResponse = { items: HistoryItem[] };
-type RecommendationResponse = { items: Recommendation[] };
 type TrendResponse = { items: Trend[] };
 
 const format = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
@@ -45,7 +43,6 @@ const format = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.f
 export default function Catalog() {
   const [items, setItems] = useState<Recording[]>([]);
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [trends, setTrends] = useState<Trend[]>([]);
   const [durations, setDurations] = useState<Record<string, number>>({});
   const [q, setQ] = useState('');
@@ -73,11 +70,7 @@ export default function Catalog() {
         request<CatalogResponse>(`/catalog?${params}`),
         request<HistoryResponse>('/history'),
       ]);
-      const [recommendationResult, trendResult] = await Promise.allSettled([
-        request<RecommendationResponse>('/analytics/recommendations'),
-        request<TrendResponse>('/analytics/trends/active'),
-      ]);
-      if (recommendationResult.status === 'fulfilled') setRecommendations(recommendationResult.value.items || []);
+      const [trendResult] = await Promise.allSettled([request<TrendResponse>('/analytics/trends/active')]);
       if (trendResult.status === 'fulfilled') setTrends(trendResult.value.items || []);
       setItems(catalog.recordings || []);
       setHistory(playbackHistory.items || []);
@@ -111,6 +104,7 @@ export default function Catalog() {
   const continuing = recent && items.find((item) => item.id === recent.recording_id);
   const duration = continuing ? durations[continuing.id] || 0 : 0;
   const progress = duration && recent ? Math.min(100, (recent.last_position_seconds / duration) * 100) : 0;
+  const maxTrendViews = Math.max(1, ...trends.map((trend) => trend.views));
 
   return (
     <AppShell>
@@ -212,41 +206,31 @@ export default function Catalog() {
       </div>
       {error && <p className="notice">{error}</p>}
       {trends.length > 0 && (
-        <section className="panel catalog-insights">
+        <section className="panel catalog-insights trend-insights">
           <div className="catalog-section-head">
-            <h2>Temas en tendencia</h2>
-            <span>Durante el periodo de examen activo</span>
+            <div>
+              <p className="section-label">SEÑALES DE ESTUDIO</p>
+              <h2>Temas en tendencia</h2>
+            </div>
+            <span>Periodo de examen activo</span>
           </div>
-          <div className="filter-row">
-            {trends.map((trend) => (
-              <span className="badge" key={trend.topic}>
-                {trend.topic} · {trend.views}
-              </span>
+          <div className="analytics-trend-grid student-trend-grid">
+            {trends.map((trend, index) => (
+              <article className="analytics-trend-card" key={trend.topic}>
+                <span className="analytics-rank">{String(index + 1).padStart(2, '0')}</span>
+                <div className="analytics-trend-main">
+                  <span className="section-label">Tema destacado</span>
+                  <strong>{trend.topic}</strong>
+                  <span className="analytics-trend-meter">
+                    <span style={{ width: `${Math.round((trend.views / maxTrendViews) * 100)}%` }} />
+                  </span>
+                </div>
+                <div className="analytics-trend-count">
+                  <strong>{trend.views}</strong>
+                  <span>{trend.views === 1 ? 'reproducción' : 'reproducciones'}</span>
+                </div>
+              </article>
             ))}
-          </div>
-        </section>
-      )}
-      {recommendations.length > 0 && (
-        <section className="catalog-insights">
-          <div className="catalog-section-head">
-            <h2>Recomendado para ti</h2>
-            <span>Basado en tus cursos, historial y valoraciones</span>
-          </div>
-          <div className="recordings-grid">
-            {recommendations.slice(0, 10).map((recommendation) => {
-              const recordingId = recommendation.recording_id || recommendation.id || '';
-              return (
-                <Link className="recording-card panel" key={recordingId} href={`/reproductor/${recordingId}`}>
-                  <VideoPreview recordingId={recordingId} className="recording-preview" />
-                  <h3>{recommendation.title}</h3>
-                  <span className="course-link">{recommendation.course}</span>
-                  <div className="recording-meta">
-                    <span>{recommendation.topic || 'Clase grabada'}</span>
-                    <span>{recommendation.recommendation}% recomendado</span>
-                  </div>
-                </Link>
-              );
-            })}
           </div>
         </section>
       )}

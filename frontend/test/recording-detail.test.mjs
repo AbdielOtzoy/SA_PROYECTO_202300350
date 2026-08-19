@@ -18,4 +18,6 @@ test('el catálogo expone el filtro y las etiquetas de temas', () => {
   assert.match(page, /options\?\.topics\.topics/);
   assert.match(page, /setTopic/);
   assert.match(page, /recording\.topics/);
+  assert.doesNotMatch(page, /analytics\/recommendations/);
+  assert.doesNotMatch(page, /Recomendado para ti/);
 });
