@@ -10,7 +10,7 @@
 
 El núcleo desarrollado en las Prácticas 1, 2 y 3 está integrado en el proyecto: arquitectura políglota, comunicación gRPC, autenticación institucional, reproducción, checkpoints, panel administrativo, importación CSV, Stored Procedures y paginación.
 
-P2 —Analítica— quedó completada en esta iteración. Sin embargo, la Fase 1 todavía no está lista para entrega: el enunciado exige, además de los avances de las prácticas, una aplicación funcional en Google Cloud Platform, almacenamiento de videos en Google Cloud Storage, gestión de inscripciones, notificaciones, CI/CD y evidencia formal de integración.
+P1 —despliegue en GCP y almacenamiento GCS— y P2–P5 quedaron implementadas y validadas. La Fase 1 todavía requiere sincronizar la documentación con el código real, crear el informe técnico de fase, cerrar la limitación documentada de sesión según aceptación del docente y completar la integración final mediante Pull Request y tag. CI/CD queda fuera del alcance de esta fase por confirmación docente.
 
 ## 2. Estado verificado
 
@@ -41,28 +41,27 @@ P2 —Analítica— quedó completada en esta iteración. Sin embargo, la Fase 1
 
 No quedan verificaciones pendientes para P2. El entorno local se reconstruyó y levantó con Docker Compose; se validaron autenticación, autorización, catálogo cacheado, registro de vistas, periodos de examen, tendencias, ranking, recomendaciones, TTL de Redis e índices de MongoDB. La suite `npm run verify`, la verificación de contratos y `docker compose config` finalizaron correctamente.
 
-## 3. Pendientes bloqueantes
+## 3. Estado de pendientes
 
-### P1 — Despliegue funcional en GCP y almacenamiento GCS
+### P1 — Despliegue funcional en GCP y almacenamiento GCS: completado ✅
 
 El proyecto exige una aplicación funcional en Google Cloud Platform y videos almacenados en Google Cloud Storage.
 
-Situación actual:
+Implementación y validación realizada:
 
-- [`docker-compose.cloud.yml`](../docker-compose.cloud.yml) continúa siendo un override parcial para `playback` y `gateway`; todavía no es un despliegue cloud autónomo.
+- [`docker-compose.gcp.yml`](../docker-compose.gcp.yml) es una composición cloud independiente con todos los servicios, persistencia, TLS configurable y sin volumen local de videos.
 - [`services/playback/cmd/playback/main.go`](../services/playback/cmd/playback/main.go) permite seleccionar `VIDEO_STORAGE_MODE=local` o `VIDEO_STORAGE_MODE=gcs`.
 - [`services/playback/internal/storage/storage.go`](../services/playback/internal/storage/storage.go) implementa lectura streaming desde GCS mediante Application Default Credentials, con soporte opcional para `GCS_PREFIX`.
-- La lectura real de `gs://yousac-videos-yousac/sample6.mp4` fue validada con ADC y el contenedor de Playback arrancó en modo GCS mediante el override local.
-- Ya existe [`docker-compose.gcp.yml`](../docker-compose.gcp.yml), una composición independiente con todos los servicios, persistencia, TLS configurable y sin volumen local de videos; aún no se ha desplegado en una VM de GCP.
+- La lectura real de `gs://yousac-videos-yousac/sample6.mp4` fue validada con ADC.
+- La composición fue desplegada en la VM de GCP y la validación funcional reportada confirmó el funcionamiento de la aplicación, la autenticación, el catálogo, la reproducción, los checkpoints y las consultas de Redis.
+- Mailpit permanece disponible para validar los correos generados por la plataforma.
 
-Acciones necesarias:
+Evidencia de entrega por adjuntar al informe final:
 
-- Definir una topología cloud completa y ejecutable.
-- Configurar credenciales mediante variables o Secret Manager, sin subir secretos.
-- Desplegar y probar la aplicación en GCP.
-- Registrar evidencia: URL, login, catálogo, reproducción, checkpoint y consulta de Redis.
+- URL o dominio público de la aplicación.
+- Capturas o registro de login, catálogo, reproducción desde GCS, checkpoint, Redis y Mailpit.
 
-La implementación y las guías se encuentran en [`docs/implementacion-gcs.md`](../docs/implementacion-gcs.md) y [`docs/despliegue-gcp.md`](../docs/despliegue-gcp.md). P1 permanece pendiente hasta completar el despliegue funcional de la plataforma en GCP.
+La implementación y las guías se encuentran en [`docs/implementacion-gcs.md`](../docs/implementacion-gcs.md) y [`docs/despliegue-gcp.md`](../docs/despliegue-gcp.md).
 
 ### P2 — Microservicio de analítica: completado ✅
 
@@ -138,30 +137,23 @@ Validación de cierre realizada:
 - Flujo funcional autenticado: importación de CSV P5, consulta de temas en opciones, filtrado por `Microservicios` y ficha con tres temas, docente, auxiliar, sílabo/material y `lecture_date` en formato `2026-08-18`.
 - Navegador: se verificaron las rutas y controles de filtro de temas, ficha, participantes separados y sección de materiales; la respuesta funcional de datos se confirmó contra el Gateway autenticado.
 
-Fuera de alcance de P5: carga binaria, Google Cloud Storage, GCP, CRUD administrativo de temas/materiales y los pendientes P1/P6–P10.
+Fuera de alcance de P5: carga binaria, Google Cloud Storage, GCP, CRUD administrativo de temas/materiales y los pendientes posteriores P8–P10.
 
 ## 4. Pendientes de infraestructura y calidad
 
-### P6 — Crear CI/CD
+### P6 — CI/CD: fuera del alcance de Fase 1
 
-No existe `.github/workflows` ni otro pipeline versionado.
+Según la consulta realizada al docente, CI/CD no es un requisito para esta fase. Por ese motivo no se implementará un pipeline en P1 y su ausencia no bloquea la entrega.
 
-Se requiere al menos:
+La construcción y el despliegue actuales se realizan mediante Docker Compose en la VM de GCP. CI/CD podrá incorporarse en una fase posterior si se solicita.
 
-- Compilación de servicios.
-- Lint y typecheck.
-- Pruebas Node, Go y Python.
-- Verificación de contratos protobuf.
-- Construcción de imágenes Docker.
-- Pipeline de despliegue cloud para cambios aprobados.
+### P7 — Dockerfiles y Compose: aceptado para Fase 1 ✅
 
-### P7 — Revisar Dockerfiles y Compose
+Existen Dockerfiles para frontend, Gateway y los microservicios. PostgreSQL, MongoDB y Redis se consumen directamente mediante imágenes oficiales.
 
-Existen Dockerfiles para frontend, Gateway y microservicios, pero PostgreSQL, MongoDB y Redis se consumen directamente mediante imágenes oficiales.
+Se confirmó que las imágenes oficiales de PostgreSQL, MongoDB y Redis son aceptadas para la Fase 1; no es necesario crear Dockerfiles auxiliares para estas dependencias.
 
-El enunciado de la Fase 1 solicita Dockerfile por cada microservicio, base de datos, caché y Gateway. Se debe confirmar con el docente si se aceptan imágenes oficiales o agregar Dockerfiles auxiliares.
-
-También se debe asegurar que `docker-compose.cloud.yml` sea un archivo independiente y no solamente un override parcial.
+`docker-compose.gcp.yml` es el archivo independiente utilizado para la VM. `docker-compose.cloud.yml` se conserva como override parcial para escenarios compatibles con el entorno local.
 
 ### P8 — Revisar seguridad de sesión
 
@@ -219,7 +211,7 @@ Falta:
 3. Completar notificaciones, preferencias y avisos automáticos.
 4. Completar la ficha detallada y decidir el modelo de temas/materiales.
 5. Actualizar los scripts y la documentación del modelo de datos.
-6. Agregar CI/CD y validaciones de construcción/despliegue.
+6. Documentar que CI/CD queda fuera de Fase 1 según la confirmación docente.
 7. Levantar el entorno local con Docker y repetir las pruebas funcionales de todos los servicios.
 8. Capturar evidencia de cada requisito obligatorio.
 9. Integrar mediante Pull Requests y crear el tag `1.0.0`.
@@ -233,7 +225,7 @@ La Fase 1 podrá considerarse lista cuando se cumplan simultáneamente estas con
 - Analítica, Redis, inscripciones y notificaciones estén implementados y demostrables.
 - La documentación coincida con el esquema y el código real.
 - El entorno local levante con Docker Compose y las pruebas funcionales estén repetidas.
-- Exista CI/CD verificable.
+- La decisión de dejar CI/CD fuera de Fase 1 esté documentada.
 - Exista un Pull Request aprobado hacia `main`.
 - Exista el tag `1.0.0` apuntando al commit de entrega.
 

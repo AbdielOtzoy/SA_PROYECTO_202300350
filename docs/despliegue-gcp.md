@@ -195,7 +195,8 @@ Registrar evidencia de:
 
 ## 10. Limitaciones conocidas
 
-- Esta primera composición construye las imágenes directamente en la VM; CI/CD y Artifact Registry quedan para P6.
+- Esta primera composición construye las imágenes directamente en la VM. Según la confirmación docente, CI/CD no es requisito de la Fase 1 y queda fuera de este despliegue.
+- PostgreSQL, MongoDB y Redis utilizan sus imágenes oficiales; esta decisión fue aceptada para la Fase 1 y no requiere Dockerfiles auxiliares para las dependencias.
 - PostgreSQL, MongoDB y Redis permanecen dentro de la VM con volúmenes persistentes de Docker; no son servicios administrados de GCP.
 - Mailpit sirve para demostrar la cola de correo. Para correo real se debe configurar un SMTP externo y sus secretos.
 - Un certificado autofirmado es suficiente para una demostración técnica, pero no para una aplicación pública sin advertencias.
