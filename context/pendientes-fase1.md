@@ -49,19 +49,20 @@ El proyecto exige una aplicación funcional en Google Cloud Platform y videos al
 
 Situación actual:
 
-- [`docker-compose.cloud.yml`](../docker-compose.cloud.yml) contiene solamente un fragmento de configuración para `playback` y `gateway`.
-- Ejecutarlo de forma independiente falla porque `playback` no tiene `image` ni `build`.
-- [`services/playback/cmd/playback/main.go`](../services/playback/cmd/playback/main.go) siempre crea el servicio con un directorio local de videos.
-- [`services/playback/internal/playback/service.go`](../services/playback/internal/playback/service.go) abre los videos con `os.Open`; no existe cliente ni lectura desde GCS.
-- No hay manifiestos, scripts o configuración verificable de GCP.
+- [`docker-compose.cloud.yml`](../docker-compose.cloud.yml) continúa siendo un override parcial para `playback` y `gateway`; todavía no es un despliegue cloud autónomo.
+- [`services/playback/cmd/playback/main.go`](../services/playback/cmd/playback/main.go) permite seleccionar `VIDEO_STORAGE_MODE=local` o `VIDEO_STORAGE_MODE=gcs`.
+- [`services/playback/internal/storage/storage.go`](../services/playback/internal/storage/storage.go) implementa lectura streaming desde GCS mediante Application Default Credentials, con soporte opcional para `GCS_PREFIX`.
+- La lectura real de `gs://yousac-videos-yousac/sample6.mp4` fue validada con ADC y el contenedor de Playback arrancó en modo GCS mediante el override local.
+- Ya existe [`docker-compose.gcp.yml`](../docker-compose.gcp.yml), una composición independiente con todos los servicios, persistencia, TLS configurable y sin volumen local de videos; aún no se ha desplegado en una VM de GCP.
 
 Acciones necesarias:
 
 - Definir una topología cloud completa y ejecutable.
-- Implementar la lectura de videos desde GCS cuando `VIDEO_STORAGE_MODE=gcs`.
 - Configurar credenciales mediante variables o Secret Manager, sin subir secretos.
 - Desplegar y probar la aplicación en GCP.
 - Registrar evidencia: URL, login, catálogo, reproducción, checkpoint y consulta de Redis.
+
+La implementación y las guías se encuentran en [`docs/implementacion-gcs.md`](../docs/implementacion-gcs.md) y [`docs/despliegue-gcp.md`](../docs/despliegue-gcp.md). P1 permanece pendiente hasta completar el despliegue funcional de la plataforma en GCP.
 
 ### P2 — Microservicio de analítica: completado ✅
 
