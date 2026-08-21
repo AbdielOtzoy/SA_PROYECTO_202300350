@@ -29,6 +29,8 @@ Navegador → Frontend Next.js → Gateway NestJS/HTTPS → gRPC → microservic
 
 El Gateway es el único punto de entrada. Los diagramas de las vistas lógica, procesos, componentes y despliegue se encuentran en `docs/arquitectura/img/`; el modelo 4+1 se documenta en `docs/arquitectura/modelo-4-1.md`.
 
+La fase P2 de Analítica completa RF-019–RF-023. El Gateway consulta el catálogo a través de `AnalyticsService.GetCatalogPage`, por lo que Analítica administra la caché de catálogo y obtiene los metadatos mediante gRPC. Los resultados de más vistas, tendencias, ranking y recomendaciones se sirven con Redis; Analítica consulta Catálogo, Identidad y Reproducción por gRPC y no accede a sus bases de datos.
+
 La implementación TypeScript usa módulos NestJS por dominio. `main.ts` sólo inicializa el proceso; `app.module.ts` registra módulos y providers; los controllers exponen transporte, los services contienen casos de uso, los repositories encapsulan PostgreSQL y los DTOs/mappers aíslan los mensajes de Protocol Buffers. El Gateway concentra configuración, sesión/JWT, clientes gRPC y el filtro de traducción de errores en `src/common/`. El frontend mantiene sus respuestas de API tipadas y captura errores como `unknown`.
 
 ```text
@@ -38,7 +40,8 @@ gateway/src/
 ├── auth/         OAuth, registro, login y sesión
 ├── catalog/      consulta y valoración
 ├── playback/     streaming y checkpoints
-└── admin/        analítica y asignación de roles
+├── admin/        analítica y asignación de roles
+└── analytics/    recomendaciones y tendencias autenticadas
 
 services/{identity,catalog,notifications}/src/
 ├── main.ts, app.module.ts
@@ -52,8 +55,8 @@ services/playback/
 services/analytics/
 ├── app/main.py            bootstrap del proceso
 ├── app/common/            configuración, JWT y caché
-├── app/analytics/         modelos, servicio y repositorio MongoDB
-└── app/transport/         adaptador gRPC y codec protobuf de caché
+├── app/analytics/         modelos, reglas, periodos y repositorio MongoDB
+└── app/transport/         adaptador gRPC y fuentes gRPC hacia otros servicios
 ```
 
 | Servicio | Responsabilidad | Persistencia |
@@ -61,14 +64,16 @@ services/analytics/
 | Identidad | Registro, login, roles y sesiones | PostgreSQL `identity_db` |
 | Catálogo | Grabaciones, búsquedas, permisos y votos | PostgreSQL `catalog_db` |
 | Reproducción | Streaming, historial y checkpoints | MongoDB `playback_db`, vídeos locales |
-| Analítica | Registro y consulta de tendencias | MongoDB `analytics_db`, Redis |
+| Analítica | Vistas semanales, tendencias de exámenes, ranking, recomendaciones y periodos | MongoDB `analytics_db`, Redis |
 | Notificaciones | Avisos de registro | PostgreSQL `notification_db`, Mailpit |
 
 ## Contratos gRPC
 
 Los contratos por dominio están en `proto/*.proto`: `identity.proto`, `catalog.proto`, `playback.proto`, `analytics.proto` y `notifications.proto`. Las direcciones y binds se controlan con `*_GRPC_ADDRESS` y `*_GRPC_BIND`; el Gateway aplica `GRPC_TIMEOUT_MS` (5000 ms por defecto) tanto a llamadas unary como al streaming.
 
-El adaptador dinámico de `proto-loader` es el único límite sin tipos del Gateway; controllers y dominio usan DTOs TypeScript explícitos. Para que Go sea reproducible en un checkout limpio, los stubs de catálogo y reproducción están versionados en `services/playback/gen/` y no se editan manualmente. El Dockerfile compila `cmd/playback` sin regenerar contratos durante la imagen.
+El adaptador dinámico de `proto-loader` es el único límite sin tipos del Gateway; controllers y dominio usan DTOs TypeScript explícitos. Analítica genera durante la construcción los stubs Python de `analytics.proto`, `catalog.proto`, `identity.proto` y `playback.proto`. Las llamadas internas reenvían y vuelven a validar el JWT.
+
+Las operaciones nuevas son `GetCatalogPage`, `MostViewed`, `TrendingTopics`, `TopRated`, CRUD de `ExamPeriod`, `Recommendations` e invalidación de cachés. Las señales que Catálogo entrega a Analítica incluyen metadatos de grabación, porcentaje global, votos totales y voto del usuario.
 
 ## Autenticación y sesión
 
@@ -92,6 +97,8 @@ Los errores de credenciales, datos y duplicados se tipan en gRPC y el Gateway lo
 Cada servicio es dueño de su almacenamiento. Identidad usa `CALL set_user_role(...)`; instalaciones nuevas reciben el procedimiento desde `databases/identity/01-schema.sql`. Para un volumen anterior se aplica una vez `databases/identity/03-migrate-set-user-role.sql`. Los diagramas ER y las colecciones se incluyen en `docs/base-de-datos/`.
 
 Los checkpoints se guardan mediante upsert y el historial conserva sólo reproducciones con avance. Los votos son binarios y modificables.
+
+Analítica conserva eventos en `views`, periodos administrativos en `exam_periods` y deja disponible `trends` para resultados materializados. Las consultas semanales y de examen usan rangos UTC semiabiertos `[inicio, fin)`. Los índices cubren `viewed_at`/`recording_id` y las fechas de periodos. Redis usa TTL de 900 segundos para `analytics:catalog:*` y 300 segundos para resultados analíticos; vistas, votos, importaciones y mutaciones administrativas invalidan las claves relacionadas.
 
 ## Docker y configuración
 
@@ -123,7 +130,9 @@ docker compose --env-file .env -f docker-compose.local.yml build
 docker compose --env-file .env -f docker-compose.local.yml up -d
 ```
 
-Los scripts reproducibles son `format`, `format:check`, `lint`, `typecheck`, `test`, `test:analytics`, `test:contracts` y `verify`. `format:human` y `format:human:check` cubren TypeScript, JavaScript, tests, CSS, YAML y configuración JSON; los SQL y Protocol Buffers se mantienen con formato expandido y claro. Ruff y `unittest` se configuran en `services/analytics/requirements-dev.txt`; el adaptador protobuf de Analítica se genera dentro de su imagen Docker. `npm test` ejecuta las pruebas de los workspaces, Go y Python; `npm run typecheck` incluye el frontend y añade `go vet ./...`. `verify` no ejecuta comandos Git; `verify:git` queda disponible para revisar espacios en blanco cuando se prepare el commit. Antes de la entrega se debe comprobar manualmente que el frontend responde, una ruta protegida sin sesión devuelve 401, un correo externo devuelve 400, credenciales incorrectas devuelven 401, un duplicado devuelve 409, una sesión válida consulta el catálogo y reproducción conserva checkpoint/streaming; la consulta administrativa de Analítica debe responder 200 con JWT válido.
+Los scripts reproducibles son `format`, `format:check`, `lint`, `typecheck`, `test`, `test:analytics`, `test:contracts` y `verify`. `format:human` y `format:human:check` cubren TypeScript, JavaScript, tests, CSS, YAML y configuración JSON; los SQL y Protocol Buffers se mantienen con formato expandido y claro. Ruff y `unittest` se configuran en `services/analytics/requirements-dev.txt`; el adaptador protobuf de Analítica se genera dentro de su imagen Docker. `npm test` ejecuta las pruebas de los workspaces, Go y Python; `npm run typecheck` incluye el frontend y añade `go vet ./...`. `verify` no ejecuta comandos Git; `verify:git` queda disponible para revisar espacios en blanco cuando se prepare el commit.
+
+Las pruebas de P2 cubren rangos semanales, normalización y agrupación de temas, exclusión de grabaciones sin votos, recomendaciones deterministas por usuario, validación de periodos y TTL de caché. La demostración funcional debe registrar una vista, consultar más vistas, crear un periodo, consultar tendencias, consultar ranking, comparar recomendaciones entre dos usuarios y confirmar reutilización de Redis y TTL máximo de 900/300 segundos.
 
 ## Limitaciones y conclusiones
 

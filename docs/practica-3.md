@@ -36,7 +36,7 @@ Esta decisión mantiene las cinco responsabilidades existentes y evita que un se
 
 ## RBAC
 
-| Rol | Panel | Catálogos maestros | Grabaciones | Importaciones | Roles |
+| Rol | Panel administrativo | Catálogos maestros | Grabaciones | Importaciones | Roles |
 |---|---|---|---|---|---|
 | `admin` | Sí | CRUD y archivado lógico global | Global | Catálogo, grabaciones e inscripciones | Gestiona |
 | `teacher` | Sí | Consulta | Solo cursos asignados | Grabaciones de cursos asignados | No gestiona |
@@ -63,11 +63,18 @@ El Gateway expone las siguientes rutas principales:
 | `GET/POST/DELETE /api/admin/course-staff` | Asignaciones curso–docente |
 | `GET /api/admin/users` | Usuarios y roles |
 | `PUT /api/admin/users/:id/roles` | Asignación o revocación de rol |
+| `GET /api/enrollments` | Cursos inscritos del usuario autenticado, filtrables por semestre, estado y credenciales |
 | `POST /api/admin/imports/catalog` | Importación de catálogo |
 | `POST /api/admin/imports/recordings` | Importación de grabaciones |
 | `POST /api/admin/imports/enrollments` | Importación de inscripciones |
 
 El archivo se recibe como `multipart/form-data` en el campo `file`. El Gateway valida sesión, rol, extensión y tamaño; el microservicio parsea y valida filas antes de invocar el procedimiento.
+
+El panel de cursos usa `GET /api/enrollments`. Identidad aplica los filtros sobre
+`user_enrollments` y el Gateway consulta Catálogo mediante gRPC para convertir
+los identificadores de curso y semestre en código, nombre, créditos y período
+académico. Los estudiantes solo pueden consultar sus propias inscripciones;
+los administradores pueden consultar otra cuenta mediante `user_id`.
 
 ## CSV
 
@@ -210,6 +217,9 @@ La verificación funcional observó:
 | Importación de catálogo, grabaciones e inscripciones | HTTP 201; 2, 12 y 1 filas aceptadas respectivamente |
 | Docente en usuarios/roles | HTTP 403; importación de grabaciones de su curso asignado HTTP 201 |
 | Estudiante en usuarios/roles | HTTP 403; consulta de catálogo HTTP 200 |
+| `GET /api/enrollments` como estudiante | HTTP 200; devuelve cursos, semestre, estado y credenciales enriquecidos |
+| `GET /api/enrollments?semester=...&status=...&credentials=...` | HTTP 200; aplica los tres filtros en Identidad |
+| `GET /api/enrollments?user_id=...` como estudiante | HTTP 403; no permite consultar otra cuenta |
 | Filtro por docente y navegación a página 2 | HTTP 200; filtros conservados y máximo 10 filas |
 
 En la prueba de rollback se invocó `sp_import_recordings_csv` con una segunda
@@ -249,6 +259,10 @@ SELECT COUNT(*) FROM recordings;
 SELECT COUNT(*) FROM user_enrollments;
 ```
 
+## Extensión P4 — Notificaciones
+
+La Fase 1 extiende esta implementación con recuperación de acceso, preferencias de correo, avisos de publicación y avisos administrativos. El Gateway mantiene la exposición REST y consulta Identidad/Catálogo por gRPC; Notificaciones administra sus plantillas, preferencias, cola e historial en PostgreSQL. El detalle técnico y la evidencia de esta extensión se encuentran en [`docs/implementacion-p4.md`](implementacion-p4.md).
+
 ## Conclusiones
 
-La implementación de la Práctica 3 conserva el aislamiento por microservicio, centraliza la exposición externa en el Gateway y utiliza los contratos gRPC existentes para agregar administración académica. Las cargas CSV son validaciones completas y transaccionales, mientras que el catálogo aplica paginación real desde PostgreSQL con un máximo de diez registros por página y filtros combinables.
+La implementación de la Práctica 3 conserva el aislamiento por microservicio, centraliza la exposición externa en el Gateway y utiliza los contratos gRPC existentes para agregar administración académica y el panel de cursos inscritos. Las cargas CSV son validaciones completas y transaccionales, mientras que el catálogo aplica paginación real desde PostgreSQL con un máximo de diez registros por página y filtros combinables.

@@ -86,3 +86,7 @@
 | RNF-032 | El repositorio deberá ejecutar mediante integración continua las compilaciones y pruebas automatizadas en cada cambio propuesto. | Alta |
 | RNF-033 | El repositorio deberá ejecutar mediante entrega continua el despliegue automatizado de los cambios aprobados. | Alta |
 | RNF-034 | Todo cambio que se integre en la rama principal de GitHub deberá aprobarse mediante un pull request. | Alta |
+
+## Evidencia RNF-006
+
+La cola de Notificaciones usa un worker TypeScript que se ejecuta al iniciar y cada 30 segundos, procesa lotes de hasta 100 correos y reintenta fallos con retrasos de 30, 60 y 120 segundos. La validación de P4 mide el tiempo desde `created_at` hasta la entrega al SMTP/Mailpit y exige un máximo de 300 segundos en condiciones normales.

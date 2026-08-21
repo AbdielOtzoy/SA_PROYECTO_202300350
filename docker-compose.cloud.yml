@@ -5,7 +5,8 @@ services:
       VIDEO_STORAGE_MODE: gcs
       GCS_BUCKET: ${GCS_BUCKET:?defina GCS_BUCKET}
       GCS_PROJECT_ID: ${GCS_PROJECT_ID:?defina GCS_PROJECT_ID}
-    volumes: []
+      GCS_PREFIX: ${GCS_PREFIX:-}
+    volumes: !reset []
   gateway:
     ports:
       - '443:443'

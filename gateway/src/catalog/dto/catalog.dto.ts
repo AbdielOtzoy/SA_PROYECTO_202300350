@@ -6,6 +6,7 @@ export interface CatalogQuery {
   course?: string;
   semester?: string;
   professor?: string;
+  topic?: string;
   page?: string | number;
   page_size?: string | number;
 }

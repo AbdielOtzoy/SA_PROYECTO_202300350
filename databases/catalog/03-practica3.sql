@@ -36,11 +36,13 @@ DROP VIEW IF EXISTS published_catalog;
 CREATE VIEW published_catalog AS
 SELECT
   r.id,
+  r.course_id,
   r.title,
   c.code course_code,
   c.name course,
   s.name school,
   (se.year::text || '-' || se.term::text) semester,
+  r.lecture_date,
   r.unit,
   r.topic,
   r.video_path,
@@ -61,8 +63,8 @@ WHERE r.is_published
   AND c.is_active
   AND s.is_active
   AND se.is_active
-GROUP BY r.id, r.title, c.code, c.name, s.name, se.year, se.term,
-         r.unit, r.topic, r.video_path;
+GROUP BY r.id, r.course_id, r.title, c.code, c.name, s.name, se.year, se.term,
+         r.lecture_date, r.unit, r.topic, r.video_path;
 
 CREATE VIEW recording_detail AS SELECT * FROM published_catalog;
 

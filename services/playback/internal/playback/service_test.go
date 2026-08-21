@@ -8,6 +8,7 @@ import (
 
 	pb "github.com/abdielo/yousac/services/playback/gen"
 	"github.com/abdielo/yousac/services/playback/internal/repository"
+	videostorage "github.com/abdielo/yousac/services/playback/internal/storage"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -55,7 +56,7 @@ func (r *fakeRepository) ListHistory(context.Context, string) ([]repository.Hist
 
 func TestGetPlaybackReturnsCheckpoint(t *testing.T) {
 	repo := &fakeRepository{checkpoint: 12.5}
-	service := NewService(fakeAuthorizer{}, fakeCatalog{reply: &pb.AuthorizationReply{Allowed: true}}, repo, "/videos")
+	service := NewService(fakeAuthorizer{}, fakeCatalog{reply: &pb.AuthorizationReply{Allowed: true}}, repo, videostorage.NewLocalVideoStorage("/videos"))
 	reply, err := service.GetPlayback(context.Background(), &pb.PlaybackRequest{UserId: "u-1", RecordingId: "r-1"})
 	if err != nil {
 		t.Fatal(err)
@@ -67,7 +68,7 @@ func TestGetPlaybackReturnsCheckpoint(t *testing.T) {
 
 func TestSaveCheckpointUsesRepository(t *testing.T) {
 	repo := &fakeRepository{}
-	service := NewService(fakeAuthorizer{}, fakeCatalog{reply: &pb.AuthorizationReply{Allowed: true}}, repo, "/videos")
+	service := NewService(fakeAuthorizer{}, fakeCatalog{reply: &pb.AuthorizationReply{Allowed: true}}, repo, videostorage.NewLocalVideoStorage("/videos"))
 	_, err := service.SaveCheckpoint(context.Background(), &pb.CheckpointRequest{UserId: "u-1", RecordingId: "r-1", Seconds: 8.75, EventType: "pause"})
 	if err != nil {
 		t.Fatal(err)
@@ -78,7 +79,7 @@ func TestSaveCheckpointUsesRepository(t *testing.T) {
 }
 
 func TestAuthorizationFailureIsPermissionDenied(t *testing.T) {
-	service := NewService(fakeAuthorizer{}, fakeCatalog{reply: &pb.AuthorizationReply{Allowed: false}, err: errors.New("catalog down")}, &fakeRepository{}, "/videos")
+	service := NewService(fakeAuthorizer{}, fakeCatalog{reply: &pb.AuthorizationReply{Allowed: false}, err: errors.New("catalog down")}, &fakeRepository{}, videostorage.NewLocalVideoStorage("/videos"))
 	_, err := service.GetPlayback(context.Background(), &pb.PlaybackRequest{})
 	if status.Code(err) != codes.PermissionDenied {
 		t.Fatalf("código inesperado: %v", status.Code(err))

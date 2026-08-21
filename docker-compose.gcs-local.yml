@@ -1,0 +1,15 @@
+# Override opcional para probar GCS desde Docker en desarrollo.
+# Requiere GOOGLE_APPLICATION_CREDENTIALS_HOST con la ruta local al archivo ADC.
+services:
+  playback:
+    environment:
+      VIDEO_STORAGE_MODE: gcs
+      GCS_BUCKET: ${GCS_BUCKET:?defina GCS_BUCKET}
+      GCS_PROJECT_ID: ${GCS_PROJECT_ID:?defina GCS_PROJECT_ID}
+      GCS_PREFIX: ${GCS_PREFIX:-}
+      GOOGLE_APPLICATION_CREDENTIALS: /var/run/secrets/google/adc.json
+    volumes: !override
+      - type: bind
+        source: ${GOOGLE_APPLICATION_CREDENTIALS_HOST:?defina GOOGLE_APPLICATION_CREDENTIALS_HOST}
+        target: /var/run/secrets/google/adc.json
+        read_only: true

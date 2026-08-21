@@ -13,6 +13,7 @@ service CatalogService {
   rpc ListCourses(Empty) returns (CoursesReply);
   rpc ListSemesters(Empty) returns (SemestersReply);
   rpc ListProfessors(Empty) returns (ProfessorsReply);
+  rpc ListTopics(Empty) returns (TopicsReply);
   rpc ListCourseStaff(CourseStaffListRequest) returns (CourseStaffReply);
   rpc UpsertSchool(SchoolRequest) returns (SchoolReply);
   rpc UpsertCourse(CourseRequest) returns (CourseReply);
@@ -33,6 +34,8 @@ message ListRequest {
   int32 page = 5;
   int32 page_size = 6;
   string professor = 7;
+  string user_id = 8;
+  string topic = 9;
 }
 
 message RecordingRequest {
@@ -73,6 +76,16 @@ message Recording {
   string video_path = 9;
   double recommendation = 10;
   string professor = 11;
+  string course_id = 12;
+  string lecture_date = 13;
+  int32 positives = 14;
+  int32 total_votes = 15;
+  bool has_user_vote = 16;
+  bool user_vote = 17;
+  repeated string topics = 18;
+  repeated RecordingParticipant professors = 19;
+  repeated RecordingParticipant assistants = 20;
+  repeated RecordingAttachment attachments = 21;
 }
 
 message VoteRequest {
@@ -140,6 +153,25 @@ message SchoolsReply { repeated School schools = 1; }
 message CoursesReply { repeated Course courses = 1; }
 message SemestersReply { repeated Semester semesters = 1; }
 message ProfessorsReply { repeated Professor professors = 1; }
+message Topic {
+  string id = 1;
+  string name = 2;
+}
+message TopicsReply { repeated Topic topics = 1; }
+
+message RecordingParticipant {
+  string id = 1;
+  string full_name = 2;
+  string email = 3;
+}
+
+message RecordingAttachment {
+  string id = 1;
+  string filename = 2;
+  string file_path = 3;
+  string file_type = 4;
+  string attachment_type = 5;
+}
 
 message CourseStaffListRequest { string course_id = 1; }
 message CourseStaffRequest {
@@ -164,4 +196,13 @@ message ImportReply {
   bool accepted = 1;
   int32 rows = 2;
   string procedure = 3;
+  repeated PublishedRecording published_recordings = 4;
+}
+
+message PublishedRecording {
+  string recording_id = 1;
+  string title = 2;
+  string course_id = 3;
+  string course_code = 4;
+  string course = 5;
 }

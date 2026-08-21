@@ -15,9 +15,11 @@ type Recording = {
   school: string;
   semester: string;
   topic: string;
+  topics?: string[];
   professor?: string;
   recommendation: number;
 };
+type Trend = { topic: string; views: number; recording_ids: string[] };
 type HistoryItem = { recording_id: string; last_position_seconds: number };
 type CatalogResponse = {
   recordings: Recording[];
@@ -31,20 +33,24 @@ type OptionResponse = {
   courses: { courses: { id: string; name: string; code: string }[] };
   semesters: { semesters: { id: string; year: number; term: number }[] };
   professors: { professors: { id: string; full_name: string; email: string }[] };
+  topics: { topics: { id: string; name: string }[] };
 };
 type HistoryResponse = { items: HistoryItem[] };
+type TrendResponse = { items: Trend[] };
 
 const format = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 
 export default function Catalog() {
   const [items, setItems] = useState<Recording[]>([]);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [trends, setTrends] = useState<Trend[]>([]);
   const [durations, setDurations] = useState<Record<string, number>>({});
   const [q, setQ] = useState('');
   const [school, setSchool] = useState('');
   const [course, setCourse] = useState('');
   const [semester, setSemester] = useState('');
   const [professor, setProfessor] = useState('');
+  const [topic, setTopic] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [total, setTotal] = useState(0);
@@ -53,9 +59,9 @@ export default function Catalog() {
 
   async function load(
     nextPage = 1,
-    overrides: Partial<Record<'q' | 'school' | 'course' | 'semester' | 'professor', string>> = {},
+    overrides: Partial<Record<'q' | 'school' | 'course' | 'semester' | 'professor' | 'topic', string>> = {},
   ) {
-    const filters = { q, school, course, semester, professor, ...overrides };
+    const filters = { q, school, course, semester, professor, topic, ...overrides };
     try {
       setError('');
       const params = new URLSearchParams({ page: String(nextPage), page_size: '10' });
@@ -64,6 +70,8 @@ export default function Catalog() {
         request<CatalogResponse>(`/catalog?${params}`),
         request<HistoryResponse>('/history'),
       ]);
+      const [trendResult] = await Promise.allSettled([request<TrendResponse>('/analytics/trends/active')]);
+      if (trendResult.status === 'fulfilled') setTrends(trendResult.value.items || []);
       setItems(catalog.recordings || []);
       setHistory(playbackHistory.items || []);
       setPage(catalog.page || nextPage);
@@ -96,6 +104,7 @@ export default function Catalog() {
   const continuing = recent && items.find((item) => item.id === recent.recording_id);
   const duration = continuing ? durations[continuing.id] || 0 : 0;
   const progress = duration && recent ? Math.min(100, (recent.last_position_seconds / duration) * 100) : 0;
+  const maxTrendViews = Math.max(1, ...trends.map((trend) => trend.views));
 
   return (
     <AppShell>
@@ -178,9 +187,53 @@ export default function Catalog() {
               </option>
             ))}
           </select>
+          <select
+            className="field"
+            value={topic}
+            onChange={(event) => {
+              setTopic(event.target.value);
+              void load(1, { topic: event.target.value });
+            }}
+          >
+            <option value="">Todos los temas</option>
+            {options?.topics.topics.map((value) => (
+              <option key={value.id} value={value.name}>
+                {value.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       {error && <p className="notice">{error}</p>}
+      {trends.length > 0 && (
+        <section className="panel catalog-insights trend-insights">
+          <div className="catalog-section-head">
+            <div>
+              <p className="section-label">SEÑALES DE ESTUDIO</p>
+              <h2>Temas en tendencia</h2>
+            </div>
+            <span>Periodo de examen activo</span>
+          </div>
+          <div className="analytics-trend-grid student-trend-grid">
+            {trends.map((trend, index) => (
+              <article className="analytics-trend-card" key={trend.topic}>
+                <span className="analytics-rank">{String(index + 1).padStart(2, '0')}</span>
+                <div className="analytics-trend-main">
+                  <span className="section-label">Tema destacado</span>
+                  <strong>{trend.topic}</strong>
+                  <span className="analytics-trend-meter">
+                    <span style={{ width: `${Math.round((trend.views / maxTrendViews) * 100)}%` }} />
+                  </span>
+                </div>
+                <div className="analytics-trend-count">
+                  <strong>{trend.views}</strong>
+                  <span>{trend.views === 1 ? 'reproducción' : 'reproducciones'}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
       <section>
         <div className="catalog-section-head">
           <h2>Todos los videos</h2>
@@ -195,7 +248,9 @@ export default function Catalog() {
               <h3>{recording.title}</h3>
               <span className="course-link">{recording.course}</span>
               <div className="recording-meta">
-                <span>{recording.professor || recording.topic || 'Clase grabada'}</span>
+                <span>
+                  {recording.topics?.join(' · ') || recording.professor || recording.topic || 'Clase grabada'}
+                </span>
                 <span>{durations[recording.id] ? format(durations[recording.id]) : '—'}</span>
               </div>
             </Link>

@@ -8,6 +8,7 @@ node_modules/
 dist/
 coverage/
 .env
+.env.gcp
 .playwright-cli/
 *.log
 __pycache__/
@@ -18,4 +19,6 @@ services/analytics/.venv/
 services/analytics/.ruff_cache/
 infrastructure/tls/*.key
 infrastructure/tls/*.crt
+deploy/tls/*.key
+deploy/tls/*.crt
 .DS_Store

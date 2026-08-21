@@ -10,12 +10,16 @@ import type {
   ProfessorMessage,
   RecordingMessage,
   RecordingRequest,
+  RecordingAttachmentMessage,
+  RecordingParticipantMessage,
   SemesterMessage,
   SchoolMessage,
+  TopicMessage,
   VoteRequest,
   AuthorizationReply,
   PlaybackAuthorizationRequest,
   RecordingsReply,
+  PublishedRecordingMessage,
 } from './dto/catalog.dto';
 import { toRecordingMessage, type RecordingRow } from './mappers/recording.mapper';
 
@@ -102,28 +106,59 @@ export class CatalogRepository {
     const pageSize = Math.min(10, Math.max(1, Math.floor(Number(input.page_size ?? input.pageSize ?? 10))));
     const offset = (page - 1) * pageSize;
     const result = await this.pool.query<RecordingRow & { total_count: number }>(
-      `WITH filtered AS (
-         SELECT published_catalog.*, COUNT(*) OVER()::int AS total_count
+      `WITH rating_stats AS (
+         SELECT recording_id,
+                COUNT(*) FILTER (WHERE vote)::int AS positives,
+                COUNT(*)::int AS total_votes
+           FROM ratings
+          GROUP BY recording_id
+       ), filtered AS (
+         SELECT published_catalog.*,
+                COALESCE(rating_stats.positives, 0)::int AS positives,
+                COALESCE(rating_stats.total_votes, 0)::int AS total_votes,
+                user_rating.vote AS user_vote,
+                (user_rating.vote IS NOT NULL) AS has_user_vote,
+                COUNT(*) OVER()::int AS total_count
            FROM published_catalog
+           LEFT JOIN rating_stats ON rating_stats.recording_id = published_catalog.id
+           LEFT JOIN ratings user_rating
+             ON user_rating.recording_id = published_catalog.id
+            AND user_rating.user_id = NULLIF($7, '')::uuid
           WHERE ($1 = '' OR title ILIKE '%' || $1 || '%'
                       OR topic ILIKE '%' || $1 || '%'
                       OR course ILIKE '%' || $1 || '%'
-                      OR course_code ILIKE '%' || $1 || '%')
+                      OR course_code ILIKE '%' || $1 || '%'
+                      OR EXISTS (
+                           SELECT 1
+                             FROM recording_topics search_rt
+                             JOIN topics search_t ON search_t.id = search_rt.topic_id
+                            WHERE search_rt.recording_id = published_catalog.id
+                              AND search_t.name ILIKE '%' || $1 || '%'
+                         ))
             AND ($2 = '' OR school = $2)
             AND ($3 = '' OR course_code = $3)
             AND ($4 = '' OR semester = $4)
             AND ($5 = '' OR professor ILIKE '%' || $5 || '%')
+            AND ($6 = '' OR EXISTS (
+              SELECT 1
+                FROM recording_topics filter_rt
+                JOIN topics filter_t ON filter_t.id = filter_rt.topic_id
+               WHERE filter_rt.recording_id = published_catalog.id
+                 AND lower(filter_t.name) = lower($6)
+            ))
        )
        SELECT *
          FROM filtered
         ORDER BY title, id
-        LIMIT $6 OFFSET $7`,
+        LIMIT $8 OFFSET $9`,
       [
         input.query || '',
         input.school || '',
         input.course || '',
         input.semester || '',
         input.professor || '',
+        input.topic || '',
+        input.user_id || input.userId || '',
         pageSize,
         offset,
       ],
@@ -140,7 +175,60 @@ export class CatalogRepository {
 
   async find(input: RecordingRequest): Promise<RecordingMessage | undefined> {
     const result = await this.pool.query<RecordingRow>('SELECT * FROM recording_detail WHERE id=$1', [input.id || '']);
-    return result.rows[0] ? toRecordingMessage(result.rows[0]) : undefined;
+    const row = result.rows[0];
+    if (!row) return undefined;
+
+    const [participants, attachments] = await Promise.all([
+      this.pool.query<{ id: string; full_name: string; email: string; role_type: string }>(
+        `SELECT p.id, p.full_name, p.email, rp.role_type
+           FROM recording_professors rp
+           JOIN professors p ON p.id = rp.professor_id
+          WHERE rp.recording_id = $1
+            AND p.is_active
+          ORDER BY rp.role_type, p.full_name`,
+        [input.id || ''],
+      ),
+      this.pool.query<{
+        id: string;
+        filename: string;
+        file_path: string;
+        file_type: string;
+        attachment_type: string;
+      }>(
+        `SELECT id, filename, file_path, file_type, attachment_type
+           FROM attachments
+          WHERE recording_id = $1
+          ORDER BY attachment_type, filename`,
+        [input.id || ''],
+      ),
+    ]);
+
+    const message = toRecordingMessage(row);
+    const toParticipant = (value: { id: string; full_name: string; email: string }): RecordingParticipantMessage => ({
+      id: value.id,
+      fullName: value.full_name,
+      email: value.email,
+    });
+    const toAttachment = (value: {
+      id: string;
+      filename: string;
+      file_path: string;
+      file_type: string;
+      attachment_type: string;
+    }): RecordingAttachmentMessage => ({
+      id: value.id,
+      filename: value.filename,
+      filePath: value.file_path,
+      fileType: value.file_type,
+      attachmentType: value.attachment_type,
+    });
+
+    return {
+      ...message,
+      professors: participants.rows.filter((value) => value.role_type === 'professor').map(toParticipant),
+      assistants: participants.rows.filter((value) => value.role_type === 'assistant').map(toParticipant),
+      attachments: attachments.rows.map(toAttachment),
+    };
   }
 
   async authorization(input: PlaybackAuthorizationRequest): Promise<AuthorizationReply> {
@@ -193,6 +281,11 @@ export class CatalogRepository {
       'SELECT id,full_name,email,is_active FROM professors ORDER BY full_name',
     );
     return result.rows.map(professorMessage);
+  }
+
+  async topics(): Promise<TopicMessage[]> {
+    const result = await this.pool.query<TopicMessage>('SELECT id,name FROM topics ORDER BY lower(name), name');
+    return result.rows;
   }
 
   async staff(courseId = '', actor?: Actor): Promise<CourseStaffMessage[]> {
@@ -314,7 +407,39 @@ export class CatalogRepository {
     await this.pool.query('CALL sp_import_catalog_csv($1::jsonb)', [JSON.stringify(rows)]);
   }
 
-  async importRecordings(rows: CsvRow[]): Promise<void> {
-    await this.pool.query('CALL sp_import_recordings_csv($1::jsonb)', [JSON.stringify(rows)]);
+  async importRecordings(rows: CsvRow[]): Promise<PublishedRecordingMessage[]> {
+    const client = await this.pool.connect();
+    const ids = rows.map((row) => String(row.recording_id || '').trim());
+    try {
+      await client.query('BEGIN');
+      const previous = await client.query<{ id: string; is_published: boolean }>(
+        'SELECT id,is_published FROM recordings WHERE id=ANY($1::uuid[]) FOR UPDATE',
+        [ids],
+      );
+      const previousState = new Map(previous.rows.map((row) => [row.id, row.is_published]));
+      await client.query('CALL sp_import_recordings_csv($1::jsonb)', [JSON.stringify(rows)]);
+      const current = await client.query<PublishedRecordingMessage>(
+        `SELECT r.id recording_id,r.title,r.course_id,c.code course_code,c.name course
+           FROM recordings r
+           JOIN courses c ON c.id=r.course_id
+          WHERE r.id=ANY($1::uuid[]) AND r.is_published AND r.is_active`,
+        [ids],
+      );
+      await client.query('COMMIT');
+      return current.rows
+        .filter((row) => previousState.get(row.recording_id) !== true)
+        .map(({ recording_id, title, course_id, course_code, course }) => ({
+          recording_id,
+          title,
+          course_id,
+          course_code,
+          course,
+        }));
+    } catch (error: unknown) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 }

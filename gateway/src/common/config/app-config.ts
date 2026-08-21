@@ -17,6 +17,14 @@ export class AppConfig {
     return process.env.TLS_DIR || join(process.cwd(), 'tls');
   }
 
+  get tlsCertificateFile(): string {
+    return process.env.TLS_CERT_FILE || join(this.tlsDir, 'localhost.crt');
+  }
+
+  get tlsKeyFile(): string {
+    return process.env.TLS_KEY_FILE || join(this.tlsDir, 'localhost.key');
+  }
+
   get gatewayPort(): number {
     return Number(process.env.GATEWAY_PORT || 443);
   }

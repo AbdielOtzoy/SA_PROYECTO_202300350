@@ -3,14 +3,13 @@ package playback
 import (
 	"context"
 	"io"
-	"os"
-	"path/filepath"
 	"time"
 
 	pb "github.com/abdielo/yousac/services/playback/gen"
 	"github.com/abdielo/yousac/services/playback/internal/auth"
 	"github.com/abdielo/yousac/services/playback/internal/catalog"
 	"github.com/abdielo/yousac/services/playback/internal/repository"
+	videostorage "github.com/abdielo/yousac/services/playback/internal/storage"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -21,11 +20,11 @@ type Service struct {
 	authorizer auth.Authorizer
 	catalog    catalog.Client
 	repository repository.Repository
-	videoRoot  string
+	videoStore videostorage.VideoStorage
 }
 
-func NewService(authorizer auth.Authorizer, catalogClient catalog.Client, playbackRepository repository.Repository, videoRoot string) *Service {
-	return &Service{authorizer: authorizer, catalog: catalogClient, repository: playbackRepository, videoRoot: videoRoot}
+func NewService(authorizer auth.Authorizer, catalogClient catalog.Client, playbackRepository repository.Repository, videoStore videostorage.VideoStorage) *Service {
+	return &Service{authorizer: authorizer, catalog: catalogClient, repository: playbackRepository, videoStore: videoStore}
 }
 
 func (s *Service) GetPlayback(ctx context.Context, request *pb.PlaybackRequest) (*pb.PlaybackReply, error) {
@@ -83,7 +82,7 @@ func (s *Service) StreamVideo(request *pb.PlaybackRequest, stream grpc.ServerStr
 	if err != nil || !authorization.GetAllowed() {
 		return status.Error(codes.PermissionDenied, "grabación no autorizada")
 	}
-	file, err := os.Open(filepath.Join(s.videoRoot, filepath.Base(authorization.GetVideoPath())))
+	file, err := s.videoStore.Open(stream.Context(), authorization.GetVideoPath())
 	if err != nil {
 		return err
 	}

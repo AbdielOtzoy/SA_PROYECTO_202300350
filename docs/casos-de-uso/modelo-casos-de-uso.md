@@ -9,7 +9,7 @@ Este modelo cubre únicamente los cuatro módulos indicados para la Práctica 1:
 3. Reproductor, checkpoint y valoración.
 4. Panel de asignaciones y permisos.
 
-Quedan fuera de esta entrega la analítica avanzada, recomendaciones personalizadas, importaciones CSV, carga/publicación de contenido y avisos administrativos. Se documentarán cuando formen parte del alcance de una práctica posterior.
+La analítica avanzada, recomendaciones personalizadas, importaciones CSV, carga/publicación de contenido y avisos administrativos se implementaron posteriormente como extensiones de la Fase 1. Este documento conserva la descomposición original y se complementa con la trazabilidad de P4.
 
 ## Convenciones aplicadas
 
@@ -160,6 +160,13 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 
 [![Diagrama local de recuperación de acceso](referencias/casos-de-uso-locales/09-cu-01-3-recuperar-acceso.drawio.svg)](referencias/casos-de-uso-locales/09-cu-01-3-recuperar-acceso.drawio)
 
+### Implementación P4 relacionada
+
+- El mecanismo temporal es un enlace único con token aleatorio almacenado como hash y expiración de 30 minutos.
+- `RF-004` se implementa mediante preferencias `new_recording` y `admin_notice`; recuperación y seguridad permanecen obligatorias.
+- `RF-005` cubre el restablecimiento de contraseña y cambios administrativos de roles.
+- `RF-027` a `RF-029` se entregan por la cola PostgreSQL y el worker de correo del microservicio de Notificaciones.
+
 ## CU-01.4 — Explorar y filtrar catálogo
 
 | Campo | Definición |
@@ -211,6 +218,10 @@ Estas convenciones se basan en UML 2.5.1 de OMG y en la semántica de `include` 
 - E1. Si la grabación dejó de estar publicada, el sistema informa que ya no está disponible y retorna al catálogo.
 
 **Relaciones locales**: `CU-01.5 — Consultar ficha de grabación` extiende `CU-01.4 — Explorar y filtrar catálogo` cuando el usuario selecciona una grabación; incluye `CU-01.5a — Mostrar ficha técnica`.
+
+### Implementación P5 relacionada
+
+La ficha se obtiene mediante `GET /api/catalog/:id`, con JWT validado por el Gateway y consulta gRPC a Catálogo. La respuesta incluye `lecture_date`, `unit`, etiquetas normalizadas, docentes, auxiliares y adjuntos. Cuando una grabación no tiene materiales, la interfaz muestra la ficha sin enlaces adicionales; el CSV acepta `topics` separado por `;` y `attachments_json` opcional.
 
 [![Diagrama local de ficha de grabación](referencias/casos-de-uso-locales/11-cu-01-5-ficha-grabacion.drawio.svg)](referencias/casos-de-uso-locales/11-cu-01-5-ficha-grabacion.drawio)
 

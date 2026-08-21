@@ -43,10 +43,69 @@ export interface RecordingMessage {
   semester: string;
   unit: string;
   topic: string;
+  topics?: string[];
   video_path?: string;
   videoPath?: string;
   recommendation: number;
   professor?: string;
+  course_id?: string;
+  courseId?: string;
+  lecture_date?: string;
+  lectureDate?: string;
+  positives?: number;
+  total_votes?: number;
+  totalVotes?: number;
+  has_user_vote?: boolean;
+  hasUserVote?: boolean;
+  user_vote?: boolean;
+  userVote?: boolean;
+  views?: number;
+  professors?: RecordingParticipant[];
+  assistants?: RecordingParticipant[];
+  attachments?: RecordingAttachment[];
+}
+
+export interface RecordingParticipant {
+  id: string;
+  full_name: string;
+  email: string;
+}
+
+export interface RecordingAttachment {
+  id: string;
+  filename: string;
+  file_path: string;
+  file_type: string;
+  attachment_type: string;
+}
+
+export interface AnalyticsRecordingMessage {
+  recording_id: string;
+  title: string;
+  course_id: string;
+  course: string;
+  course_code: string;
+  school: string;
+  semester: string;
+  unit: string;
+  topic: string;
+  video_path: string;
+  recommendation: number;
+  positives: number;
+  total_votes: number;
+  has_user_vote: boolean;
+  user_vote: boolean;
+  professor: string;
+  views: number;
+  topics?: string[];
+}
+
+export interface AnalyticsCatalogPageReply {
+  recordings: AnalyticsRecordingMessage[];
+  page: number;
+  page_size: number;
+  total: number;
+  total_pages: number;
 }
 
 export interface ListRecordingsReply {
@@ -61,6 +120,10 @@ export interface ListRecordingsReply {
 
 export interface RecordingReply {
   recording: RecordingMessage;
+}
+
+export interface CatalogTopicsReply {
+  topics: { id: string; name: string }[];
 }
 
 export interface RatingReply {
@@ -94,6 +157,104 @@ export interface VideoChunk {
 
 export interface NotificationReply {
   accepted: boolean;
+  queue_id?: string;
+  queued?: number;
+}
+
+export interface NotificationBatchReply {
+  accepted: boolean;
+  queued: number;
+}
+
+export interface PasswordResetReply {
+  accepted: boolean;
+  user_id?: string;
+  recipient?: string;
+  reset_token?: string;
+}
+
+export interface PasswordResetResult {
+  accepted: boolean;
+  user: UserMessage;
+}
+
+export interface NotificationRecipient {
+  user_id: string;
+  recipient: string;
+  full_name?: string;
+}
+
+export interface NotificationRecipientsReply {
+  recipients: NotificationRecipient[];
+}
+
+export interface NotificationPreferences {
+  new_recording: boolean;
+  admin_notice: boolean;
+  recovery: boolean;
+  security: boolean;
+}
+
+export interface PublishedRecording {
+  recording_id: string;
+  title: string;
+  course_id: string;
+  course_code: string;
+  course: string;
+}
+
+export interface EnrollmentMessage {
+  course_id?: string;
+  courseId?: string;
+  semester_id?: string;
+  semesterId?: string;
+  status?: string;
+  credentials?: string;
+}
+
+export interface EnrollmentsReply {
+  enrollments: EnrollmentMessage[];
+}
+
+export interface CourseMessage {
+  id: string;
+  code: string;
+  name: string;
+  school_id?: string;
+  schoolId?: string;
+  credits?: number;
+  is_active?: boolean;
+  isActive?: boolean;
+}
+
+export interface CoursesReply {
+  courses: CourseMessage[];
+}
+
+export interface SemesterMessage {
+  id: string;
+  year: number;
+  term: number;
+  is_active?: boolean;
+  isActive?: boolean;
+}
+
+export interface SemestersReply {
+  semesters: SemesterMessage[];
+}
+
+export interface EnrollmentView {
+  user_id: string;
+  course_id: string;
+  course_code: string;
+  course_name: string;
+  credits: number;
+  semester_id: string;
+  semester: string;
+  semester_year: number;
+  semester_term: number;
+  status: string;
+  credentials: string;
 }
 
 export interface AuthProfile {

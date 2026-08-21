@@ -15,6 +15,17 @@ Table users {
   Note: 'Cuentas institucionales de la plataforma'
 }
 
+Table password_reset_tokens {
+  id uuid [pk]
+  user_id uuid [not null]
+  token_hash text [unique, not null, note: 'Hash SHA-256; el token en claro no se persiste']
+  expires_at timestamptz [not null]
+  used_at timestamptz
+  created_at timestamptz [not null, default: `now()`]
+
+  Note: 'Tokens de recuperación de un solo uso, con expiración de 30 minutos'
+}
+
 Table roles {
   id uuid [pk]
   name varchar(50) [unique, not null]
@@ -50,7 +61,7 @@ Table user_roles {
 Table user_enrollments {
   user_id uuid [pk, not null]
   course_id uuid [pk, not null, note: 'Referencia lógica a catalog_db.courses.id']
-  semester_id uuid [note: 'Referencia lógica a catalog_db.semesters.id']
+  semester_id uuid [pk, not null, note: 'Referencia lógica a catalog_db.semesters.id']
   status varchar(20) [not null]
   credentials varchar(50)
 
@@ -74,19 +85,18 @@ Ref: role_permissions.permission_id > permissions.id
 Ref: user_roles.user_id > users.id
 Ref: user_roles.role_id > roles.id
 Ref: user_roles.assigned_by > users.id
+Ref: password_reset_tokens.user_id > users.id
 Ref: user_enrollments.user_id > users.id
 Ref: credential_audit_log.user_id > users.id
 
 Note programmable_objects {
 '''
-OBJETOS PROGRAMABLES
+OBJETOS PROGRAMABLES IMPLEMENTADOS
 
-SP — sp_assign_role
-SP — sp_revoke_role
-SP — sp_import_enrollments_csv
-FN — fn_accumulated_permissions
-VW — vw_user_profile
-TG — trg_audit_credentials
-TG — trg_audit_roles
+SP — set_user_role(p_user, p_role, p_assign, p_actor)
+SP — sp_import_enrollments_csv(p_rows jsonb)
+FN — get_user_permissions(p_user uuid)
+TG — user_roles_audit (audit_identity_change)
+TG — users_password_audit (audit_password_change)
 '''
 }
