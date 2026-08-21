@@ -9,6 +9,9 @@ import type {
   OAuthLoginRequest,
   RegisterRequest,
   SessionRequest,
+  PasswordResetRequest,
+  ResetPasswordRequest,
+  NotificationRecipientsRequest,
 } from './dto/identity.dto';
 import { IdentityService } from './identity.service';
 
@@ -29,6 +32,23 @@ export class IdentityController {
     return this.identity.oauthLogin(data);
   }
 
+  @GrpcMethod('IdentityService', 'RequestPasswordReset')
+  requestPasswordReset(data: PasswordResetRequest, metadata: Metadata) {
+    this.requirePermission(metadata, 'identity:recovery');
+    return this.identity.requestPasswordReset(data).then((reply) => ({
+      accepted: reply.accepted,
+      userId: reply.user_id || '',
+      recipient: reply.recipient || '',
+      resetToken: reply.reset_token || '',
+    }));
+  }
+
+  @GrpcMethod('IdentityService', 'ResetPassword')
+  resetPassword(data: ResetPasswordRequest, metadata: Metadata) {
+    this.requirePermission(metadata, 'identity:recovery');
+    return this.identity.resetPassword(data);
+  }
+
   @GrpcMethod('IdentityService', 'GetSession')
   session(data: SessionRequest, metadata: Metadata) {
     const claims = this.auth.verify(metadata);
@@ -39,6 +59,23 @@ export class IdentityController {
   enrollments(data: EnrollmentsRequest, metadata: Metadata) {
     const claims = this.auth.verify(metadata);
     return this.identity.enrollments(data, claims.sub, claims.roles?.includes('admin') === true);
+  }
+
+  @GrpcMethod('IdentityService', 'ListNotificationRecipients')
+  notificationRecipients(data: NotificationRecipientsRequest, metadata: Metadata) {
+    const claims = this.auth.verify(metadata);
+    const isAdmin = claims.roles?.includes('admin') === true;
+    const isGateway = claims.roles?.includes('gateway') === true;
+    if (!isAdmin && !(isGateway && claims.permissions?.includes('identity:notification_recipients'))) {
+      this.auth.denied('Permiso de destinatarios de notificaciones requerido');
+    }
+    return this.identity.notificationRecipients(data || {}).then((reply) => ({
+      recipients: reply.recipients.map((recipient) => ({
+        userId: recipient.userId,
+        recipient: recipient.recipient,
+        fullName: recipient.fullName,
+      })),
+    }));
   }
 
   @GrpcMethod('IdentityService', 'ChangeRole')
@@ -61,5 +98,12 @@ export class IdentityController {
       data?.filename || '',
       claims.roles?.includes('admin') === true,
     );
+  }
+
+  private requirePermission(metadata: Metadata, permission: string): void {
+    const claims = this.auth.verify(metadata);
+    if (!claims.roles?.includes('gateway') || !claims.permissions?.includes(permission)) {
+      this.auth.denied('Permiso interno requerido');
+    }
   }
 }

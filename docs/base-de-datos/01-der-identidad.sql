@@ -10,6 +10,15 @@ CREATE TABLE "users" (
   "updated_at" timestamptz NOT NULL DEFAULT now()
 );
 
+CREATE TABLE "password_reset_tokens" (
+  "id" uuid PRIMARY KEY,
+  "user_id" uuid NOT NULL,
+  "token_hash" text UNIQUE NOT NULL,
+  "expires_at" timestamptz NOT NULL,
+  "used_at" timestamptz,
+  "created_at" timestamptz NOT NULL DEFAULT now()
+);
+
 CREATE TABLE "roles" (
   "id" uuid PRIMARY KEY,
   "name" varchar(50) UNIQUE NOT NULL,
@@ -39,10 +48,10 @@ CREATE TABLE "user_roles" (
 CREATE TABLE "user_enrollments" (
   "user_id" uuid NOT NULL,
   "course_id" uuid NOT NULL,
-  "semester_id" uuid,
+  "semester_id" uuid NOT NULL,
   "status" varchar(20) NOT NULL,
   "credentials" varchar(50),
-  PRIMARY KEY ("user_id", "course_id")
+  PRIMARY KEY ("user_id", "course_id", "semester_id")
 );
 
 CREATE TABLE "credential_audit_log" (
@@ -56,6 +65,7 @@ CREATE TABLE "credential_audit_log" (
 );
 
 COMMENT ON TABLE "users" IS 'Cuentas institucionales de la plataforma';
+COMMENT ON TABLE "password_reset_tokens" IS 'Tokens de recuperación de un solo uso; solo se persiste el hash SHA-256';
 COMMENT ON TABLE "roles" IS 'Roles del sistema (Estudiante, Docente, Auxiliar, Admin)';
 COMMENT ON TABLE "permissions" IS 'Permisos atómicos del sistema';
 COMMENT ON TABLE "role_permissions" IS 'Asignación de permisos a roles (N:N)';
@@ -70,6 +80,19 @@ ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_fk" FOREIGN KEY ("user_
 ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_fk" FOREIGN KEY ("role_id") REFERENCES "roles" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_assigned_by_fk" FOREIGN KEY ("assigned_by") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
+ALTER TABLE "password_reset_tokens" ADD CONSTRAINT "password_reset_tokens_user_fk" FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
 ALTER TABLE "user_enrollments" ADD CONSTRAINT "user_enrollments_user_fk" FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "credential_audit_log" ADD CONSTRAINT "credential_audit_log_user_fk" FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE INDEX "password_reset_tokens_active_idx"
+  ON "password_reset_tokens" ("user_id", "expires_at")
+  WHERE "used_at" IS NULL;
+
+-- Inventario de objetos programables implementados en databases/identity:
+-- PROCEDURE set_user_role(p_user uuid, p_role text, p_assign boolean, p_actor uuid)
+-- PROCEDURE sp_import_enrollments_csv(p_rows jsonb)
+-- FUNCTION get_user_permissions(p_user uuid)
+-- TRIGGER FUNCTION audit_identity_change() + TRIGGER user_roles_audit
+-- TRIGGER FUNCTION audit_password_change() + TRIGGER users_password_audit

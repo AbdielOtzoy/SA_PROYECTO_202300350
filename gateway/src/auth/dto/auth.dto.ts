@@ -1,4 +1,11 @@
-import type { AuthReply, LoginRequest, RegisterRequest, UserMessage } from '../../common/grpc/grpc.types';
+import type {
+  AuthReply,
+  LoginRequest,
+  PasswordResetReply,
+  PasswordResetResult,
+  RegisterRequest,
+  UserMessage,
+} from '../../common/grpc/grpc.types';
 
 export type { AuthReply, LoginRequest, RegisterRequest, UserMessage };
 
@@ -18,3 +25,19 @@ export interface RegistrationNotification {
   subject: string;
   body: string;
 }
+
+export interface RecoveryRequest {
+  email?: string;
+}
+
+export interface RecoveryResetRequest {
+  token?: string;
+  new_password?: string;
+}
+
+export interface RecoveryResponse {
+  accepted: boolean;
+  message: string;
+}
+
+export type { PasswordResetReply, PasswordResetResult };

@@ -13,6 +13,7 @@ from .common.auth import JWTAuthenticator
 from .common.cache import AnalyticsCache
 from .common.config import AnalyticsConfig
 from .transport.grpc_adapter import AnalyticsGrpcAdapter, ProtobufResultCodec
+from .transport.sources import GrpcAnalyticsSources
 
 
 def create_server(config: AnalyticsConfig | None = None) -> grpc.Server:
@@ -20,9 +21,17 @@ def create_server(config: AnalyticsConfig | None = None) -> grpc.Server:
     mongo_client = MongoClient(settings.mongo_url)
     redis_client = Redis.from_url(settings.redis_url, decode_responses=True)
 
-    repository = MongoViewRepository(mongo_client.get_database().views)
+    database = mongo_client.get_database()
+    repository = MongoViewRepository(database.views, database.exam_periods, database.trends)
+    repository.ensure_indexes()
     cache = AnalyticsCache(redis_client)
-    service = AnalyticsService(repository, cache, ProtobufResultCodec())
+    sources = GrpcAnalyticsSources(
+        settings.catalog_grpc_address,
+        settings.identity_grpc_address,
+        settings.playback_grpc_address,
+        settings.grpc_timeout_ms,
+    )
+    service = AnalyticsService(repository, cache, ProtobufResultCodec(), sources)
     adapter = AnalyticsGrpcAdapter(service, JWTAuthenticator(settings.jwt_secret))
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=8))

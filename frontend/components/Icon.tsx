@@ -14,6 +14,8 @@ export type IconName =
   | 'bell'
   | 'search'
   | 'filter'
+  | 'loader'
+  | 'alert'
   | 'play'
   | 'check'
   | 'thumbUp'
@@ -29,6 +31,7 @@ export type IconName =
   | 'userAdd'
   | 'database'
   | 'message'
+  | 'recommend'
   | 'logout';
 const paths: Record<IconName, ReactNode> = {
   grid: (
@@ -96,6 +99,13 @@ const paths: Record<IconName, ReactNode> = {
       <circle cx="8" cy="18" r="2" />
     </g>
   ),
+  loader: <circle cx="12" cy="12" r="8" strokeDasharray="24 12" />,
+  alert: (
+    <g>
+      <path d="m12 3 9 17H3z" />
+      <path d="M12 9v4M12 17h.01" />
+    </g>
+  ),
   play: <path d="m9 6 10 6-10 6z" />,
   check: <path d="m5 12 4 4L19 6" />,
   thumbUp: (
@@ -145,6 +155,7 @@ const paths: Record<IconName, ReactNode> = {
     </g>
   ),
   message: <path d="M20 11.5a8 8 0 0 1-8 8H7l-4 3 1-4.5A8 8 0 1 1 20 11.5z" />,
+  recommend: <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3.1-5.6 3.1 1.1-6.2L3 9.6l6.2-.9z" />,
   logout: <path d="M10 17l5-5-5-5M15 12H3M21 4v16H10" />,
 };
 export function Icon({ name, size = 22, ...props }: { name: IconName; size?: number } & SVGProps<SVGSVGElement>) {

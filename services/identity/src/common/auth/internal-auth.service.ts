@@ -7,6 +7,7 @@ import { AppConfig } from '../config/app-config';
 export interface InternalClaims extends jwt.JwtPayload {
   sub: string;
   roles?: string[];
+  permissions?: string[];
 }
 
 @Injectable()
@@ -23,5 +24,9 @@ export class InternalAuthService {
     } catch {
       throw new RpcException({ code: GrpcStatus.UNAUTHENTICATED, details: 'JWT inválido' });
     }
+  }
+
+  denied(details: string): never {
+    throw new RpcException({ code: GrpcStatus.PERMISSION_DENIED, details });
   }
 }

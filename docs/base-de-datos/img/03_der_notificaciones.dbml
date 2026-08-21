@@ -24,10 +24,13 @@ Table user_preferences {
 Table email_queue {
   id uuid [pk]
   user_id uuid [not null, note: 'Referencia lógica a identity_db.users.id']
-  template_id uuid [not null]
+  template_id uuid [note: 'FK opcional a templates.id']
   recipient varchar(255) [not null]
   params_json jsonb
-  status varchar(20) [not null]
+  status varchar(20) [not null, note: 'pending | processing | sent | failed']
+  attempts integer [not null, default: 0]
+  available_at timestamptz [not null, default: `now()`]
+  last_error text
   created_at timestamptz [not null, default: `now()`]
   sent_at timestamptz
 
@@ -37,7 +40,7 @@ Table email_queue {
 Table email_log {
   id uuid [pk]
   user_id uuid [not null, note: 'Referencia lógica a identity_db.users.id']
-  template_id uuid [not null]
+  template_id uuid [note: 'FK opcional a templates.id']
   recipient varchar(255) [not null]
   subject varchar(200) [not null]
   body text [not null]
@@ -52,9 +55,10 @@ Ref: email_log.template_id > templates.id
 
 Note programmable_objects {
 '''
-OBJETOS PROGRAMABLES
+OBJETOS IMPLEMENTADOS EN LA APLICACIÓN
 
-SP — sp_enqueue_notification
-VW — vw_queue_status
+CODE — NotificationsRepository.enqueue / enqueueBatch
+WORKER — NotificationsWorker
+INDEX — email_queue_pending_idx (available_at, created_at)
 '''
 }

@@ -88,7 +88,7 @@ export default function Login() {
               <Icon name="eye" />
             </button>
           </div>
-          <a className="login-forgot" href="#">
+          <a className="login-forgot" href="/recuperar">
             ¿Olvidaste tu contraseña?
           </a>
           <button className="button full" type="submit">

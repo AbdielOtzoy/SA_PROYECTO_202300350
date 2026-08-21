@@ -18,10 +18,13 @@ CREATE TABLE "user_preferences" (
 CREATE TABLE "email_queue" (
   "id" uuid PRIMARY KEY,
   "user_id" uuid NOT NULL,
-  "template_id" uuid NOT NULL,
+  "template_id" uuid,
   "recipient" varchar(255) NOT NULL,
   "params_json" jsonb,
-  "status" varchar(20) NOT NULL,
+  "status" varchar(20) NOT NULL CHECK ("status" IN ('pending', 'processing', 'sent', 'failed')),
+  "attempts" integer NOT NULL DEFAULT 0,
+  "available_at" timestamptz NOT NULL DEFAULT now(),
+  "last_error" text,
   "created_at" timestamptz NOT NULL DEFAULT now(),
   "sent_at" timestamptz
 );
@@ -29,7 +32,7 @@ CREATE TABLE "email_queue" (
 CREATE TABLE "email_log" (
   "id" uuid PRIMARY KEY,
   "user_id" uuid NOT NULL,
-  "template_id" uuid NOT NULL,
+  "template_id" uuid,
   "recipient" varchar(255) NOT NULL,
   "subject" varchar(200) NOT NULL,
   "body" text NOT NULL,
@@ -45,3 +48,11 @@ COMMENT ON TABLE "email_log" IS 'Historial de correos enviados';
 ALTER TABLE "email_queue" ADD CONSTRAINT "email_queue_template_fk" FOREIGN KEY ("template_id") REFERENCES "templates" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "email_log" ADD CONSTRAINT "email_log_template_fk" FOREIGN KEY ("template_id") REFERENCES "templates" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE INDEX "email_queue_pending_idx"
+  ON "email_queue" ("available_at", "created_at")
+  WHERE "status" IN ('pending', 'processing');
+
+-- user_id es una referencia lógica a identity_db.users.id; no se crea una FK
+-- entre microservicios. La cola y los reintentos se implementan en TypeScript:
+-- NotificationsRepository.enqueue/enqueueBatch y NotificationsWorker.

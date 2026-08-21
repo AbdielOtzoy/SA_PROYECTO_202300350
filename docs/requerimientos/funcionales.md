@@ -25,6 +25,10 @@
 | RF-011 | Cuando un docente o auxiliar gestione uno de sus cursos, el sistema deberá permitirle cargar y publicar sus grabaciones. | Alta |
 | RF-012 | Cuando un administrador gestione el contenido, el sistema deberá darle acceso a las grabaciones de todos los cursos. | Alta |
 
+### Implementación P5 — ficha y modelo académico
+
+RF-009 y RF-010 se completan con etiquetas normalizadas (`topics` y `recording_topics`), filtro por tema, ficha con unidad y fecha de impartición, listas separadas de docentes y auxiliares, y adjuntos de tipo `syllabus` o `material`. Los adjuntos se manejan como metadatos y URL/ruta; la carga binaria y GCS permanecen fuera de P5.
+
 # Reproducción
 
 | ID | Requerimiento | Prioridad |
@@ -66,3 +70,7 @@
 | RF-027 | Cuando se complete el registro de una cuenta, el sistema deberá enviar una confirmación al correo institucional registrado. | Alta |
 | RF-028 | Cuando se publique una nueva clase, el sistema deberá notificar por correo a los usuarios inscritos en el curso que tengan habilitada esa preferencia. | Alta |
 | RF-029 | Cuando un administrador emita un aviso, el sistema deberá enviarlo por correo a los usuarios del rol o curso seleccionado que tengan habilitada esa preferencia. | Alta |
+
+## Trazabilidad P4
+
+RF-003, RF-004, RF-005 y RF-027–RF-029 se implementan mediante los contratos gRPC de Identidad y Notificaciones, las rutas del Gateway de recuperación, preferencias y avisos administrativos, y el worker que procesa `email_queue`. La publicación de una grabación se integra con Identidad para resolver inscritos y con Notificaciones para aplicar `new_recording`.

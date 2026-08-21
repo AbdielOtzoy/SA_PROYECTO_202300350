@@ -7,5 +7,4 @@ COPY gateway/package.json gateway/package.json
 RUN npm install --workspace @yousac/gateway
 COPY proto ./proto
 COPY gateway ./gateway
-VOLUME ["/videos"]
 CMD ["npm","run","start","--workspace","@yousac/gateway"]

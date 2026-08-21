@@ -3,9 +3,23 @@ import { OAuth2Client } from 'google-auth-library';
 import type { Request } from 'express';
 import { AppConfig } from '../common/config/app-config';
 import { GrpcCallService } from '../common/grpc/grpc.client';
-import type { AuthReply, LoginRequest, RegisterRequest, SessionReply, RegistrationNotification } from './dto/auth.dto';
+import type {
+  AuthReply,
+  LoginRequest,
+  RecoveryRequest,
+  RecoveryResetRequest,
+  RecoveryResponse,
+  RegisterRequest,
+  SessionReply,
+  RegistrationNotification,
+} from './dto/auth.dto';
 import { createOAuthState, validInstitutionalEmail } from './oauth';
-import type { AuthProfile, NotificationReply } from '../common/grpc/grpc.types';
+import type {
+  AuthProfile,
+  NotificationReply,
+  PasswordResetReply,
+  PasswordResetResult,
+} from '../common/grpc/grpc.types';
 import { SessionService } from '../common/auth/session.service';
 
 export const OAUTH_STATE_COOKIE = 'yousac_oauth_state';
@@ -28,6 +42,59 @@ export class AuthService {
   async login(input: LoginRequest): Promise<AuthReply> {
     this.requireInstitutionalEmail(input.email || '');
     return this.grpc.unary<LoginRequest, AuthReply>('identity', 'Login', input);
+  }
+
+  async requestRecovery(input: RecoveryRequest): Promise<RecoveryResponse> {
+    const token = this.session.issueInternalToken(['identity:recovery', 'notifications:enqueue']);
+    const reply = await this.grpc.unary<RecoveryRequest, PasswordResetReply>(
+      'identity',
+      'RequestPasswordReset',
+      { email: input.email || '' },
+      token,
+    );
+    if (reply.reset_token && reply.recipient && reply.user_id) {
+      const recoveryUrl = `${this.config.frontendUrl}/recuperar?token=${encodeURIComponent(reply.reset_token)}`;
+      await this.grpc.unary(
+        'notifications',
+        'Send',
+        {
+          user_id: reply.user_id,
+          recipient: reply.recipient,
+          type: 'recovery',
+          template_code: 'recovery',
+          params_json: JSON.stringify({ recovery_url: recoveryUrl }),
+        },
+        token,
+      );
+    }
+    return {
+      accepted: true,
+      message: 'Si la cuenta existe, recibirás instrucciones de recuperación en tu correo institucional.',
+    };
+  }
+
+  async resetRecovery(input: RecoveryResetRequest): Promise<RecoveryResponse> {
+    const token = this.session.issueInternalToken(['identity:recovery', 'notifications:enqueue']);
+    const reply = await this.grpc.unary<RecoveryResetRequest, PasswordResetResult>(
+      'identity',
+      'ResetPassword',
+      { token: input.token || '', new_password: input.new_password || '' },
+      token,
+    );
+    const user = reply.user;
+    await this.grpc.unary(
+      'notifications',
+      'Send',
+      {
+        user_id: user.id,
+        recipient: user.email,
+        type: 'security',
+        template_code: 'security',
+        params_json: JSON.stringify({ body: 'Tu contraseña fue actualizada correctamente.' }),
+      },
+      token,
+    );
+    return { accepted: true, message: 'Tu contraseña fue actualizada. Ya puedes iniciar sesión.' };
   }
 
   googleAuthorization(): { state: string; url: string } {

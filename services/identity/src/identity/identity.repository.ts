@@ -11,6 +11,15 @@ interface CredentialsRow {
 interface IdRow {
   id: string;
 }
+interface ResetUserRow {
+  id: string;
+  email: string;
+}
+interface NotificationRecipientRow {
+  user_id: string;
+  recipient: string;
+  full_name: string;
+}
 interface EnrollmentRow {
   course_id: string;
   semester_id: string;
@@ -99,14 +108,95 @@ export class IdentityRepository {
     return result.rows[0]?.id;
   }
 
+  async findResetRecipient(email: string): Promise<ResetUserRow | undefined> {
+    const result = await this.pool.query<ResetUserRow>('SELECT id,email FROM users WHERE email=$1 AND is_active', [
+      email,
+    ]);
+    return result.rows[0];
+  }
+
+  async createPasswordResetToken(userId: string, tokenHash: string, expiresAt: Date): Promise<void> {
+    await this.pool.query('UPDATE password_reset_tokens SET used_at=now() WHERE user_id=$1 AND used_at IS NULL', [
+      userId,
+    ]);
+    await this.pool.query('INSERT INTO password_reset_tokens(user_id,token_hash,expires_at) VALUES($1,$2,$3)', [
+      userId,
+      tokenHash,
+      expiresAt,
+    ]);
+  }
+
+  async consumePasswordReset(tokenHash: string, passwordHash: string): Promise<ResetUserRow | undefined> {
+    const client = await this.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const result = await client.query<ResetUserRow>(
+        `SELECT u.id,u.email
+           FROM password_reset_tokens t
+           JOIN users u ON u.id=t.user_id
+          WHERE t.token_hash=$1
+            AND t.used_at IS NULL
+            AND t.expires_at > now()
+            AND u.is_active
+          FOR UPDATE OF t,u`,
+        [tokenHash],
+      );
+      const user = result.rows[0];
+      if (!user) {
+        await client.query('COMMIT');
+        return undefined;
+      }
+      await client.query('UPDATE users SET password_hash=$2,updated_at=now() WHERE id=$1', [user.id, passwordHash]);
+      await client.query('UPDATE password_reset_tokens SET used_at=now() WHERE user_id=$1 AND used_at IS NULL', [
+        user.id,
+      ]);
+      await client.query('COMMIT');
+      return user;
+    } catch (error: unknown) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async listNotificationRecipients(
+    role: string,
+    courseId: string,
+    status: string,
+  ): Promise<NotificationRecipientRow[]> {
+    const result = await this.pool.query<NotificationRecipientRow>(
+      `SELECT DISTINCT u.id user_id,u.email recipient,u.full_name
+         FROM users u
+         LEFT JOIN user_roles ur ON ur.user_id=u.id
+         LEFT JOIN roles r ON r.id=ur.role_id
+        WHERE u.is_active
+          AND ($1='' OR r.name=$1)
+          AND ($2='' OR EXISTS (
+            SELECT 1 FROM user_enrollments e
+             WHERE e.user_id=u.id
+               AND e.course_id=$2::uuid
+               AND ($3='' OR e.status=$3)
+          ))
+        ORDER BY u.email`,
+      [role, courseId, status],
+    );
+    return result.rows;
+  }
+
   updateFullName(id: string, fullName: string): Promise<unknown> {
     return this.pool.query('UPDATE users SET full_name=$2, updated_at=now() WHERE id=$1', [id, fullName]);
   }
 
-  async listEnrollments(userId: string, status: string, credentials: string): Promise<EnrollmentMessage[]> {
+  async listEnrollments(
+    userId: string,
+    semester: string,
+    status: string,
+    credentials: string,
+  ): Promise<EnrollmentMessage[]> {
     const result = await this.pool.query<EnrollmentRow>(
-      "SELECT course_id,semester_id,status,credentials FROM user_enrollments WHERE user_id=$1 AND ($2='' OR status=$2) AND ($3='' OR credentials=$3)",
-      [userId, status, credentials],
+      "SELECT course_id,semester_id,status,credentials FROM user_enrollments WHERE user_id=$1 AND ($2='' OR semester_id=$2::uuid) AND ($3='' OR status=$3) AND ($4='' OR credentials=$4)",
+      [userId, semester, status, credentials],
     );
     return result.rows.map((row) => ({
       courseId: row.course_id,

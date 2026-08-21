@@ -19,6 +19,9 @@
         <mxCell id="comp-navegador" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=center;fontSize=10;" value="&lt;b&gt;Navegador Web&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«application»&lt;/font&gt;" vertex="1">
           <mxGeometry height="60" width="180" x="70" y="430" as="geometry" />
         </mxCell>
+        <mxCell id="oauth-provider" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=center;fontSize=10;" value="&lt;b&gt;Proveedor OAuth institucional&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«agente externo» · Google OAuth&lt;br&gt;HTTPS Authorization Code&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="240" x="40" y="100" as="geometry" />
+        </mxCell>
         <mxCell id="maquina" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;fontStyle=1;fontSize=13;" value="Máquina Local (Docker Host)" vertex="1">
           <mxGeometry height="880" width="1240" x="360" y="90" as="geometry" />
         </mxCell>
@@ -49,6 +52,9 @@
         <mxCell id="c-notificaciones" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=center;fontSize=10;" value="&lt;b&gt;Svc Notificaciones&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«container» · «TypeScript» · gRPC :50055&lt;/font&gt;" vertex="1">
           <mxGeometry height="70" width="240" x="460" y="660" as="geometry" />
         </mxCell>
+        <mxCell id="mailpit" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=center;fontSize=10;" value="&lt;b&gt;Mailpit&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«agente externo» · SMTP :1025&lt;br&gt;Web UI :8025&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="240" x="740" y="710" as="geometry" />
+        </mxCell>
         <mxCell id="zona-db" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;fontStyle=1;fontSize=11;" value="Docker-Compose · Entorno de Ejecución — Persistencia (Database per Microservice)" vertex="1">
           <mxGeometry height="550" width="460" x="1060" y="240" as="geometry" />
         </mxCell>
@@ -72,6 +78,22 @@
         </mxCell>
         <mxCell id="vol-videos" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#ffffff;strokeColor=#666666;fontSize=10;align=center;" value="&lt;i&gt;«volume»&lt;/i&gt;&lt;br&gt;&lt;b&gt;Volumen persistente de videos&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;(almacenamiento local de grabaciones)&lt;/font&gt;" vertex="1">
           <mxGeometry height="70" width="460" x="1060" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="e-gw-oauth" edge="1" parent="1" source="c-gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.15;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="oauth-provider" value="HTTPS OAuth 2.0 / callback">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="310" />
+              <mxPoint x="340" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-not-mailpit" edge="1" parent="1" source="c-notificaciones" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="mailpit" value="SMTP">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="720" y="695" />
+              <mxPoint x="720" y="745" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="e-cli-front" edge="1" parent="1" source="nodo-cliente" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="c-frontend" value="">
           <mxGeometry relative="1" as="geometry">

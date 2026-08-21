@@ -19,13 +19,16 @@
         <mxCell id="comp-navegador" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=center;fontSize=10;" value="&lt;b&gt;Navegador Web&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«application»&lt;/font&gt;" vertex="1">
           <mxGeometry height="60" width="180" x="70" y="430" as="geometry" />
         </mxCell>
+        <mxCell id="oauth-provider" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=center;fontSize=10;" value="&lt;b&gt;Proveedor OAuth institucional&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«agente externo» · Google OAuth&lt;br&gt;HTTPS Authorization Code&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="240" x="40" y="100" as="geometry" />
+        </mxCell>
         <mxCell id="gh-node" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;fontStyle=1;fontSize=11;" value="Repositorio GitHub" vertex="1">
           <mxGeometry height="150" width="240" x="40" y="700" as="geometry" />
         </mxCell>
         <mxCell id="gh-cd" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=center;fontSize=10;" value="&lt;b&gt;GitHub Actions&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«referencia futura»&lt;/font&gt;" vertex="1">
           <mxGeometry height="65" width="180" x="70" y="760" as="geometry" />
         </mxCell>
-        <mxCell id="entorno" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;fontStyle=1;fontSize=13;" value="GCP (futuro opcional)" vertex="1">
+        <mxCell id="entorno" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;fontStyle=1;fontSize=13;" value="GCP — Proyecto yousac" vertex="1">
           <mxGeometry height="900" width="1240" x="360" y="90" as="geometry" />
         </mxCell>
         <mxCell id="maquina" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;fontStyle=1;fontSize=12;" value="Compute Engine — VM (Docker Host)" vertex="1">
@@ -61,6 +64,9 @@
         <mxCell id="c-notificaciones" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=center;fontSize=10;" value="&lt;b&gt;Svc Notificaciones&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«container» · «TypeScript» · gRPC :50055&lt;/font&gt;" vertex="1">
           <mxGeometry height="70" width="240" x="460" y="660" as="geometry" />
         </mxCell>
+        <mxCell id="mailpit" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=center;fontSize=10;" value="&lt;b&gt;Mailpit&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«agente externo» · SMTP :1025&lt;br&gt;Web UI 127.0.0.1:8025&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="240" x="740" y="710" as="geometry" />
+        </mxCell>
         <mxCell id="zona-db" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;fontStyle=1;fontSize=11;" value="Docker-Compose · Entorno de Ejecución — Persistencia (Database per Microservice)" vertex="1">
           <mxGeometry height="550" width="460" x="1060" y="240" as="geometry" />
         </mxCell>
@@ -82,10 +88,10 @@
         <mxCell id="db-redis" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=center;" value="&lt;b&gt;Redis Analítica (exclusivo)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«container» · :6379&lt;/font&gt;" vertex="1">
           <mxGeometry height="70" width="190" x="1310" y="540" as="geometry" />
         </mxCell>
-        <mxCell id="gcs" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;fontStyle=1;fontSize=11;" value="GCS (futuro opcional)" vertex="1">
+        <mxCell id="gcs" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;fontStyle=1;fontSize=11;" value="Google Cloud Storage (GCS)" vertex="1">
           <mxGeometry height="120" width="460" x="1060" y="820" as="geometry" />
         </mxCell>
-        <mxCell id="gcs-resource" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=center;fontSize=10;" value="&lt;b&gt;Bucket de videos&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«resource» · grabaciones&lt;/font&gt;" vertex="1">
+        <mxCell id="gcs-resource" parent="1" style="shape=component;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=center;fontSize=10;" value="&lt;b&gt;Bucket de videos&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;«resource» · yousac-videos-yousac&lt;/font&gt;" vertex="1">
           <mxGeometry height="50" width="300" x="1140" y="875" as="geometry" />
         </mxCell>
         <mxCell id="e-cli-front" edge="1" parent="1" source="nodo-cliente" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="c-frontend" value="">
@@ -94,6 +100,22 @@
               <mxPoint x="320" y="445" />
               <mxPoint x="320" y="285" />
               <mxPoint x="860" y="285" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-gw-oauth" edge="1" parent="1" source="c-gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=0;exitY=0.15;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="oauth-provider" value="HTTPS OAuth 2.0 / callback">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="310" />
+              <mxPoint x="340" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-not-mailpit" edge="1" parent="1" source="c-notificaciones" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="mailpit" value="SMTP">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="720" y="695" />
+              <mxPoint x="720" y="745" />
             </Array>
           </mxGeometry>
         </mxCell>

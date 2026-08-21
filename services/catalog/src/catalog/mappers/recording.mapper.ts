@@ -9,12 +9,32 @@ export interface RecordingRow {
   semester: string;
   unit: string;
   topic: string;
+  topics?: string[] | string;
   video_path: string;
   professor?: string;
   recommendation: number | string | null;
+  course_id?: string;
+  lecture_date?: string | Date | null;
+  positives?: number | string;
+  total_votes?: number | string;
+  has_user_vote?: boolean;
+  user_vote?: boolean;
+  views?: number | string;
+}
+
+function dateValue(value: string | Date | null | undefined): string {
+  if (!value) return '';
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return String(value).slice(0, 10);
 }
 
 export function toRecordingMessage(row: RecordingRow): RecordingMessage {
+  const topics = Array.isArray(row.topics)
+    ? row.topics.map(String).filter(Boolean)
+    : String(row.topics || '')
+        .split(',')
+        .map((value) => value.trim())
+        .filter(Boolean);
   return {
     id: row.id,
     title: row.title,
@@ -24,8 +44,19 @@ export function toRecordingMessage(row: RecordingRow): RecordingMessage {
     semester: row.semester,
     unit: row.unit,
     topic: row.topic,
+    topics: topics.length ? topics : row.topic ? [row.topic] : [],
     videoPath: row.video_path,
     professor: row.professor || '',
     recommendation: Number(row.recommendation || 0),
+    courseId: row.course_id || '',
+    lectureDate: dateValue(row.lecture_date),
+    positives: Number(row.positives || 0),
+    totalVotes: Number(row.total_votes || 0),
+    hasUserVote: row.has_user_vote === true,
+    userVote: row.user_vote === true,
+    views: Number(row.views || 0),
+    professors: [],
+    assistants: [],
+    attachments: [],
   };
 }

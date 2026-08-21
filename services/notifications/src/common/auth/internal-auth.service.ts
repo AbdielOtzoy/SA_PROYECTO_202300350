@@ -19,4 +19,8 @@ export class InternalAuthService {
       throw new RpcException({ code: GrpcStatus.UNAUTHENTICATED, details: 'JWT inválido' });
     }
   }
+
+  denied(details: string): never {
+    throw new RpcException({ code: GrpcStatus.PERMISSION_DENIED, details });
+  }
 }

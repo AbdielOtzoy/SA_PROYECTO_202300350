@@ -142,6 +142,12 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      catalog:
+        condition: service_started
+      identity:
+        condition: service_started
+      playback:
+        condition: service_started
     restart: unless-stopped
 
   notifications:
